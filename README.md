@@ -52,3 +52,15 @@ bin/rubocop
 The integration suite covers both forms, validation, consent, session cookies and CSRF, honeypot filtering, admin authentication, filtering, review updates and unsafe input. Production has no JavaScript and a content security policy that disallows scripts.
 
 JSON is pinned below version 3 because Rails 8.1.3.1's session decoder passes a positional options argument that JSON 3 rejects. The browser-session test covers this failure.
+
+## Deployment verification
+
+Verified on 13 September 2026 at https://commonground-pilot.fly.dev:
+
+- Both public forms saved test applications and showed the confirmation page.
+- Unauthenticated admin requests returned 401. Authenticated review and status updates worked.
+- Requests without a CSRF token were rejected.
+- Both applications and review notes survived a Fly machine restart.
+- The two deployment test applications were removed afterward.
+- Desktop and mobile layouts, visible keyboard focus, native required-field validation and accessibility labels were checked in the browser. No full screen-reader audit has been performed.
+- All 12 integration tests passed, with 121 assertions. Brakeman reported no warnings.
