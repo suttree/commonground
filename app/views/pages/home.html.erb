@@ -1,17 +1,28 @@
-<section class="hero" aria-labelledby="hero-title">
-  <p class="eyebrow">People, purpose & work</p>
-  <h1 id="hero-title">Find common ground.<br><em>Do something worthwhile.</em></h1>
-  <p class="intro">What needs doing? Why does it matter? And who would care enough to help?</p>
-  <p class="hero-copy">We introduce people and organisations through the work they want to do and the people they want it to serve.</p>
-  <div class="actions">
-    <%= link_to "I need someone", new_organisation_path, class: "button" %>
-    <%= link_to "I'm interested in helping", new_person_path, class: "button secondary" %>
+<section class="home-opening" aria-labelledby="hero-title">
+  <div class="opening-context">
+    <p class="opening-label">People, purpose & work</p>
+    <h1 id="hero-title">Find common ground.<br>Do something worthwhile.</h1>
+    <p>We introduce people and organisations through the work they want to do and the people they want it to serve.</p>
+    <p class="opening-note">A small pilot. Real people making the introductions. No CV needed.</p>
   </div>
-  <p class="small-note">A small pilot. Real people making the introductions. No CV needed.</p>
+  <div class="opening-invitation">
+    <p class="opening-questions">
+      <span>What needs doing?</span>
+      <span>Why does it matter?</span>
+      <span>And who would care enough to help?</span>
+    </p>
+    <nav class="opening-links" aria-label="Join the pilot">
+      <%= link_to new_organisation_path do %><span>I need someone</span><span aria-hidden="true">→</span><% end %>
+      <%= link_to new_person_path do %><span>I'm interested in helping</span><span aria-hidden="true">→</span><% end %>
+    </nav>
+  </div>
 </section>
 
-<section class="editorial-section" aria-labelledby="purpose-title">
-  <div><p class="eyebrow">Start with what matters</p><h2 id="purpose-title">Same apple juice.<br>Different reasons.</h2></div>
+<section class="home-purpose" aria-labelledby="purpose-title">
+  <div>
+    <p class="opening-label">Start with what matters</p>
+    <h2 id="purpose-title">Same apple juice.<br>Different reasons.</h2>
+  </div>
   <div class="prose">
     <p>One company makes juice to save surplus apples from going to waste. Another wants to buy from local growers. Another creates jobs for people who've been out of work for years.</p>
     <p>The product looks the same. The work you want to be part of might not.</p>

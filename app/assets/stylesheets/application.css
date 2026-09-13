@@ -21,16 +21,12 @@ h3 { font-size: 1.3rem; line-height: 1.35; font-weight: 600; letter-spacing: -.0
 .pilot-label, .eyebrow, .small-note, .hint { color: var(--muted); font-size: 1rem; }
 .pilot-label { text-align: right; }
 .eyebrow { letter-spacing: .09em; text-transform: uppercase; font-size: .875rem; font-weight: 600; margin-bottom: 22px; }
-.hero { padding: 86px 0 78px; }
-.hero h1 { max-width: 1050px; }
 .intro { font-size: 1.5rem; line-height: 1.5; max-width: 720px; }
-.hero-copy { max-width: 650px; }
 .actions { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; margin: 30px 0 20px; }
 .button { display: inline-block; font: inherit; font-weight: 500; text-decoration: none; text-align: center; padding: 14px 24px; min-height: 54px; border: 1px solid var(--green); border-radius: 4px; background: var(--green); color: #fff; cursor: pointer; }
 .button:hover { background: #193b2d; text-decoration: none; }
 .button.secondary { color: var(--green); background: transparent; }
 .button.secondary:hover { background: var(--wash); }
-.editorial-section { display: grid; grid-template-columns: 1fr 1.2fr; gap: 70px; border-top: 1px solid var(--line); padding: 64px 0; }
 .prose p { max-width: 65ch; }
 .prose h2 { font-size: 2rem; margin-top: 1.5em; }
 .how-section { padding: 64px 0 72px; border-top: 1px solid var(--line); }
@@ -89,9 +85,7 @@ select { white-space: normal; }
   .pilot-label { max-width: 145px; font-size: .875rem; }
   .wordmark { font-size: 1rem; gap: 8px; }
   .brand-mark { width: 36px; height: 36px; font-size: 1.35rem; flex-shrink: 0; }
-  .hero { padding: 48px 0; }
   .intro { font-size: 1.3rem; }
-  .editorial-section { grid-template-columns: 1fr; gap: 20px; padding: 40px 0; }
   .steps { grid-template-columns: 1fr; gap: 32px; }
   .steps li::before { margin-bottom: 10px; }
   .how-section { padding: 40px 0; }
@@ -103,4 +97,41 @@ select { white-space: normal; }
   .pilot-label { display: none; }
   h1 { font-size: 2.65rem; }
   .actions .button { width: 100%; }
+}
+
+/* The home page opens like a practical invitation, with two equal ways in. */
+.home-header { min-height: 102px; border-bottom: 2px solid #28312f; }
+.home-header .wordmark { color: #28312f; font-size: 1.5rem; font-weight: 700; letter-spacing: -.055em; }
+.home-header .brand-mark { display: none; }
+.home-header .pilot-label { color: #515b56; }
+.home-opening { color: #28312f; display: grid; grid-template-columns: 1fr 1.15fr; gap: 100px; padding: 52px 0 64px; }
+.opening-label { font-size: 1rem; margin-bottom: 24px; color: #515b56; }
+.home-opening h1 { font-family: inherit; font-size: clamp(2rem, 3.2vw, 2.75rem); font-weight: 650; letter-spacing: -.045em; line-height: 1.12; text-wrap: initial; margin-bottom: 28px; }
+.opening-context > p:not(.opening-label) { max-width: 38ch; }
+.opening-note { font-size: 1rem; color: #515b56; padding-top: 20px; margin-bottom: 0; }
+.opening-invitation { padding-top: 46px; }
+.opening-questions { font-size: clamp(1.75rem, 2.8vw, 2.3rem); line-height: 1.25; letter-spacing: -.035em; margin-bottom: 38px; }
+.opening-questions span { display: block; margin-bottom: 12px; }
+.opening-links { border-top: 1px solid #87918a; }
+.opening-links a { color: #2347a0; display: flex; align-items: baseline; justify-content: space-between; gap: 20px; padding: 18px 0; border-bottom: 1px solid #87918a; text-decoration: none; font-size: 1.25rem; }
+.opening-links a:hover span:first-child { text-decoration: underline; text-underline-offset: .22em; }
+.opening-links a > span:last-child { font-size: 1.5rem; }
+.home-purpose { display: grid; grid-template-columns: 1fr 1.15fr; gap: 100px; color: #28312f; padding: 44px 0 52px; border-top: 2px solid #28312f; }
+.home-purpose h2 { font-family: inherit; font-size: clamp(1.75rem, 2.8vw, 2.3rem); font-weight: 650; letter-spacing: -.04em; line-height: 1.15; }
+.home-purpose .prose { padding-top: 46px; }
+@media (max-width: 900px) {
+  .home-opening, .home-purpose { gap: 48px; }
+}
+@media (max-width: 650px) {
+  .home-header { min-height: 90px; gap: 20px; }
+  .home-header .wordmark { font-size: 1.25rem; letter-spacing: -.045em; }
+  .home-header .pilot-label { max-width: 130px; }
+  .home-opening, .home-purpose { grid-template-columns: 1fr; gap: 34px; }
+  .home-opening { padding: 32px 0 42px; }
+  .home-opening h1 { font-size: 2.1rem; }
+  .opening-label { margin-bottom: 20px; }
+  .opening-note { padding-top: 0; }
+  .opening-invitation, .home-purpose .prose { padding-top: 0; }
+  .opening-questions { font-size: 1.75rem; margin-bottom: 28px; }
+  .home-purpose { padding: 32px 0; gap: 12px; }
 }

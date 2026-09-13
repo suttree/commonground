@@ -11,7 +11,7 @@
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header wrap">
+    <header class="site-header wrap<%= " home-header" if controller_name == "pages" && action_name == "home" %>">
       <%= link_to root_path, class: "wordmark", aria: { label: "Common Ground home" } do %><span class="brand-mark" aria-hidden="true">cg.</span> Common Ground<% end %>
       <span class="pilot-label">An early experiment in finding work</span>
     </header>
