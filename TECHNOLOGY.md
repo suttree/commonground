@@ -38,4 +38,6 @@ Check both submission flows with JavaScript disabled, using only a keyboard, and
 
 Host the Rails application on [Fly.io](https://fly.io/rails/).
 
-Choose Rails and Ruby versions and the database when implementation begins. Keep those choices proportionate to the small pilot.
+The pilot uses Rails 8.1.3.1, Ruby 3.4.1 and SQLite on a persistent Fly volume in London. Deploy one application machine so all submissions use the same database. Scheduled volume snapshots have seven-day retention.
+
+The admin area uses plain Rails views protected by HTTP Basic authentication, with credentials stored in Fly secrets. Public applicants do not need an account. See [README.md](README.md) for setup and deployment instructions.

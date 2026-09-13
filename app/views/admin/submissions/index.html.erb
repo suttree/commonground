@@ -1,0 +1,21 @@
+<% content_for :title, "Applications" %>
+<section class="page-intro compact"><p class="eyebrow">Private · Team review</p><h1>Applications.</h1><p>Read the context. Start a conversation. Make an introduction when it feels useful.</p></section>
+<%= form_with url: admin_root_path, method: :get, local: true, class: "filters" do |form| %>
+  <div><%= form.label :kind, "From" %><%= form.select :kind, [["Everyone", ""], ["People", "person"], ["Organisations", "organisation"]], selected: @kind %></div>
+  <div><%= form.label :status, "Review status" %><%= form.select :status, [["All statuses", ""]] + Submission::STATUSES.map { |status| [status, status] }, selected: @status %></div>
+  <%= form.submit "Filter", class: "button" %>
+<% end %>
+<p><%= pluralize @count, "application" %></p>
+<% if @submissions.empty? %>
+  <div class="empty-state"><h2>No applications here yet.</h2><p>When someone submits a form, their answers will appear here for review.</p></div>
+<% else %>
+  <ul class="application-list">
+    <% @submissions.each do |submission| %>
+      <li><div><p class="eyebrow"><%= submission.organisation? ? "Organisation" : "Person" %> · <%= submission.created_at.strftime("%d %b %Y") %></p><h2><%= link_to submission.display_name, admin_submission_path(submission) %></h2><p><%= truncate(submission.organisation? ? submission.challenge : submission.purpose, length: 180) %></p></div><span class="status"><%= submission.status %></span></li>
+    <% end %>
+  </ul>
+<% end %>
+<nav class="actions" aria-label="Application pages">
+  <% if @page > 1 %><%= link_to "Previous page", admin_root_path(kind: @kind, status: @status, page: @page - 1) %><% end %>
+  <% if @page * 50 < @count %><%= link_to "Next page", admin_root_path(kind: @kind, status: @status, page: @page + 1) %><% end %>
+</nav>

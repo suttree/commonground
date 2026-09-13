@@ -1,0 +1,1 @@
+<% if record.errors[attribute].any? %><p class="field-error" id="<%= attribute %>-error"><%= record.errors.full_messages_for(attribute).join(". ") %></p><% end %>

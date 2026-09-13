@@ -1,0 +1,22 @@
+<% content_for :title, @submission.display_name %>
+<div class="narrow">
+  <p class="back-link"><%= link_to "← All applications", admin_root_path %></p>
+  <section class="page-intro compact"><p class="eyebrow"><%= @submission.organisation? ? "Organisation" : "Person" %> · <%= @submission.created_at.strftime("%d %b %Y") %></p><h1><%= @submission.display_name %></h1><span class="status"><%= @submission.status %></span></section>
+  <dl class="answers">
+    <dt>Contact</dt><dd><%= @submission.name %><br><%= mail_to @submission.email %></dd>
+    <% if @submission.website.present? %><dt>Website or work</dt><dd><%= @submission.website %></dd><% end %>
+    <% if @submission.organisation? %><dt>What needs doing?</dt><dd><%= simple_format @submission.challenge %></dd><% end %>
+    <dt><%= @submission.organisation? ? "Who benefits, and how?" : "Problems and people they care about" %></dt><dd><%= simple_format @submission.purpose %></dd>
+    <% unless @submission.organisation? %><dt>One example of their work</dt><dd><%= simple_format @submission.experience %></dd><% end %>
+    <% { working_style: "Working style", engagement: "Engagement", availability: "Timing & commitment", location: "Location & remote working", pay_expectations: "Budget / pay expectations" }.each do |attribute, label| %><dt><%= label %></dt><dd><%= simple_format @submission.public_send(attribute) %></dd><% end %>
+    <dt>Permission to review and contact</dt><dd>Given on <%= @submission.consented_at.strftime("%d %b %Y at %H:%M UTC") %></dd>
+  </dl>
+  <section class="review" aria-labelledby="review-title"><h2 id="review-title">Team review</h2><p>Notes stay private. Ask both sides before sharing contact details.</p>
+    <%= render "shared/errors", record: @submission %>
+    <%= form_with model: [:admin, @submission], local: true do |form| %>
+      <div class="field"><%= form.label :status, "Review status" %><%= form.select :status, Submission::STATUSES, {}, field_options(@submission, :status) %><%= render "shared/field_error", record: @submission, attribute: :status %></div>
+      <div class="field"><%= form.label :notes, "Conversation, introduction & outcome notes" %><%= form.text_area :notes, rows: 7, maxlength: 10000, **field_options(@submission, :notes) %><%= render "shared/field_error", record: @submission, attribute: :notes %></div>
+      <%= form.submit "Save review", class: "button" %>
+    <% end %>
+  </section>
+</div>

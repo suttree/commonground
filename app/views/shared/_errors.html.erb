@@ -1,0 +1,7 @@
+<% if record.errors.any? %>
+  <section class="error-summary" role="alert" aria-labelledby="errors-title" tabindex="-1">
+    <h2 id="errors-title">Please check your answers.</h2>
+    <p>Your answers are still here. Review the following fields:</p>
+    <ul><% record.errors.each do |error| %><li><%= link_to error.full_message, "#submission_#{error.attribute}" %></li><% end %></ul>
+  </section>
+<% end %>
