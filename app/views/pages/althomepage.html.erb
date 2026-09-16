@@ -1,0 +1,16 @@
+<% content_for :title, "Your job title doesn’t define your impact." %>
+<section class="home-opening campaign-opening" aria-labelledby="hero-title">
+  <div class="opening-context">
+    <h1 id="hero-title">Your job title doesn’t define your impact.</h1>
+    <p>The age of AI calls for people who want to solve problems, build expertise, and create work that matters.</p>
+  </div>
+  <div class="opening-invitation">
+    <p class="intro">Commonbound connects people with companies and each other around the problems they’re here to solve—not the titles they hold.</p>
+    <p>Tell us what you’re working towards.</p>
+    <h2 class="join-heading">Join Commonbound.</h2>
+    <nav class="opening-links" aria-label="Join Commonbound">
+      <%= link_to new_person_path do %><span>I'm interested in helping</span><span aria-hidden="true">→</span><% end %>
+      <%= link_to new_organisation_path do %><span>I need someone</span><span aria-hidden="true">→</span><% end %>
+    </nav>
+  </div>
+</section>

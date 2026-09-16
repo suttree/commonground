@@ -11,7 +11,7 @@
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header wrap<%= " home-header" if controller_name == "pages" && %w[home about].include?(action_name) %>">
+    <header class="site-header wrap<%= " home-header" if controller_name == "pages" && %w[home althomepage about].include?(action_name) %>">
       <%= link_to root_path, class: "wordmark", aria: { label: "Commonbound home" } do %><span class="brand-mark" aria-hidden="true">cb.</span> Commonbound<% end %>
       <nav aria-label="Main navigation"><%= link_to "About", about_path %></nav>
     </header>
