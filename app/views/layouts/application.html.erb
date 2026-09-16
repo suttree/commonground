@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title><%= content_for?(:title) ? "#{yield(:title)} · Common Ground" : "Common Ground · Work worth doing, together" %></title>
+    <title><%= content_for?(:title) ? "#{yield(:title)} · Commonbound" : "Commonbound · Work worth doing, together" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Find people through what needs doing and why it matters. Personal introductions for people and organisations.">
+    <meta name="description" content="Commonbound connects people and organisations around meaningful work and the problems they want to solve.">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "application" %>
@@ -11,9 +11,9 @@
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header wrap<%= " home-header" if controller_name == "pages" && action_name == "home" %>">
-      <%= link_to root_path, class: "wordmark", aria: { label: "Common Ground home" } do %><span class="brand-mark" aria-hidden="true">cg.</span> Common Ground<% end %>
-      <span class="pilot-label">An early experiment in finding work</span>
+    <header class="site-header wrap<%= " home-header" if controller_name == "pages" && %w[home about].include?(action_name) %>">
+      <%= link_to root_path, class: "wordmark", aria: { label: "Commonbound home" } do %><span class="brand-mark" aria-hidden="true">cb.</span> Commonbound<% end %>
+      <nav aria-label="Main navigation"><%= link_to "About", about_path %></nav>
     </header>
     <main id="main" class="wrap" tabindex="-1">
       <% if notice %><p class="notice" role="status"><%= notice %></p><% end %>

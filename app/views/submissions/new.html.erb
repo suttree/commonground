@@ -1,7 +1,7 @@
 <% organisation = @submission.organisation? %>
 <% content_for :title, organisation ? "Tell us what needs doing" : "Tell us about yourself" %>
 <div class="form-page narrow">
-  <p class="back-link"><%= link_to "← Back to Common Ground", root_path %></p>
+  <p class="back-link"><%= link_to "← Back to Commonbound", root_path %></p>
   <div class="page-intro compact">
     <p class="eyebrow"><%= organisation ? "For organisations" : "For people" %></p>
     <h1><%= organisation ? "What needs" : "What work" %><br><em><%= organisation ? "doing?" : "matters to you?" %></em></h1>
@@ -41,7 +41,7 @@
       <div class="field"><%= form.label :pay_expectations, organisation ? "What is the budget or pay range?" : "What are your pay expectations?" %><p id="pay_expectations-hint" class="hint">Include the currency and whether it's per hour, day, year or project. If it's undecided, tell us where things stand.</p><%= form.text_area :pay_expectations, required: true, rows: 2, maxlength: 5000, **field_options(@submission, :pay_expectations, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :pay_expectations %></div>
     </fieldset>
     <div class="honeypot" aria-hidden="true"><%= form.label :website_confirmation, "Leave this empty" %><%= form.text_field :website_confirmation, tabindex: -1, autocomplete: "off" %></div>
-    <div class="consent field"><%= form.check_box :consent, { required: true, **field_options(@submission, :consent) }, "1", "0" %><%= form.label :consent, "I'm happy for the Common Ground team to review my answers and contact me about the pilot." %><%= render "shared/field_error", record: @submission, attribute: :consent %></div>
+    <div class="consent field"><%= form.check_box :consent, { required: true, **field_options(@submission, :consent) }, "1", "0" %><%= form.label :consent, "I'm happy for the Commonbound team to review my answers and contact me about the pilot." %><%= render "shared/field_error", record: @submission, attribute: :consent %></div>
     <p class="hint">We'll ask before sharing your details for an introduction. Read <%= link_to "how we use your details", privacy_path %>.</p>
     <%= form.submit organisation ? "Send your brief" : "Send your introduction", class: "button" %>
   <% end %>

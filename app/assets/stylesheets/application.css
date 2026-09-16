@@ -135,3 +135,15 @@ select { white-space: normal; }
   .opening-questions { font-size: 1.75rem; margin-bottom: 28px; }
   .home-purpose { padding: 32px 0; gap: 12px; }
 }
+
+.about-page { padding: 52px 0 72px; }
+.about-page h1 { font-family: inherit; font-size: clamp(2rem, 4vw, 3rem); font-weight: 650; margin-bottom: 36px; }
+.about-page p { max-width: 65ch; }
+.about-page .opening-links { margin-top: 36px; }
+.campaign-opening { padding-top: 64px; }
+.campaign-opening .opening-invitation { padding-top: 0; }
+.campaign-opening .opening-questions { font-size: clamp(1.4rem, 2.2vw, 1.85rem); margin-top: 36px; }
+.join-heading { font-family: inherit; font-size: 1.3rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.4; margin: 32px 0 20px; }
+@media (max-width: 650px) {
+  .campaign-opening { padding-top: 32px; gap: 12px; }
+}

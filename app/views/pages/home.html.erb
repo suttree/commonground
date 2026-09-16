@@ -1,46 +1,20 @@
-<section class="home-opening" aria-labelledby="hero-title">
+<% content_for :title, "What are you working towards?" %>
+<section class="home-opening campaign-opening" aria-labelledby="hero-title">
   <div class="opening-context">
-    <p class="opening-label">People, purpose & work</p>
-    <h1 id="hero-title">Find common ground.<br>Do something worthwhile.</h1>
-    <p>We introduce people and organisations through the work they want to do and the people they want it to serve.</p>
-    <p class="opening-note">A small pilot. Real people making the introductions. No CV needed.</p>
+    <h1 id="hero-title">What are you working towards?</h1>
+    <p class="opening-questions">
+      <span>Not your job title.</span>
+      <span>Not your next promotion.</span>
+      <span>Not another PowerPoint.</span>
+    </p>
   </div>
   <div class="opening-invitation">
-    <p class="opening-questions">
-      <span>What needs doing?</span>
-      <span>Why does it matter?</span>
-      <span>And who would care enough to help?</span>
-    </p>
-    <nav class="opening-links" aria-label="Join the pilot">
-      <%= link_to new_organisation_path do %><span>I need someone</span><span aria-hidden="true">→</span><% end %>
+    <p class="intro">The problem you want to solve. The change you want to create. The impact you want to have.</p>
+    <p>Commonbound is building a new way to connect people and companies and organizations around meaningful work.</p>
+    <h2 class="join-heading">Tell us what you’re here to change.</h2>
+    <nav class="opening-links" aria-label="Join Commonbound">
       <%= link_to new_person_path do %><span>I'm interested in helping</span><span aria-hidden="true">→</span><% end %>
+      <%= link_to new_organisation_path do %><span>I need someone</span><span aria-hidden="true">→</span><% end %>
     </nav>
   </div>
-</section>
-
-<section class="home-purpose" aria-labelledby="purpose-title">
-  <div>
-    <p class="opening-label">Start with what matters</p>
-    <h2 id="purpose-title">Same apple juice.<br>Different reasons.</h2>
-  </div>
-  <div class="prose">
-    <p>One company makes juice to save surplus apples from going to waste. Another wants to buy from local growers. Another creates jobs for people who've been out of work for years.</p>
-    <p>The product looks the same. The work you want to be part of might not.</p>
-    <p>We want to understand those differences, alongside the practical things: your experience, how you work, your time and your pay.</p>
-  </div>
-</section>
-
-<section class="how-section" aria-labelledby="how-title">
-  <p class="eyebrow">How it works</p><h2 id="how-title">A little context.<br>A better conversation.</h2>
-  <ol class="steps">
-    <li><h3>Tell us what brings you here.</h3><p>Share a challenge your organisation faces, or tell us about work you've done and problems you care about.</p></li>
-    <li><h3>We'll read it ourselves.</h3><p>Monika, Sarper and Duncan review each submission. We may get in touch to understand a little more.</p></li>
-    <li><h3>Meet when it makes sense.</h3><p>If we see a promising connection, we'll explain why and ask both sides before making an introduction.</p></li>
-  </ol>
-</section>
-
-<section class="closing" aria-labelledby="pilot-title">
-  <p class="eyebrow">Help shape the first round</p><h2 id="pilot-title">We're starting small.</h2>
-  <p>We're looking for five organisations with real work to offer, and people interested in helping. There are no fees during this pilot and no promise of a match. Just a chance to find out whether a more thoughtful introduction helps.</p>
-  <div class="actions"><%= link_to "Tell us what needs doing", new_organisation_path %><%= link_to "Tell us about yourself", new_person_path %></div>
 </section>

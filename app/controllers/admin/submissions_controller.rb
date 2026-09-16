@@ -37,7 +37,7 @@ module Admin
         return
       end
 
-      authenticate_or_request_with_http_basic("Common Ground admin") do |given_user, given_password|
+      authenticate_or_request_with_http_basic("Commonbound admin") do |given_user, given_password|
         ActiveSupport::SecurityUtils.secure_compare(given_user, username) &
           ActiveSupport::SecurityUtils.secure_compare(given_password, password)
       end

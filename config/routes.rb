@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   root "pages#home"
+  get "about", to: "pages#about"
   get "privacy", to: "pages#privacy"
   get "thanks", to: "pages#thanks"
   get "people/new", to: "submissions#new", as: :new_person
