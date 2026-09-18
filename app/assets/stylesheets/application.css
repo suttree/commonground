@@ -49,7 +49,7 @@ legend { font-size: 1.35rem; font-weight: 600; padding: 0 18px 0 0; }
 .field { margin-bottom: 30px; }
 label { display: block; font-weight: 500; margin-bottom: 8px; }
 .hint { margin-bottom: 10px; line-height: 1.5; }
-input:not([type=submit], [type=checkbox]), textarea, select { display: block; width: 100%; font: inherit; color: var(--ink); background: #fffef9; border: 1px solid #7b877a; border-radius: 3px; padding: 12px 14px; min-height: 54px; }
+input:not([type=submit], [type=checkbox], [type=radio]), textarea, select { display: block; width: 100%; font: inherit; color: var(--ink); background: #fffef9; border: 1px solid #7b877a; border-radius: 3px; padding: 12px 14px; min-height: 54px; }
 textarea { resize: vertical; }
 select { white-space: normal; }
 [aria-invalid=true] { border-color: var(--error) !important; border-width: 2px !important; }
@@ -147,3 +147,21 @@ select { white-space: normal; }
 @media (max-width: 650px) {
   .campaign-opening { padding-top: 32px; gap: 12px; }
 }
+
+/* Profile choices stay readable and usable without JavaScript. */
+.check-choice { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 12px; padding: 10px 0; }
+.check-choice input { width: 22px; height: 22px; margin: 5px 0 0; accent-color: var(--green); }
+.check-choice label { font-weight: 400; margin: 0; overflow-wrap: anywhere; }
+summary { cursor: pointer; padding: 16px 0; font-weight: 600; }
+.sdg-goal, .optional-section { border-bottom: 1px solid var(--line); }
+.sdg-goal .check-choice { padding: 14px 0; }
+.repeat-entry { border-left: 2px solid var(--line); padding: 20px; margin-bottom: 24px; }
+.repeat-entry legend { font-size: 1.1rem; }
+.add-hint { margin-top: 12px; }
+.feeling-choices { display: flex; flex-wrap: wrap; gap: 12px; }
+.feeling-choices label { display: inline-flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 24px; }
+input[type=radio] { width: 22px; height: 22px; accent-color: var(--green); }
+.answers ul { padding-left: 24px; }
+.feeling-choice { display: flex; align-items: center; gap: 8px; }
+.feeling-choice label { margin: 0; }
+.optional-sections { margin: 40px 0; }

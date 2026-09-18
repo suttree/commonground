@@ -55,7 +55,7 @@ class PilotTest < ActionDispatch::IntegrationTest
   end
 
   test "organisation brief is stored and can be reviewed and updated privately" do
-    post organisations_path, params: { submission: answers.except(:experience).merge(organisation_name: "Orchard Co-op", challenge: "We need help figuring this out.") }
+    post organisations_path, params: { submission: answers.except(:experience).merge(mission: "Reduce food waste", offering: "Local juice", challenge_kind: "Challenges", organisation_name: "Orchard Co-op", challenge: "We need help figuring this out.") }
     assert_redirected_to thanks_path
     entry = Submission.last
     assert_equal "organisation", entry.kind
@@ -171,5 +171,88 @@ class PilotTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   ensure
     ActionController::Base.allow_forgery_protection = old_setting
+  end
+  test "structured personal profile saves both optional sections and repeated entries" do
+    skill = { skill: "Research", results: "Reduced waste", organisation: "Co-op", time: "2025" }
+    project = { problem: "Waste", context: "Food", approach: "Reuse", results: "Less waste" }
+    post people_path, params: { submission: answers.merge(
+      target_ids: [ "", "12.3", "2.1" ], sectors_past: [ "Education & research" ],
+      sectors_future: [ "Environment & conservation" ], sector_reason: "Use my research",
+      radius_km: "25", education_topics: "Systems thinking\nEcology",
+      satisfaction_feeling: "Alive", satisfaction_notes: "Working with others",
+      skills: [ skill, skill.merge(skill: "Design") ], projects: [ project, project ],
+      mission: "Should not be accepted", profile_version: 1) }
+    assert_redirected_to thanks_path
+    entry = Submission.last
+    assert_equal 2, entry.profile_version
+    assert_equal [ "12.3", "2.1" ], entry.target_ids
+    assert_equal 2, entry.skills.size
+    assert_equal 2, entry.projects.size
+    assert_equal "Alive", entry.satisfaction_feeling
+    assert_nil entry.mission
+    get admin_submission_path(entry), headers: admin_headers
+    assert_response :success
+    assert_select "dd", text: /Working with others/
+    assert_select "li", text: /12.3/
+    patch admin_submission_path(entry), headers: admin_headers, params: { submission: { notes: "Reviewed" } }
+    assert_redirected_to admin_submission_path(entry)
+    assert_equal 2, entry.reload.projects.size
+  end
+
+  test "add another preserves answers without requiring or saving a complete profile" do
+    assert_no_difference "Submission.count" do
+      post people_path, params: { add_section: "projects", submission: {
+        name: "Alex", target_ids: [ "12.3" ], consent: "1",
+        projects: [ { problem: "Waste", context: "", approach: "", results: "" } ] } }
+    end
+    assert_response :success
+    assert_select "input#submission_name[value=Alex]"
+    assert_select "textarea#submission_projects_0_problem", text: "Waste"
+    assert_select "textarea#submission_projects_1_problem"
+    assert_select "input[name='submission[target_ids][]'][value='12.3'][checked]"
+    assert_select "input#submission_consent[checked]"
+  end
+
+  test "invalid choices and partial optional entries are rejected with answers preserved" do
+    assert_no_difference "Submission.count" do
+      post people_path, params: { submission: answers.merge(target_ids: [ "99.9" ],
+        sectors_past: [ "Unknown" ], radius_km: "-1", satisfaction_feeling: "Alive",
+        skills: [ { skill: "Research" } ]) }
+    end
+    assert_response :unprocessable_entity
+    %w[target_ids sectors_past radius_km satisfaction_notes skills].each do |field|
+      assert_select ".error-summary a[href='#submission_#{field}']"
+    end
+    assert_select "textarea#submission_skills_0_skill", text: "Research"
+  end
+
+  test "company products persist and blank optional personal sections can be skipped" do
+    post people_path, params: { submission: answers.merge(skills: [ { skill: "", results: "", organisation: "", time: "" } ],
+      projects: [ { problem: "", context: "", approach: "", results: "" } ], satisfaction_feeling: "", satisfaction_notes: "") }
+    assert_redirected_to thanks_path
+    assert_empty Submission.last.skills
+    assert_empty Submission.last.projects
+    product = { name: "Juice", special: "Surplus apples", impact: "Less waste" }
+    post organisations_path, params: { submission: answers.merge(organisation_name: "Orchard", mission: "Reduce waste",
+      offering: "Juice", challenge_kind: "Goals", challenge: "Reach more growers", impact_metrics: "Tonnes saved",
+      products: [ product, product.merge(name: "Cider") ], help_needed: "Grower relationships") }
+    assert_redirected_to thanks_path
+    entry = Submission.last
+    assert_equal 2, entry.products.size
+    get admin_submission_path(entry), headers: admin_headers
+    assert_response :success
+    assert_select "dd", text: /Cider/
+    assert_select "dd", text: /Tonnes saved/
+  end
+
+  test "legacy applications retain their original answers and remain editable" do
+    entry = Submission.create!(answers.merge(kind: "organisation", organisation_name: "Legacy", challenge: "Original challenge"))
+    assert_equal 1, entry.profile_version
+    get admin_submission_path(entry), headers: admin_headers
+    assert_response :success
+    assert_select "dd", text: /GBP 400 per day/
+    patch admin_submission_path(entry), headers: admin_headers, params: { submission: { status: "Introduced" } }
+    assert_redirected_to admin_submission_path(entry)
+    assert_equal "Introduced", entry.reload.status
   end
 end

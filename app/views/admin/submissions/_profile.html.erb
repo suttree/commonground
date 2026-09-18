@@ -1,0 +1,35 @@
+<% fields = submission.organisation? ? {
+  mission: "We exist to…", purpose: "We strive to positively impact…", offering: "We offer…",
+  impact_metrics: "Positive impact metrics", proud_of: "We’re especially proud of…",
+  challenge_kind: "Challenges or goals", challenge: "Our current challenges / goals", help_needed: "People who can help us"
+} : {
+  purpose: "People I strive to serve with my work", location: "Location", radius_km: "Radius (km)",
+  experience: "The underlying thread in my experiences", sector_reason: "Why I wish to move into these sectors",
+  education_topics: "Topics that impacted my thinking during my education",
+  satisfaction_feeling: "I feel most…", satisfaction_notes: "When…"
+} %>
+<% fields.each do |attribute, label| %>
+  <% if submission.public_send(attribute).present? %>
+    <dt><%= label %></dt><dd><%= simple_format submission.public_send(attribute).to_s %></dd>
+  <% end %>
+<% end %>
+<% unless submission.organisation? %>
+  <% { target_ids: "Problems, inequalities and inefficiencies", sectors_past: "Sectors worked in", sectors_future: "Sectors I wish to move into" }.each do |attribute, label| %>
+    <% if submission.public_send(attribute).present? %>
+      <dt><%= label %></dt><dd><ul>
+        <% submission.public_send(attribute).each do |value| %>
+          <li><%= attribute == :target_ids ? "#{value} — #{ProfileOptions::TARGETS.fetch(value).fetch('text')}" : value %></li>
+        <% end %>
+      </ul></dd>
+    <% end %>
+  <% end %>
+<% end %>
+<% (submission.organisation? ? { "products" => "Product / service" } : { "skills" => "Verified skill", "projects" => "Project" }).each do |field, title| %>
+  <% submission.profile_entries(field).each_with_index do |entry, index| %>
+    <dt><%= title %> <%= index + 1 %></dt><dd>
+      <% ProfileOptions::REPEATED_FIELDS.fetch(field).each do |key, label| %>
+        <p><strong><%= label %></strong></p><%= simple_format entry[key] %>
+      <% end %>
+    </dd>
+  <% end %>
+<% end %>

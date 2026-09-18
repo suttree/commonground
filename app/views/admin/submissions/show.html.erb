@@ -5,10 +5,14 @@
   <dl class="answers">
     <dt>Contact</dt><dd><%= @submission.name %><br><%= mail_to @submission.email %></dd>
     <% if @submission.website.present? %><dt>Website or work</dt><dd><%= @submission.website %></dd><% end %>
+    <% if @submission.structured_profile? %>
+      <%= render "profile", submission: @submission %>
+    <% else %>
     <% if @submission.organisation? %><dt>What needs doing?</dt><dd><%= simple_format @submission.challenge %></dd><% end %>
     <dt><%= @submission.organisation? ? "Who benefits, and how?" : "Problems and people they care about" %></dt><dd><%= simple_format @submission.purpose %></dd>
     <% unless @submission.organisation? %><dt>One example of their work</dt><dd><%= simple_format @submission.experience %></dd><% end %>
     <% { working_style: "Working style", engagement: "Engagement", availability: "Timing & commitment", location: "Location & remote working", pay_expectations: "Budget / pay expectations" }.each do |attribute, label| %><dt><%= label %></dt><dd><%= simple_format @submission.public_send(attribute) %></dd><% end %>
+    <% end %>
     <dt>Permission to review and contact</dt><dd>Given on <%= @submission.consented_at.strftime("%d %b %Y at %H:%M UTC") %></dd>
   </dl>
   <section class="review" aria-labelledby="review-title"><h2 id="review-title">Team review</h2><p>Notes stay private. Ask both sides before sharing contact details.</p>

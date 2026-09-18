@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_13_000100) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_000100) do
   create_table "submissions", force: :cascade do |t|
     t.text "availability", null: false
     t.text "challenge"
@@ -25,6 +25,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_000100) do
     t.text "notes"
     t.string "organisation_name"
     t.text "pay_expectations", null: false
+    t.json "profile", default: {}, null: false
+    t.integer "profile_version", default: 1, null: false
     t.text "purpose", null: false
     t.string "status", default: "Received", null: false
     t.datetime "updated_at", null: false

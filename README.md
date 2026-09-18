@@ -64,3 +64,11 @@ Verified on 13 September 2026 at https://commonground-pilot.fly.dev:
 - The two deployment test applications were removed afterward.
 - Desktop and mobile layouts, visible keyboard focus, native required-field validation and accessibility labels were checked in the browser. No full screen-reader audit has been performed.
 - All 12 integration tests passed, with 121 assertions. Brakeman reported no warnings.
+
+## Structured profiles
+
+New submissions use profile version 2. Personal profiles include SDG target choices, sectors, verified skills, education, and optional satisfaction and portfolio sections. Company profiles include purpose, beneficiaries, offerings, metrics, products, and challenges or goals. Repeated entries use server-rendered “add another” buttons; JavaScript is not required. Each group supports up to ten entries. Empty optional entries are discarded; started entries must be complete.
+
+The 169 SDG targets are a local snapshot of the [Human Rights Guide to the SDGs](https://sdg.humanrights.dk/list-goals-targets), retrieved on 18 September 2026, in `config/data/sdg_targets.json`. Original target wording, dates and thresholds are retained. Sectors are a pilot-specific list in `ProfileOptions`, rather than an official classification.
+
+The migration adds a JSON profile column and a version column. Existing applications retain their original answers and admin display. The public forms never accept review notes, status, kind or profile version from submitted parameters.

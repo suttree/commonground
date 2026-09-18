@@ -1,0 +1,23 @@
+<% entries = @submission.profile_entries(field) %>
+<% entries = [{}] if entries.empty? %>
+<fieldset class="repeat-group" id="submission_<%= field %>" tabindex="-1">
+  <legend><%= title %> (optional)</legend>
+  <p class="hint">Leave an entry empty to skip it. If you start one, complete each field. You can add up to 10 entries.</p>
+  <%= render "shared/field_error", record: @submission, attribute: field %>
+  <% entries.each_with_index do |entry, index| %>
+    <fieldset class="repeat-entry">
+      <legend><%= singular %> <%= index + 1 %></legend>
+      <% ProfileOptions::REPEATED_FIELDS.fetch(field).each do |key, label| %>
+        <% input_id = "submission_#{field}_#{index}_#{key}" %>
+        <div class="field">
+          <%= label_tag input_id, label %>
+          <%= text_area_tag "submission[#{field}][][#{key}]", entry[key], id: input_id, rows: 2, maxlength: 5000, aria: { describedby: @submission.errors[field].any? ? "#{field}-error" : nil } %>
+        </div>
+      <% end %>
+    </fieldset>
+  <% end %>
+  <% if entries.size < 10 %>
+    <%= form.button "Add another #{singular.downcase}", name: "add_section", value: field, formnovalidate: true, formaction: "#{@submission.organisation? ? organisations_path : people_path}#submission_#{field}", class: "button secondary" %>
+    <p class="hint add-hint">Your answers stay in the form. This does not submit your profile.</p>
+  <% end %>
+</fieldset>
