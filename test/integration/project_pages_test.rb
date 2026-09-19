@@ -2,7 +2,7 @@ require "test_helper"
 
 class ProjectPagesTest < ActionDispatch::IntegrationTest
   test "project previews link to complete case studies and respect publication" do
-    project = { "title" => "Community garden", "role" => "Designer", "problem" => "Too little growing space. " * 15,
+    project = { "title" => "Community's garden", "role" => "Designer", "problem" => "Too little growing space. " * 15,
       "context" => "A shared courtyard", "approach" => "Designed with residents", "results" => "A garden for everyone", "url" => "https://example.test/garden" }
     entry = Submission.create!(kind: "person", profile_version: 2, name: "Example", email: "private@example.test",
       purpose: "Useful work", experience: "Projects", consent: "1", published: true, notes: "Private review",
@@ -17,7 +17,8 @@ class ProjectPagesTest < ActionDispatch::IntegrationTest
     assert_select "details.project-story", count: 0
     get profile_project_path(entry.public_slug, 1)
     assert_response :success
-    assert_select "h1", text: "Community garden"
+    assert_select "h1", text: "Community's garden"
+    assert_select "title", text: "Community's garden · Example · Commonbound"
     assert_select ".prose", text: /#{Regexp.escape(project['problem'].strip)}/
     assert_select "h2", text: "Results"
     assert_select "a[href='https://example.test/garden']"

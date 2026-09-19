@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title><%= content_for?(:title) ? "#{yield(:title)} · Commonbound" : "Commonbound · Work worth doing, together" %></title>
+    <title><% if content_for?(:title) %><%= yield(:title) %> · Commonbound<% else %>Commonbound · Work worth doing, together<% end %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="description" content="Commonbound connects people and organisations around meaningful work and the problems they want to solve.">
     <%= csrf_meta_tags %>
