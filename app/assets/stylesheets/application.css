@@ -230,3 +230,24 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .quiz-answer .eyebrow { margin-bottom: 12px; }
 .quiz-footnote { margin-top: 28px; }
 @media (max-width: 600px) { .quiz-topics { grid-template-columns: minmax(0, 1fr); } }
+
+.quiz-wizard { max-width: 680px; }
+.quiz-wizard h1 { font-size: clamp(2rem, 4vw, 2.8rem); }
+.quiz-wizard progress { width: 100%; height: 6px; accent-color: var(--green); display: block; margin: 0 0 24px; }
+.wizard-options { border: 0; padding: 0; margin-top: 20px; }
+.wizard-options legend { margin-bottom: 12px; }
+.wizard-option { display: flex; align-items: center; gap: 14px; padding: 16px; border: 1px solid var(--line); cursor: pointer; font-size: 1.05rem; font-weight: 400; line-height: 1.4; margin-bottom: 10px; }
+.wizard-option input, .wizard-skip input { flex-shrink: 0; margin: 0; }
+.wizard-option:has(input:checked) { background: var(--wash); border-color: var(--green); }
+.wizard-skip { display: flex; align-items: center; gap: 14px; font-size: .95rem; font-weight: 400; padding: 10px 16px; cursor: pointer; }
+.quiz-reasons { font-size: 1rem; padding-left: 22px; }
+.quiz-restart { background: none; border: 0; color: var(--green); text-decoration: underline; font: inherit; cursor: pointer; padding: 0; }
+@media (max-width: 600px) {
+  .quiz-wizard { padding-top: 24px; }
+  .quiz-wizard .eyebrow { margin-bottom: 12px; }
+  .quiz-wizard h1 { font-size: 1.7rem; }
+  .quiz-wizard progress { margin-bottom: 16px; }
+  .wizard-options { margin-top: 16px; }
+  .wizard-option { padding: 12px; font-size: 1rem; }
+  .quiz-wizard .actions { margin-top: 16px; }
+}

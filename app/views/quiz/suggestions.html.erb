@@ -1,0 +1,23 @@
+<% content_for :title, "Your suggested priorities" %>
+<div class="quiz-page narrow">
+  <p class="eyebrow">Your suggested priorities</p>
+  <h1><%= @matches.any? ? "A starting point for your next project." : "Still exploring? That's fine." %></h1>
+  <% if @matches.any? %>
+    <p>These problems connect to the choices you made. See which ones feel worth exploring.</p>
+    <% @matches.each do |id, reasons| %>
+      <article class="quiz-answer">
+        <p class="eyebrow">SDG target <%= id %></p>
+        <h3><%= SdgQuiz::LABELS.fetch(id) %></h3>
+        <p class="small-note">Suggested because you chose:</p>
+        <ul class="quiz-reasons"><% reasons.uniq.first(2).each do |reason| %><li><%= reason %></li><% end %></ul>
+        <details><summary>Read the full target</summary><p><%= ProfileOptions::TARGETS.fetch(id).fetch("text") %></p></details>
+      </article>
+    <% end %>
+    <p class="small-note">Each answer points to related SDG targets. We show up to three with the most connections; equal matches follow question order. This is a starting point, not an assessment of your values or skills.</p>
+  <% else %>
+    <p>You skipped every question, so we haven't suggested any priorities. You can try again or browse the topics at your own pace.</p>
+  <% end %>
+  <div class="actions"><%= link_to "Review my answers", quiz_path(question: 0), class: "button secondary" %><%= link_to "Explore all goals and targets", explore_quiz_path %></div>
+  <%= form_with url: quiz_path do %><button class="quiz-restart" name="restart" value="1">Start again</button><% end %>
+  <p class="small-note quiz-footnote">Your answers haven't been added to a profile.</p>
+</div>

@@ -1,0 +1,42 @@
+[
+  {"question":"You have a day to help a local project. Where do you go?","options":[
+    {"label":"A community kitchen helping families eat well","targets":["2.1","1.3"]},
+    {"label":"A group making streets greener and safer","targets":["11.7","11.2"]},
+    {"label":"A workshop helping people learn new skills","targets":["4.4","8.6"]},
+    {"label":"A service helping people get healthcare","targets":["3.8","10.2"]}]},
+  {"question":"A business asks for your help. Which brief do you pick?","options":[
+    {"label":"Make jobs safer, fairer and better paid","targets":["8.5","8.8","5.5"]},
+    {"label":"Cut waste and make its environmental reporting useful","targets":["12.6","12.5"]},
+    {"label":"Switch its buildings to cleaner energy","targets":["7.2","7.3","13.2"]},
+    {"label":"Build affordable tools that more people can use","targets":["9.c","9.5"]}]},
+  {"question":"You can join one campaign. What would you work on?","options":[
+    {"label":"Make public decisions more open and accountable","targets":["16.6","16.7"]},
+    {"label":"Give women equal rights and opportunities","targets":["5.1","5.5"]},
+    {"label":"Help people who are excluded get a fair chance","targets":["10.2","10.3"]},
+    {"label":"Bring organisations together to solve a shared problem","targets":["17.17","17.16"]}]},
+  {"question":"Which environmental project would hold your attention?","options":[
+    {"label":"Restore forests and protect wildlife","targets":["15.2","15.5"]},
+    {"label":"Keep plastic and pollution out of the sea","targets":["14.1","14.2"]},
+    {"label":"Make drinking water clean and reliable","targets":["6.1","6.3"]},
+    {"label":"Help communities prepare for a changing climate","targets":["13.1","13.3"]}]},
+  {"question":"A neighbourhood has funding to spend. What would you put first?","options":[
+    {"label":"Affordable homes and support with basic living costs","targets":["11.1","1.3"]},
+    {"label":"Spaces where neighbours can meet and shape local plans","targets":["11.3","17.17"]},
+    {"label":"Learning and job opportunities for young people","targets":["4.4","8.6"]},
+    {"label":"Food growing and access to healthy meals","targets":["2.1","2.4"]}]},
+  {"question":"Which change would you most like to see in everyday life?","options":[
+    {"label":"Less waste, more repair and reuse","targets":["12.5","12.6"]},
+    {"label":"Clean energy that everyone can afford","targets":["7.1","7.2"]},
+    {"label":"Healthcare and mental health support within reach","targets":["3.8","3.4"]},
+    {"label":"Services designed so nobody is shut out","targets":["10.2","9.c"]}]},
+  {"question":"Which task would you be most keen to take on?","options":[
+    {"label":"Bring residents, businesses and public services together","targets":["17.17","11.3"]},
+    {"label":"Help a business measure and explain its sustainability work","targets":["12.6","12.8"]},
+    {"label":"Help people understand their rights and challenge unfairness","targets":["16.3","5.1","10.3"]},
+    {"label":"Test practical ways to protect nature and use fewer resources","targets":["15.5","6.4","14.2"]}]},
+  {"question":"A year later, which result would make you want to keep going?","options":[
+    {"label":"People have more secure incomes and better working lives","targets":["1.3","8.5"]},
+    {"label":"More people can learn, stay healthy and take part","targets":["4.4","3.8","10.2"]},
+    {"label":"Communities have more say and organisations work together","targets":["11.3","17.17","16.7"]},
+    {"label":"We use fewer resources and put less pressure on the planet","targets":["12.6","13.1","15.5"]}]}
+]

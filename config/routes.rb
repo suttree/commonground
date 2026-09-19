@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   root "pages#home"
   get "quiz", to: "quiz#show", as: :quiz
   post "quiz", to: "quiz#create"
+  get "quiz/explore", to: "quiz#explore", as: :explore_quiz
+  post "quiz/explore", to: "quiz#select"
   get "althomepage", to: "pages#althomepage"
   get "about", to: "pages#about"
   get "privacy", to: "pages#privacy"

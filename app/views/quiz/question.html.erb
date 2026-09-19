@@ -1,0 +1,27 @@
+<% content_for :title, "Find your priorities" %>
+<div class="quiz-page narrow quiz-wizard">
+  <p class="eyebrow">Question <%= @index + 1 %> of <%= SdgQuiz::QUESTIONS.size %></p>
+  <progress value="<%= @index %>" max="<%= SdgQuiz::QUESTIONS.size %>" aria-label="Questions answered"><%= @index %> of <%= SdgQuiz::QUESTIONS.size %></progress>
+  <% if @index.zero? %><p class="small-note">About 3 minutes. No SDG knowledge needed.</p><% end %>
+  <% if @error %><p class="error-summary" role="alert"><%= @error %></p><% end %>
+  <% question = SdgQuiz::QUESTIONS.fetch(@index) %>
+  <h1 id="quiz-question"><%= question.fetch("question") %></h1>
+  <%= form_with url: quiz_path do %>
+    <%= hidden_field_tag :question, @index %>
+    <fieldset class="wizard-options" aria-labelledby="quiz-question">
+      <legend class="small-note">Pick the closest fit.</legend>
+      <% question.fetch("options").each_with_index do |option, index| %>
+        <label class="wizard-option">
+          <%= radio_button_tag :answer, index, @answers[@index.to_s] == index.to_s %>
+          <span><%= option.fetch("label") %></span>
+        </label>
+      <% end %>
+      <label class="wizard-skip"><%= radio_button_tag :answer, "skip", @answers[@index.to_s] == "skip" %> <span>Nothing stands out. Skip this one.</span></label>
+    </fieldset>
+    <div class="actions">
+      <button class="button"><%= @index == SdgQuiz::QUESTIONS.size - 1 ? "See my suggestions" : "Next question" %></button>
+      <% if @index.positive? %><%= link_to "Back", quiz_path(question: @index - 1) %><% end %>
+    </div>
+  <% end %>
+  <p class="small-note">Your answers stay in this browser session and aren't added to a profile.</p>
+</div>

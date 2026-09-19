@@ -3,7 +3,7 @@
   <h1>What would you like to change?</h1>
   <p>Start with the topics you care about. We'll help you narrow them down to a few problems you'd like to work on.</p>
   <p class="small-note">No right or wrong answers. This is a way to explore your interests, not a test of your knowledge.</p>
-  <%= form_with url: quiz_path do %>
+  <%= form_with url: explore_quiz_path do %>
     <% @target_ids.each do |id| %><%= hidden_field_tag "targets[]", id %><% end %>
     <fieldset>
       <legend>Which topics matter most to you?</legend>
