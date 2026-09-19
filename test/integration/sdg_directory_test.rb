@@ -26,7 +26,7 @@ class SdgDirectoryTest < ActionDispatch::IntegrationTest
     get sdgs_path(q: "water", goal: "6")
     assert_select ".sdg-target-card", minimum: 1
     assert_select ".sdg-target-card h3 a" do |links|
-      assert links.all? { |link| link["href"].start_with?("/sdgs/targets/6.") }
+      assert links.all? { |link| link["href"].start_with?("/sustainable-development-goals/targets/6.") }
     end
     get sdgs_path(q: "2030")
     assert_select ".sdg-target-card", count: 18
@@ -37,6 +37,19 @@ class SdgDirectoryTest < ActionDispatch::IntegrationTest
     assert_select ".empty-state", text: /No targets match/
     get sdgs_path(q: "<script>alert(1)</script>")
     assert_select "script", count: 0
+  end
+
+  test "legacy URLs redirect to the new directory and preserve searches" do
+    get "/sdgs", params: { q: "food waste", goal: "12" }
+    assert_response :moved_permanently
+    assert_equal sdgs_path, URI.parse(response.location).path
+    assert_equal({ "q" => "food waste", "goal" => "12" }, Rack::Utils.parse_query(URI.parse(response.location).query))
+    get "/sdgs/12"
+    assert_redirected_to sdg_goal_path("12")
+    get "/sdgs/targets/12.6"
+    assert_redirected_to sdg_target_path("12.6")
+    follow_redirect!
+    assert_response :success
   end
 
   test "invalid reference pages return 404 and malformed search stays safe" do

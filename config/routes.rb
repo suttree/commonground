@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
   root "pages#home"
-  get "sdgs", to: "sdgs#index", as: :sdgs
-  get "sdgs/targets/:id", to: "sdgs#target", as: :sdg_target, constraints: { id: /[0-9]+\.[0-9a-z]+/ }, format: false
-  get "sdgs/:id", to: "sdgs#goal", as: :sdg_goal, constraints: { id: /[0-9]+/ }
+  get "sustainable-development-goals", to: "sdgs#index", as: :sdgs
+  get "sustainable-development-goals/targets/:id", to: "sdgs#target", as: :sdg_target, constraints: { id: /[0-9]+\.[0-9a-z]+/ }, format: false
+  get "sustainable-development-goals/:id", to: "sdgs#goal", as: :sdg_goal, constraints: { id: /[0-9]+/ }
+  get "sdgs(/*path)", to: redirect { |_params, request| request.original_fullpath.sub(%r{\A/sdgs}, "/sustainable-development-goals") }, format: false
   get "quiz", to: "quiz#show", as: :quiz
   post "quiz", to: "quiz#create"
   get "quiz/explore", to: "quiz#explore", as: :explore_quiz
