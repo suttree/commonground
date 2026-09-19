@@ -20,7 +20,7 @@ module Admin
 
     def update
       @submission = Submission.find(params[:id])
-      if @submission.update(params.require(:submission).permit(:status, :notes))
+      if @submission.update(params.require(:submission).permit(:status, :notes, :published))
         redirect_to admin_submission_path(@submission), notice: "Review saved.", status: :see_other
       else
         render :show, status: :unprocessable_entity

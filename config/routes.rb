@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   post "people", to: "submissions#create", as: :people
   get "organisations/new", to: "submissions#new", as: :new_organisation
   post "organisations", to: "submissions#create", as: :organisations
+  get "profiles/:slug", to: "profiles#show", as: :profile
 
   namespace :admin do
     root "submissions#index"

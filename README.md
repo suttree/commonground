@@ -72,3 +72,9 @@ New submissions use profile version 2. Personal profiles include SDG target choi
 The 169 SDG targets are a local snapshot of the [Human Rights Guide to the SDGs](https://sdg.humanrights.dk/list-goals-targets), retrieved on 18 September 2026, in `config/data/sdg_targets.json`. Original target wording, dates and thresholds are retained. Sectors are a pilot-specific list in `ProfileOptions`, rather than an official classification.
 
 The migration adds a JSON profile column and a version column. Existing applications retain their original answers and admin display. The public forms never accept review notes, status, kind or profile version from submitted parameters.
+
+## Public profiles
+
+Profiles are private by default. With the applicant's permission, an admin can enable "Publish profile" on their submission. The page is available at `/profiles/name-uniqueid` with a random 12-character suffix. Its URL stays the same after name changes or republication. Disabling publication makes the URL return 404.
+
+The page shows profile answers and the website, but excludes contact email, pay expectations, consent records, review status and private notes. Public form submissions cannot set publication fields. Selected SDG targets retain their original wording inside expandable goal sections.

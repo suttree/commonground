@@ -1,0 +1,69 @@
+<% content_for :title, @profile.display_name %>
+<article class="public-profile">
+  <header class="profile-opening">
+    <div>
+      <p class="eyebrow"><%= @profile.organisation? ? "Organisation" : "Personal profile" %></p>
+      <h1><%= @profile.display_name %></h1>
+      <% if @profile.location.present? %><p class="profile-location"><%= @profile.location %><% if @profile.radius_km.present? %> · Within <%= @profile.radius_km %> km<% end %></p><% end %>
+      <% if @profile.website.to_s.match?(%r{\Ahttps?://}i) %><%= link_to "Website & work ↗", @profile.website, rel: "noopener noreferrer", class: "profile-website" %><% end %>
+    </div>
+    <div class="profile-purpose">
+      <h2><%= @profile.organisation? ? "Who we serve" : "Who I want to serve" %></h2>
+      <%= simple_format @profile.purpose %>
+    </div>
+  </header>
+  <div class="profile-body">
+    <div class="profile-main">
+      <% fields = @profile.organisation? ? { mission: "Our purpose", offering: "What we offer", impact_metrics: "Our impact", proud_of: "What we're proud of", challenge: "What we're working on", help_needed: "Who can help" } : { experience: "The thread through my work", education_topics: "What shaped my thinking" } %>
+      <% fields.each do |field, heading| %>
+        <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><%= simple_format @profile.public_send(field) %></section><% end %>
+      <% end %>
+      <% if !@profile.organisation? && @profile.satisfaction_notes.present? %>
+        <section class="profile-section"><h2>I feel most <%= @profile.satisfaction_feeling.to_s.downcase %> when...</h2><%= simple_format @profile.satisfaction_notes %></section>
+      <% end %>
+      <% groups = @profile.organisation? ? { "products" => "Products & services" } : { "skills" => "Skills in practice", "projects" => "Projects" } %>
+      <% groups.each do |field, heading| %>
+        <% if @profile.profile_entries(field).any? %>
+          <section class="profile-section"><h2><%= heading %></h2>
+            <% @profile.profile_entries(field).each do |entry| %>
+              <div class="profile-evidence">
+                <% if field == "skills" %>
+                  <h3><%= entry["skill"] %></h3>
+                  <p class="small-note"><%= [entry["organisation"], entry["time"]].compact_blank.join(" · ") %></p>
+                  <%= simple_format entry["results"] %>
+                <% else %>
+                  <% ProfileOptions::REPEATED_FIELDS.fetch(field).each do |key, label| %><h3><%= label %></h3><%= simple_format entry[key] %><% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </section>
+        <% end %>
+      <% end %>
+    </div>
+    <% unless @profile.organisation? %>
+      <aside class="profile-interests" aria-label="Sector interests">
+        <% { sectors_future: "Where I'd like to work", sectors_past: "Where I've worked" }.each do |field, heading| %>
+          <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><ul class="profile-tags"><% @profile.public_send(field).each do |sector| %><li><%= sector %></li><% end %></ul></section><% end %>
+        <% end %>
+        <% if @profile.sector_reason.present? %><section class="profile-section"><h2>Why these sectors</h2><%= simple_format @profile.sector_reason %></section><% end %>
+      </aside>
+    <% end %>
+  </div>
+  <% if !@profile.organisation? && @profile.target_ids.present? %>
+    <section class="profile-targets profile-section">
+      <p class="eyebrow">Sustainable development goals</p>
+      <h2>Problems I care about</h2>
+      <p class="small-note">Selected UN targets. Open a goal to read the targets in full.</p>
+      <div class="profile-goals">
+        <% ProfileOptions::GOALS.each do |goal| %>
+          <% targets = goal.fetch("targets").select { |target| @profile.target_ids.include?(target.fetch("id")) } %>
+          <% if targets.any? %>
+            <details class="sdg-goal"><summary><%= goal.fetch("name") %> <span class="small-note">· <%= pluralize(targets.size, "target") %></span></summary>
+              <ul><% targets.each do |target| %><li><strong><%= target.fetch("id") %></strong> <%= target.fetch("text") %></li><% end %></ul>
+            </details>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</article>

@@ -49,6 +49,12 @@ class Submission < ApplicationRecord
 
   before_validation :clean_profile_collections, if: :structured_profile?
   before_create { self.consented_at = Time.current }
+  before_validation :assign_public_slug, if: :published?
+
+  validates :public_slug, uniqueness: true, allow_nil: true
+  validates :public_slug, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/ }, allow_nil: true
+
+  scope :published, -> { where(published: true) }
 
   def organisation?
     kind == "organisation"
@@ -68,6 +74,10 @@ class Submission < ApplicationRecord
   end
 
   private
+
+  def assign_public_slug
+    self.public_slug ||= "#{display_name.to_s.parameterize.presence || 'profile'}-#{SecureRandom.hex(6)}"
+  end
 
   def clean_profile_collections
     %i[target_ids sectors_past sectors_future].each do |field|

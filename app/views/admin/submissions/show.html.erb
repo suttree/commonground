@@ -18,6 +18,9 @@
   <section class="review" aria-labelledby="review-title"><h2 id="review-title">Team review</h2><p>Notes stay private. Ask both sides before sharing contact details.</p>
     <%= render "shared/errors", record: @submission %>
     <%= form_with model: [:admin, @submission], local: true do |form| %>
+      <div class="check-choice"><%= form.check_box :published %><%= form.label :published, "Publish profile. Only enable with the person's or organisation's permission." %></div>
+      <p class="hint">The public page includes profile answers and website. Contact email, pay expectations and team review details stay private.</p>
+      <% if @submission.published? %><p><%= link_to "View public profile", profile_path(@submission.public_slug) %></p><% end %>
       <div class="field"><%= form.label :status, "Review status" %><%= form.select :status, Submission::STATUSES, {}, field_options(@submission, :status) %><%= render "shared/field_error", record: @submission, attribute: :status %></div>
       <div class="field"><%= form.label :notes, "Conversation, introduction & outcome notes" %><%= form.text_area :notes, rows: 7, maxlength: 10000, **field_options(@submission, :notes) %><%= render "shared/field_error", record: @submission, attribute: :notes %></div>
       <%= form.submit "Save review", class: "button" %>
