@@ -174,7 +174,7 @@ class PilotTest < ActionDispatch::IntegrationTest
   end
   test "structured personal profile saves both optional sections and repeated entries" do
     skill = { skill: "Research", results: "Reduced waste", organisation: "Co-op", time: "2025" }
-    project = { problem: "Waste", context: "Food", approach: "Reuse", results: "Less waste" }
+    project = { title: "Food reuse", role: "Researcher", problem: "Waste", context: "Food", approach: "Reuse", results: "Less waste" }
     post people_path, params: { submission: answers.merge(
       target_ids: [ "", "12.3", "2.1" ], sectors_past: [ "Education & research" ],
       sectors_future: [ "Environment & conservation" ], sector_reason: "Use my research",

@@ -11,6 +11,7 @@ module ProfileOptions
     "Technology & digital services", "Transport & logistics", "Other"
   ].freeze
   FEELINGS = [ "Alive", "Satisfied", "At peace" ].freeze
+  PROJECT_DETAILS = { "title" => "Project title", "role" => "My role", "organisation" => "Client / organisation (optional)", "time" => "When (optional)", "url" => "Project link (optional)", "caption" => "Image description / caption (optional)" }.freeze
   REPEATED_FIELDS = {
     "skills" => { "skill" => "Skill", "results" => "Results that verify this skill", "organisation" => "Company / organisation", "time" => "When" },
     "projects" => { "problem" => "Problem", "context" => "Context", "approach" => "My approach", "results" => "Results" },

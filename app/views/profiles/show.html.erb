@@ -36,6 +36,17 @@
                   <%= simple_format entry["special"] %>
                   <h4>The impact we want to have</h4>
                   <%= simple_format entry["impact"] %>
+                <% elsif field == "projects" %>
+                  <h3><%= entry["title"].presence || "Project" %></h3>
+                  <% if entry["role"].present? %><p class="project-role"><%= entry["role"] %></p><% end %>
+                  <% if entry["organisation"].present? || entry["time"].present? %><p class="small-note"><%= [entry["organisation"], entry["time"]].compact_blank.join(" · ") %></p><% end %>
+                  <% if (image = @profile.portfolio_images.find_by(id: entry["image_id"])) %>
+                    <figure class="portfolio-figure"><%= image_tag portfolio_image_path(image), alt: entry["caption"].presence || "#{entry['title'].presence || 'Project'} image", class: "portfolio-image", loading: "lazy" %><% if entry["caption"].present? %><figcaption><%= entry["caption"] %></figcaption><% end %></figure>
+                  <% end %>
+                  <details class="project-story"><summary>Read the case study</summary>
+                    <% ProfileOptions::REPEATED_FIELDS.fetch(field).each do |key, label| %><h4><%= label %></h4><%= simple_format entry[key] %><% end %>
+                  </details>
+                  <% if entry["url"].to_s.match?(%r{\Ahttps?://}i) %><p><%= link_to "View project ↗", entry["url"], rel: "noopener noreferrer" %></p><% end %>
                 <% else %>
                   <% ProfileOptions::REPEATED_FIELDS.fetch(field).each do |key, label| %><h3><%= label %></h3><%= simple_format entry[key] %><% end %>
                 <% end %>
@@ -60,10 +71,12 @@
       </aside>
     <% end %>
   </div>
-  <% if !@profile.organisation? && @profile.target_ids.present? %>
+  <% if !@profile.organisation? && @profile.exploring == "1" %>
+    <section class="profile-targets profile-section"><h2>My current priorities</h2><p>I'm still exploring which problems I want to work on next.</p></section>
+  <% elsif !@profile.organisation? && @profile.target_ids.present? && @profile.target_ids.size <= 3 %>
     <section class="profile-targets profile-section">
       <p class="eyebrow">Sustainable development goals</p>
-      <h2>Problems I care about</h2>
+      <h2>Problems I want to work on next</h2>
       <p class="small-note">Selected UN targets. Open a goal to read the targets in full.</p>
       <div class="profile-goals">
         <% ProfileOptions::GOALS.each do |goal| %>

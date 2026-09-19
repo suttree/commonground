@@ -179,6 +179,12 @@ input[type=radio] { width: 22px; height: 22px; accent-color: var(--green); }
 .profile-section p:last-child { margin-bottom: 0; }
 .profile-evidence { padding: 24px; border: 1px solid var(--line); margin-top: 16px; }
 .profile-evidence h4 { font-size: 1rem; font-weight: 600; margin: 24px 0 8px; }
+.portfolio-figure { margin: 20px 0; }
+.portfolio-image { display: block; width: 100%; max-height: 480px; object-fit: contain; background: var(--wash); }
+.portfolio-figure figcaption { font-size: .9rem; color: var(--muted); margin-top: 8px; }
+.project-role { margin-bottom: 8px; }
+.project-story { border-top: 1px solid var(--line); margin-top: 20px; }
+input[type=file] { max-width: 100%; font-size: 1rem; }
 .profile-tags { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
 .profile-tags li { font-size: .95rem; padding: 5px 12px; border: 1px solid var(--line); border-radius: 3px; }
 .profile-targets { border-top: 2px solid var(--ink); padding-top: 36px; margin: 12px 0 0; }

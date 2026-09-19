@@ -20,11 +20,17 @@ module Admin
 
     def update
       @submission = Submission.find(params[:id])
-      if @submission.update(params.require(:submission).permit(:status, :notes, :published))
+      if @submission.update(params.require(:submission).permit(:status, :notes, :published, :exploring, target_ids: []))
         redirect_to admin_submission_path(@submission), notice: "Review saved.", status: :see_other
       else
         render :show, status: :unprocessable_entity
       end
+    end
+
+    def image
+      image = PortfolioImage.where.not(submission_id: nil).find(params[:id])
+      response.headers["X-Content-Type-Options"] = "nosniff"
+      send_data image.data, type: image.content_type, disposition: "inline"
     end
 
     private

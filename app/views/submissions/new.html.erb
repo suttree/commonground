@@ -9,7 +9,7 @@
     <p class="small-note">All fields are required unless marked optional. Your answers stay private unless you agree to a public profile.</p>
   </div>
   <%= render "shared/errors", record: @submission %>
-  <%= form_with model: @submission, url: organisation ? organisations_path : people_path, local: true do |form| %>
+  <%= form_with model: @submission, url: organisation ? organisations_path : people_path, local: true, html: { multipart: true } do |form| %>
     <fieldset>
       <legend><%= organisation ? "You & your organisation" : "A little about you" %></legend>
       <% if organisation %>

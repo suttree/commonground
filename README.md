@@ -78,3 +78,13 @@ The migration adds a JSON profile column and a version column. Existing applicat
 Profiles are private by default. With the applicant's permission, an admin can enable "Publish profile" on their submission. The page is available at `/profiles/name-uniqueid` with a random 12-character suffix. Its URL stays the same after name changes or republication. Disabling publication makes the URL return 404.
 
 The page shows profile answers and the website, but excludes contact email, pay expectations, consent records, review status and private notes. Public form submissions cannot set publication fields. Selected SDG targets retain their original wording inside expandable goal sections.
+
+## Priorities and portfolio
+
+People can choose up to three current SDG priorities or mark themselves as still exploring. Existing selections are preserved. Profiles with more than three targets omit that section publicly until the team narrows the selection in the admin review form. Saving unrelated review changes remains possible for older profiles.
+
+New project entries require a title and role alongside problem, context, approach and results. Organisation, dates, project URL and image caption are optional. Older projects without titles or roles still render and remain reviewable.
+
+Each project accepts one JPEG, PNG or WebP image, up to 2 MB, with at most ten projects per profile. The pilot stores image bytes in SQLite alongside the submission, so the existing mounted volume and database backups cover images too. Draft images use signed tokens restricted to the uploading browser session and expire after 24 hours. They survive validation errors and server-rendered add-another requests. Public image endpoints check that the associated profile is currently published; admin image endpoints require authentication. Unpublishing a profile also removes public access to its images.
+
+Expired unattached drafts are removed on subsequent image uploads. To clean them up without a new upload, run `bin/rails portfolio:prune_drafts`. Image uploads are included in the form's request rate limit. No PDF export or questionnaire is included.

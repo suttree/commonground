@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_19_000100) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_19_000200) do
+  create_table "portfolio_images", force: :cascade do |t|
+    t.string "content_type", null: false
+    t.datetime "created_at", null: false
+    t.binary "data", null: false
+    t.integer "submission_id"
+    t.datetime "updated_at", null: false
+    t.string "upload_owner", null: false
+    t.index ["submission_id"], name: "index_portfolio_images_on_submission_id"
+    t.index ["upload_owner", "created_at"], name: "index_portfolio_images_on_upload_owner_and_created_at"
+  end
+
   create_table "submissions", force: :cascade do |t|
     t.text "availability", null: false
     t.text "challenge"
@@ -38,4 +49,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_000100) do
     t.index ["public_slug"], name: "index_submissions_on_public_slug", unique: true
     t.index ["status"], name: "index_submissions_on_status"
   end
+
+  add_foreign_key "portfolio_images", "submissions"
 end

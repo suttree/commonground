@@ -5,7 +5,8 @@ class Submission < ApplicationRecord
   STATUSES = [ "Received", "Needs a conversation", "Ready for introductions", "Introduced", "Outcome recorded" ].freeze
   PROFILE_FIELDS = %i[target_ids sectors_past sectors_future sector_reason radius_km education_topics satisfaction_feeling satisfaction_notes skills projects mission offering impact_metrics proud_of challenge_kind help_needed products].freeze
 
-  store_accessor :profile, *PROFILE_FIELDS
+  store_accessor :profile, *PROFILE_FIELDS, :exploring
+  has_many :portfolio_images, dependent: :destroy
   attr_accessor :consent, :website_confirmation
 
   # Keep the original columns and their contents for applications already received.
@@ -45,6 +46,8 @@ class Submission < ApplicationRecord
     validate :valid_profile_choices
     validate :valid_repeated_entries
     validate :complete_satisfaction
+    validate :valid_priorities
+    validate :valid_project_details
   end
 
   before_validation :clean_profile_collections, if: :structured_profile?
@@ -74,6 +77,31 @@ class Submission < ApplicationRecord
   end
 
   private
+
+  def valid_priorities
+    return if organisation?
+    errors.add(:exploring, "is invalid") unless [ nil, "", "0", "1" ].include?(exploring)
+    changed = new_record? || profile.fetch("target_ids", nil) != (profile_in_database || {})["target_ids"] || exploring != (profile_in_database || {})["exploring"]
+    return unless changed
+    errors.add(:target_ids, "must contain no more than three current priorities") if Array(target_ids).size > 3
+    errors.add(:target_ids, "must be cleared when you choose I'm still exploring") if exploring == "1" && Array(target_ids).any?
+  end
+
+  def valid_project_details
+    profile_entries("projects").each_with_index do |row, index|
+      ProfileOptions::PROJECT_DETAILS.each_key do |key|
+        value = row[key]
+        if (new_record? || row.key?(key)) && %w[title role].include?(key) && value.blank?
+          errors.add(:projects, "entry #{index + 1}: #{ProfileOptions::PROJECT_DETAILS[key]} is required")
+        elsif value.present? && (!value.is_a?(String) || value.length > 5000)
+          errors.add(:projects, "entry #{index + 1}: #{key} is too long or invalid")
+        end
+      end
+      if row["url"].present? && !row["url"].to_s.match?(%r{\Ahttps?://[^\s]+\z})
+        errors.add(:projects, "entry #{index + 1}: project link must start with https:// or http://")
+      end
+    end
+  end
 
   def assign_public_slug
     self.public_slug ||= "#{display_name.to_s.parameterize.presence || 'profile'}-#{SecureRandom.hex(6)}"

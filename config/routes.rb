@@ -9,10 +9,13 @@ Rails.application.routes.draw do
   get "organisations/new", to: "submissions#new", as: :new_organisation
   post "organisations", to: "submissions#create", as: :organisations
   get "profiles/:slug", to: "profiles#show", as: :profile
+  get "portfolio/images/:id", to: "portfolio_images#show", as: :portfolio_image
+  get "portfolio/draft", to: "portfolio_images#draft", as: :draft_portfolio_image
 
   namespace :admin do
     root "submissions#index"
     resources :submissions, only: [ :index, :show, :update ]
+    get "portfolio/images/:id", to: "submissions#image", as: :portfolio_image
   end
 
   get "up", to: "rails/health#show", as: :rails_health_check
