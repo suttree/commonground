@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   post "people", to: "submissions#create", as: :people
   get "organisations/new", to: "submissions#new", as: :new_organisation
   post "organisations", to: "submissions#create", as: :organisations
+  get "profiles/:slug/contact", to: "contact_requests#new", as: :new_profile_contact
+  post "profiles/:slug/contact", to: "contact_requests#create", as: :profile_contact
+  get "profiles/:slug/contact/thanks", to: "contact_requests#thanks", as: :profile_contact_thanks
   get "profiles/:slug", to: "profiles#show", as: :profile
   get "profiles/:slug/skills/:position", to: "profiles#skill", as: :profile_skill, constraints: { position: /[1-9][0-9]*/ }
   get "profiles/:slug/projects/:position", to: "profiles#project", as: :profile_project, constraints: { position: /[1-9][0-9]*/ }
@@ -24,6 +27,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root "submissions#index"
+    resources :contact_requests, only: [ :index, :show ]
     resources :submissions, only: [ :index, :show, :update ]
     get "portfolio/images/:id", to: "submissions#image", as: :portfolio_image
   end

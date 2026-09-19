@@ -12,6 +12,7 @@ class QuizWizardTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
     assert_select ".quiz-answer", count: 3
+    assert_select ".next-step-option", count: 3
     assert_select ".quiz-reasons li", minimum: 3
     get quiz_path(question: 3)
     assert_select "input[value='1'][checked]"

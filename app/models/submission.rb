@@ -6,6 +6,7 @@ class Submission < ApplicationRecord
   PROFILE_FIELDS = %i[target_ids sectors_past sectors_future sector_reason radius_km education_topics satisfaction_feeling satisfaction_notes skills projects mission offering impact_metrics proud_of challenge_kind help_needed products].freeze
 
   store_accessor :profile, *PROFILE_FIELDS, :exploring
+  has_many :contact_requests, dependent: :destroy
   has_many :portfolio_images, dependent: :destroy
   attr_accessor :consent, :website_confirmation
 

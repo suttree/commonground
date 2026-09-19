@@ -1,0 +1,5 @@
+<% content_for :title, "Conversation requests" %>
+<section class="page-intro compact"><p class="eyebrow">Private · Team review</p><h1>Conversation requests.</h1><p><%= link_to "Back to applications", admin_root_path %></p></section>
+<p><%= pluralize(@count, "request") %></p>
+<ul class="application-list"><% @requests.each do |request| %><li><div><p class="eyebrow"><%= request.created_at.strftime("%d %b %Y") %> · For <%= request.submission.display_name %></p><h2><%= link_to request.name, admin_contact_request_path(request) %></h2><p><%= ContactRequest::OPTIONS.fetch(request.intent).fetch(:label) %></p><p><%= truncate(request.message, length: 180) %></p></div></li><% end %></ul>
+<nav class="actions" aria-label="Request pages"><% if @page > 1 %><%= link_to "Previous page", admin_contact_requests_path(page: @page - 1) %><% end %><% if @page * 50 < @count %><%= link_to "Next page", admin_contact_requests_path(page: @page + 1) %><% end %></nav>

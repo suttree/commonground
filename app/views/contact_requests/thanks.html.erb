@@ -1,0 +1,2 @@
+<% content_for :title, "Request received" %>
+<section class="page-intro narrow"><h1>Request received.</h1><p>The Commonbound team will review your request for <%= @recipient.display_name %> and follow up using the email you provided.</p><p><%= link_to "Back to #{@recipient.display_name}'s profile", profile_path(@recipient.public_slug) %></p></section>

@@ -17,7 +17,18 @@
   <% else %>
     <p>You skipped every question, so we haven't suggested any priorities. You can try again whenever you're ready.</p>
   <% end %>
-  <div class="actions"><%= link_to "Pitch your problem to Nika", profile_path("nika-van-olst-3e4265d5c4bf"), class: "button" %><%= link_to "Review my answers", quiz_path(question: 0), class: "button secondary" %></div>
+  <section class="quiz-next-steps" aria-labelledby="next-steps-heading">
+    <h2 id="next-steps-heading">What would you like to do next?</h2>
+    <p>Start a conversation with Nika.</p>
+    <div class="next-step-options">
+      <% ContactRequest::OPTIONS.each do |intent, option| %>
+        <%= link_to new_profile_contact_path("nika-van-olst-3e4265d5c4bf", intent: intent), class: "next-step-option" do %>
+          <strong><%= option.fetch(:label) %></strong><span><%= option.fetch(:description) %></span>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+  <div class="actions"><%= link_to "Review my answers", quiz_path(question: 0), class: "button secondary" %></div>
   <%= form_with url: quiz_path do %><button class="quiz-restart" name="restart" value="1">Start again</button><% end %>
   <p class="small-note quiz-footnote">Your answers haven't been added to a profile.</p>
 </div>

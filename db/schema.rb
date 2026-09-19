@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_19_000200) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_19_000300) do
+  create_table "contact_requests", force: :cascade do |t|
+    t.datetime "consented_at", null: false
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.string "intent", null: false
+    t.text "message", null: false
+    t.string "name", null: false
+    t.integer "submission_id", null: false
+    t.json "target_ids", default: [], null: false
+    t.datetime "updated_at", null: false
+    t.index ["submission_id"], name: "index_contact_requests_on_submission_id"
+  end
+
   create_table "portfolio_images", force: :cascade do |t|
     t.string "content_type", null: false
     t.datetime "created_at", null: false
@@ -50,5 +63,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_000200) do
     t.index ["status"], name: "index_submissions_on_status"
   end
 
+  add_foreign_key "contact_requests", "submissions"
   add_foreign_key "portfolio_images", "submissions"
 end
