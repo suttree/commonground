@@ -21,32 +21,18 @@
       <% if !@profile.organisation? && @profile.satisfaction_notes.present? %>
         <section class="profile-section"><h2>I feel most <%= @profile.satisfaction_feeling.to_s.downcase %> when...</h2><%= simple_format @profile.satisfaction_notes %></section>
       <% end %>
-      <% unless @profile.organisation? %><%= render "skills", profile: @profile %><% end %>
-      <% groups = @profile.organisation? ? { "products" => "Products & services" } : { "projects" => "Projects" } %>
-      <% groups.each do |field, heading| %>
-        <% if @profile.profile_entries(field).any? %>
-          <section class="profile-section"><h2><%= heading %></h2>
-            <% @profile.profile_entries(field).each do |entry| %>
+      <% unless @profile.organisation? %>
+        <%= render "skills", profile: @profile %>
+        <%= render "projects", profile: @profile %>
+      <% else %>
+        <% if @profile.profile_entries("products").any? %>
+          <section class="profile-section"><h2>Products & services</h2>
+            <% @profile.profile_entries("products").each do |entry| %>
               <div class="profile-evidence">
-                <% if field == "products" %>
-                  <h3><%= entry["name"] %></h3>
-                  <%= simple_format entry["special"] %>
-                  <h4>The impact we want to have</h4>
-                  <%= simple_format entry["impact"] %>
-                <% elsif field == "projects" %>
-                  <h3><%= entry["title"].presence || "Project" %></h3>
-                  <% if entry["role"].present? %><p class="project-role"><%= entry["role"] %></p><% end %>
-                  <% if entry["organisation"].present? || entry["time"].present? %><p class="small-note"><%= [entry["organisation"], entry["time"]].compact_blank.join(" · ") %></p><% end %>
-                  <% if (image = @profile.portfolio_images.find_by(id: entry["image_id"])) %>
-                    <figure class="portfolio-figure"><%= image_tag portfolio_image_path(image), alt: entry["caption"].presence || "#{entry['title'].presence || 'Project'} image", class: "portfolio-image", loading: "lazy" %><% if entry["caption"].present? %><figcaption><%= entry["caption"] %></figcaption><% end %></figure>
-                  <% end %>
-                  <details class="project-story"><summary>Read the case study</summary>
-                    <% ProfileOptions::REPEATED_FIELDS.fetch(field).each do |key, label| %><h4><%= label %></h4><%= simple_format entry[key] %><% end %>
-                  </details>
-                  <% if entry["url"].to_s.match?(%r{\Ahttps?://}i) %><p><%= link_to "View project ↗", entry["url"], rel: "noopener noreferrer" %></p><% end %>
-                <% else %>
-                  <% ProfileOptions::REPEATED_FIELDS.fetch(field).each do |key, label| %><h3><%= label %></h3><%= simple_format entry[key] %><% end %>
-                <% end %>
+                <h3><%= entry["name"] %></h3>
+                <%= simple_format entry["special"] %>
+                <h4>The impact we want to have</h4>
+                <%= simple_format entry["impact"] %>
               </div>
             <% end %>
           </section>

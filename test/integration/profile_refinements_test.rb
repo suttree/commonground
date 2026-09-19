@@ -86,8 +86,10 @@ class ProfileRefinementsTest < ActionDispatch::IntegrationTest
     get profile_path(entry.public_slug)
     assert_select "h3", text: "Community garden"
     assert_select "img[alt='Plan of the garden']"
+    get profile_project_path(entry.public_slug, 1)
+    assert_response :success
     assert_select "a[href='https://example.test/project']"
-    assert_select "details.project-story", text: /Designed with neighbours/
+    assert_select ".prose", text: /Designed with neighbours/
     get portfolio_image_path(image)
     assert_response :success
     entry.update!(published: false)

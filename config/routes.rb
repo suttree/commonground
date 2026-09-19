@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   post "organisations", to: "submissions#create", as: :organisations
   get "profiles/:slug", to: "profiles#show", as: :profile
   get "profiles/:slug/skills/:position", to: "profiles#skill", as: :profile_skill, constraints: { position: /[1-9][0-9]*/ }
+  get "profiles/:slug/projects/:position", to: "profiles#project", as: :profile_project, constraints: { position: /[1-9][0-9]*/ }
   get "portfolio/images/:id", to: "portfolio_images#show", as: :portfolio_image
   get "portfolio/draft", to: "portfolio_images#draft", as: :draft_portfolio_image
 

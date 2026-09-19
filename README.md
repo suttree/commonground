@@ -90,3 +90,5 @@ Each project accepts one JPEG, PNG or WebP image, up to 2 MB, with at most ten p
 Expired unattached drafts are removed on subsequent image uploads. To clean them up without a new upload, run `bin/rails portfolio:prune_drafts`. Image uploads are included in the form's request rate limit. No PDF export or questionnaire is included.
 
 Skills on public profiles use horizontally scrollable preview cards with native scroll snapping and previous/next links. Each card links to `/profiles/:slug/skills/:position` for its full evidence. Detail pages follow the profile's publication status and return 404 for missing skills. A single skill has no carousel controls. No JavaScript or new profile fields are required.
+
+Portfolio projects use the same carousel pattern, with image previews linking to `/profiles/:slug/projects/:position`. The case-study page contains the full image and caption, role, dates, problem, context, approach, results and external project link. These pages are available only while the parent profile is published.

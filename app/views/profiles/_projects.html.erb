@@ -1,0 +1,29 @@
+<% projects = profile.profile_entries("projects") %>
+<% if projects.any? %>
+  <section class="profile-section" id="projects" aria-labelledby="projects-heading">
+    <h2 id="projects-heading">Projects</h2>
+    <% if projects.many? %><p class="small-note" id="projects-hint">Swipe or use the arrows to browse <%= projects.size %> projects.</p><% end %>
+    <div class="skill-carousel project-carousel <%= 'has-many' if projects.many? %>" role="region" aria-label="Project previews" <%= 'aria-describedby=projects-hint tabindex=0' if projects.many? %>>
+      <% projects.each_with_index do |project, index| %>
+        <% title = project["title"].presence || "Project #{index + 1}" %>
+        <article class="skill-card project-card" id="project-<%= index + 1 %>" aria-labelledby="project-heading-<%= index + 1 %>">
+          <% if (image = profile.portfolio_images.find_by(id: project["image_id"])) %>
+            <%= link_to profile_project_path(profile.public_slug, index + 1), aria: { label: "Read #{title}" } do %><%= image_tag portfolio_image_path(image), alt: project["caption"].presence || title, class: "portfolio-image project-thumbnail", loading: "lazy" %><% end %>
+          <% end %>
+          <h3 id="project-heading-<%= index + 1 %>"><%= link_to title, profile_project_path(profile.public_slug, index + 1) %></h3>
+          <% if project["role"].present? %><p class="project-role small-note"><%= project["role"] %></p><% end %>
+          <p class="small-note"><%= [project["organisation"], project["time"]].compact_blank.join(" · ") %></p>
+          <p class="skill-preview"><%= truncate(strip_tags(project["problem"].to_s).squish, length: 140, separator: " ") %></p>
+          <%= link_to "Read the case study →", profile_project_path(profile.public_slug, index + 1), aria: { label: "Read the case study: #{title}" }, class: "skill-read-more" %>
+          <% if projects.many? %>
+            <nav class="skill-controls" aria-label="Browse projects from <%= title %>">
+              <% if index.positive? %><%= link_to "←", "#project-#{index}", aria: { label: "Previous project" } %><% else %><span aria-hidden="true"></span><% end %>
+              <span class="small-note"><%= index + 1 %> of <%= projects.size %></span>
+              <% if index < projects.size - 1 %><%= link_to "→", "#project-#{index + 2}", aria: { label: "Next project" } %><% else %><span aria-hidden="true"></span><% end %>
+            </nav>
+          <% end %>
+        </article>
+      <% end %>
+    </div>
+  </section>
+<% end %>

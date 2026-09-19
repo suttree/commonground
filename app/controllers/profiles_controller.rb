@@ -11,6 +11,13 @@ class ProfilesController < ApplicationController
     raise ActiveRecord::RecordNotFound unless @skill
   end
 
+  def project
+    @projects = @profile.profile_entries("projects")
+    @position = params[:position].to_i
+    @project = @projects[@position - 1] if @position.positive? && !@profile.organisation?
+    raise ActiveRecord::RecordNotFound unless @project
+  end
+
   private
 
   def find_profile
