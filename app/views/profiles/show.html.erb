@@ -54,6 +54,15 @@
       </aside>
     <% end %>
   </div>
+  <% if (example = SdgQuiz::EXAMPLES[@profile.public_slug]) && !@profile.organisation? %>
+    <section class="profile-targets profile-section" id="quiz-answers">
+      <p class="eyebrow">Example quiz answers</p>
+      <h2>Problems to work on next</h2>
+      <p class="small-note">Illustrative answers based on Nika's portfolio, added to show how the quiz could look on a profile. Nika hasn't completed the quiz.</p>
+      <%= render "quiz/answers", target_ids: example.keys, notes: example %>
+      <p class="quiz-footnote"><%= link_to "Find your own priorities", quiz_path %></p>
+    </section>
+  <% end %>
   <% if !@profile.organisation? && @profile.exploring == "1" %>
     <section class="profile-targets profile-section"><h2>My current priorities</h2><p>I'm still exploring which problems I want to work on next.</p></section>
   <% elsif !@profile.organisation? && @profile.target_ids.present? && @profile.target_ids.size <= 3 %>

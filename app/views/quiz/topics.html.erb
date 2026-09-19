@@ -1,0 +1,23 @@
+<div class="quiz-page narrow">
+  <%= render "progress", step: 1 %>
+  <h1>What would you like to change?</h1>
+  <p>Start with the topics you care about. We'll help you narrow them down to a few problems you'd like to work on.</p>
+  <p class="small-note">No right or wrong answers. This is a way to explore your interests, not a test of your knowledge.</p>
+  <%= form_with url: quiz_path do %>
+    <% @target_ids.each do |id| %><%= hidden_field_tag "targets[]", id %><% end %>
+    <fieldset>
+      <legend>Which topics matter most to you?</legend>
+      <p class="hint">Choose one, two or three. You can change these later.</p>
+      <div class="quiz-topics">
+        <% ProfileOptions::GOALS.each do |goal| %>
+          <div class="check-choice quiz-choice">
+            <%= check_box_tag "goals[]", goal.fetch("id"), @goal_ids.include?(goal.fetch("id")), id: "goal-#{goal.fetch('id')}" %>
+            <%= label_tag "goal-#{goal.fetch('id')}" do %><span class="small-note">Goal <%= goal.fetch("id") %></span><br><%= goal.fetch("name") %><% end %>
+          </div>
+        <% end %>
+      </div>
+    </fieldset>
+    <button class="button" name="step" value="targets">Find my priorities</button>
+  <% end %>
+  <p class="small-note quiz-footnote">All 17 Sustainable Development Goals are included. Your quiz answers aren't saved to a profile.</p>
+</div>
