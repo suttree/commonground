@@ -198,3 +198,17 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
   .profile-purpose { padding: 24px; }
   .profile-body { gap: 0; }
 }
+
+.profile-main { min-width: 0; }
+.skill-carousel { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 6px 6px 14px; margin-inline: -6px; }
+.skill-card { flex: 0 0 100%; min-width: 0; border: 1px solid var(--line); padding: 24px; scroll-snap-align: start; scroll-margin-top: 24px; display: flex; flex-direction: column; }
+.skill-carousel.has-many .skill-card { flex-basis: 88%; }
+.skill-card h3 a { color: var(--ink); text-decoration: none; }
+.skill-card h3 a:hover { text-decoration: underline; }
+.skill-preview { font-size: 1.05rem; }
+.skill-read-more { margin-top: auto; font-size: 1rem; align-self: start; }
+.skill-controls { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; text-align: center; border-top: 1px solid var(--line); margin-top: 20px; padding-top: 12px; }
+.skill-controls a { display: grid; place-items: center; min-height: 44px; text-decoration: none; border: 1px solid var(--line); }
+.skill-detail { padding-bottom: 64px; overflow-wrap: anywhere; }
+.skill-detail h1 { font-size: clamp(2.5rem, 6vw, 4rem); }
+.skill-detail-navigation { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; border-top: 1px solid var(--line); padding-top: 24px; margin-top: 40px; font-size: 1rem; }

@@ -1,0 +1,24 @@
+<% skills = profile.profile_entries("skills") %>
+<% if skills.any? %>
+  <section class="profile-section" id="skills" aria-labelledby="skills-heading">
+    <h2 id="skills-heading">Skills in practice</h2>
+    <% if skills.many? %><p class="small-note" id="skills-hint">Swipe or use the arrows to browse <%= skills.size %> skills.</p><% end %>
+    <div class="skill-carousel <%= 'has-many' if skills.many? %>" role="region" aria-label="Skills in practice" <%= 'aria-describedby=skills-hint tabindex=0' if skills.many? %>>
+      <% skills.each_with_index do |skill, index| %>
+        <article class="skill-card" id="skill-<%= index + 1 %>" aria-labelledby="skill-heading-<%= index + 1 %>">
+          <h3 id="skill-heading-<%= index + 1 %>"><%= link_to skill["skill"], profile_skill_path(profile.public_slug, index + 1) %></h3>
+          <p class="small-note"><%= [skill["organisation"], skill["time"]].compact_blank.join(" · ") %></p>
+          <p class="skill-preview"><%= truncate(strip_tags(skill["results"].to_s).squish, length: 140, separator: " ") %></p>
+          <%= link_to "Read more →", profile_skill_path(profile.public_slug, index + 1), aria: { label: "Read more about #{skill['skill']}" }, class: "skill-read-more" %>
+          <% if skills.many? %>
+            <nav class="skill-controls" aria-label="Browse skills from <%= skill['skill'] %>">
+              <% if index.positive? %><%= link_to "←", "#skill-#{index}", aria: { label: "Previous skill" } %><% else %><span aria-hidden="true"></span><% end %>
+              <span class="small-note"><%= index + 1 %> of <%= skills.size %></span>
+              <% if index < skills.size - 1 %><%= link_to "→", "#skill-#{index + 2}", aria: { label: "Next skill" } %><% else %><span aria-hidden="true"></span><% end %>
+            </nav>
+          <% end %>
+        </article>
+      <% end %>
+    </div>
+  </section>
+<% end %>

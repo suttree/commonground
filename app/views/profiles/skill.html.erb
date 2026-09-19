@@ -1,0 +1,16 @@
+<% content_for :title, "#{@skill['skill']} · #{@profile.display_name}" %>
+<article class="narrow skill-detail">
+  <p class="back-link"><%= link_to "← Back to #{@profile.display_name}", profile_path(@profile.public_slug, anchor: "skill-#{@position}") %></p>
+  <header class="page-intro compact">
+    <p class="eyebrow">Skills in practice · <%= @profile.display_name %></p>
+    <h1><%= @skill["skill"] %></h1>
+    <p class="small-note"><%= [@skill["organisation"], @skill["time"]].compact_blank.join(" · ") %></p>
+  </header>
+  <section class="prose"><h2>How I've used this skill</h2><%= simple_format @skill["results"] %></section>
+  <% if @skills.many? %>
+    <nav class="skill-detail-navigation" aria-label="Other skills">
+      <% if @position > 1 %><%= link_to "← #{@skills[@position - 2]['skill']}", profile_skill_path(@profile.public_slug, @position - 1) %><% end %>
+      <% if @position < @skills.size %><%= link_to "#{@skills[@position]['skill']} →", profile_skill_path(@profile.public_slug, @position + 1) %><% end %>
+    </nav>
+  <% end %>
+</article>
