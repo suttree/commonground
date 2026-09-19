@@ -11,7 +11,9 @@ class ContactRequestsTest < ActionDispatch::IntegrationTest
     ContactRequest::OPTIONS.each_key do |intent|
       get new_profile_contact_path(@recipient.public_slug, intent: intent)
       assert_response :success
-      assert_select "option[value=?][selected]", intent
+      assert_select "input[type=radio][name=\"contact_request[intent]\"]", count: 3
+      assert_select "input[type=radio][checked]", count: 1
+      assert_select "input[type=radio][value=?][checked]", intent
       assert_no_match @recipient.email, response.body
       assert_difference "ContactRequest.count", 1 do
         post profile_contact_path(@recipient.public_slug), params: { contact_request: @valid.merge(intent: intent, submission_id: 999, target_ids: [ "1.1" ]) }

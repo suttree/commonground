@@ -20,13 +20,18 @@
   <section class="quiz-next-steps" aria-labelledby="next-steps-heading">
     <h2 id="next-steps-heading">What would you like to do next?</h2>
     <p>Start a conversation with Nika.</p>
-    <div class="next-step-options">
-      <% ContactRequest::OPTIONS.each do |intent, option| %>
-        <%= link_to new_profile_contact_path("nika-van-olst-3e4265d5c4bf", intent: intent), class: "next-step-option" do %>
-          <strong><%= option.fetch(:label) %></strong><span><%= option.fetch(:description) %></span>
+    <%= form_with url: new_profile_contact_path("nika-van-olst-3e4265d5c4bf"), method: :get do %>
+      <fieldset class="wizard-options">
+        <legend>Choose one option</legend>
+        <% ContactRequest::OPTIONS.each do |intent, option| %>
+          <label class="wizard-option next-step-option">
+            <%= radio_button_tag :intent, intent, false, required: true %>
+            <span><strong><%= option.fetch(:label) %></strong><span><%= option.fetch(:description) %></span></span>
+          </label>
         <% end %>
-      <% end %>
-    </div>
+      </fieldset>
+      <button class="button">Continue</button>
+    <% end %>
   </section>
   <div class="actions"><%= link_to "Review my answers", quiz_path(question: 0), class: "button secondary" %></div>
   <%= form_with url: quiz_path do %><button class="quiz-restart" name="restart" value="1">Start again</button><% end %>
