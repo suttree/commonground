@@ -15,9 +15,9 @@
     <% end %>
     <p class="small-note">Each answer points to related SDG targets. We show up to three with the most connections; equal matches follow question order. This is a starting point, not an assessment of your values or skills.</p>
   <% else %>
-    <p>You skipped every question, so we haven't suggested any priorities. You can try again or browse the topics at your own pace.</p>
+    <p>You skipped every question, so we haven't suggested any priorities. You can try again whenever you're ready.</p>
   <% end %>
-  <div class="actions"><%= link_to "Review my answers", quiz_path(question: 0), class: "button secondary" %><%= link_to "Explore all goals and targets", explore_quiz_path %></div>
+  <div class="actions"><%= link_to "Review my answers", quiz_path(question: 0), class: "button secondary" %></div>
   <%= form_with url: quiz_path do %><button class="quiz-restart" name="restart" value="1">Start again</button><% end %>
   <p class="small-note quiz-footnote">Your answers haven't been added to a profile.</p>
 </div>
