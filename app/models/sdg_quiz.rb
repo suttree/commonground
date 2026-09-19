@@ -1,5 +1,5 @@
 class SdgQuiz
-  LABELS = JSON.parse(File.read(Rails.root.join("config/data/quiz_labels.json"))).freeze
+  LABELS = SdgDirectory::LABELS
   QUESTIONS = JSON.parse(File.read(Rails.root.join("config/data/quiz_questions.json"))).freeze
   EXAMPLES = {
     "nika-van-olst-3e4265d5c4bf" => {

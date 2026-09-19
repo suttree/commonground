@@ -5,7 +5,7 @@
       <p class="eyebrow">Goal <%= goal.fetch("id") %> · <%= goal.fetch("name") %></p>
       <h3><%= SdgQuiz::LABELS.fetch(id) %></h3>
       <% if local_assigns[:notes]&.key?(id) %><p><%= notes.fetch(id) %></p><% end %>
-      <details><summary>Read target <%= id %></summary><p><%= ProfileOptions::TARGETS.fetch(id).fetch("text") %></p></details>
+      <details><summary>Read target <%= id %></summary><p><%= ProfileOptions::TARGETS.fetch(id).fetch("text") %></p><p><%= link_to "Target #{id} in the SDG directory", sdg_target_path(id) %></p></details>
     </article>
   <% end %>
 </div>
