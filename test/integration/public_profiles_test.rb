@@ -1,6 +1,31 @@
 require "test_helper"
 
 class PublicProfilesTest < ActionDispatch::IntegrationTest
+  test "organisation profiles show their work and collaboration needs without contact details" do
+    entry = Submission.create!(kind: "organisation", profile_version: 2, name: "Private contact",
+      organisation_name: "Ara the Songbird", email: "private@example.test", consent: "1",
+      purpose: "People adjacent to loneliness", mission: "Provide companionship", offering: "A robot songbird",
+      challenge_kind: "Challenges", challenge: "Local production", help_needed: "Product design and research",
+      notes: "Private review", published: true,
+      products: [ { "name" => "Ara", "special" => "Birdsong without surveillance", "impact" => "Reduce loneliness" } ])
+    assert_match(/\Aara-the-songbird-[a-f0-9]{12}\z/, entry.public_slug)
+    get profile_path(entry.public_slug)
+    assert_response :success
+    assert_select "h1", text: "Ara the Songbird"
+    assert_select ".profile-main", text: /Provide companionship/
+    assert_select ".profile-evidence h3", text: "Ara"
+    assert_select ".profile-evidence", text: /Reduce loneliness/
+    assert_select "aside", text: /Local production/
+    assert_select "aside", text: /Product design and research/
+    assert_select "h2", text: "Our current challenges"
+    assert_select "h2", text: "Our impact", count: 0
+    [ entry.name, entry.email, entry.notes, entry.status ].each { |value| assert_no_match value, response.body }
+    entry.update!(challenge_kind: "Goals")
+    get profile_path(entry.public_slug)
+    assert_select "h2", text: "Our current goals"
+    assert_select "h2", text: "Our current challenges", count: 0
+  end
+
   def profile
     Submission.create!(kind: "person", profile_version: 2, name: "Duncan Gough",
       email: "private@example.test", purpose: "People overlooked at work.", experience: "Building useful products.",

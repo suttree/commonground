@@ -14,7 +14,7 @@
   </header>
   <div class="profile-body">
     <div class="profile-main">
-      <% fields = @profile.organisation? ? { mission: "Our purpose", offering: "What we offer", impact_metrics: "Our impact", proud_of: "What we're proud of", challenge: "What we're working on", help_needed: "Who can help" } : { experience: "The thread through my work", education_topics: "What shaped my thinking" } %>
+      <% fields = @profile.organisation? ? { mission: "Our purpose", offering: "What we offer", impact_metrics: "Our impact", proud_of: "What we're proud of" } : { experience: "The thread through my work", education_topics: "What shaped my thinking" } %>
       <% fields.each do |field, heading| %>
         <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><%= simple_format @profile.public_send(field) %></section><% end %>
       <% end %>
@@ -31,6 +31,11 @@
                   <h3><%= entry["skill"] %></h3>
                   <p class="small-note"><%= [entry["organisation"], entry["time"]].compact_blank.join(" · ") %></p>
                   <%= simple_format entry["results"] %>
+                <% elsif field == "products" %>
+                  <h3><%= entry["name"] %></h3>
+                  <%= simple_format entry["special"] %>
+                  <h4>The impact we want to have</h4>
+                  <%= simple_format entry["impact"] %>
                 <% else %>
                   <% ProfileOptions::REPEATED_FIELDS.fetch(field).each do |key, label| %><h3><%= label %></h3><%= simple_format entry[key] %><% end %>
                 <% end %>
@@ -40,7 +45,13 @@
         <% end %>
       <% end %>
     </div>
-    <% unless @profile.organisation? %>
+    <% if @profile.organisation? %>
+      <aside class="profile-interests" aria-label="Challenges and collaboration">
+        <% { challenge: @profile.challenge_kind == "Goals" ? "Our current goals" : "Our current challenges", help_needed: "Who can help" }.each do |field, heading| %>
+          <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><%= simple_format @profile.public_send(field) %></section><% end %>
+        <% end %>
+      </aside>
+    <% else %>
       <aside class="profile-interests" aria-label="Sector interests">
         <% { sectors_future: "Where I'd like to work", sectors_past: "Where I've worked" }.each do |field, heading| %>
           <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><ul class="profile-tags"><% @profile.public_send(field).each do |sector| %><li><%= sector %></li><% end %></ul></section><% end %>
