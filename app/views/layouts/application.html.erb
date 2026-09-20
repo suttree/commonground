@@ -9,7 +9,7 @@
     <%= stylesheet_link_tag "application" %>
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
   </head>
-  <body>
+  <body<% if content_for?(:body_class) %> class="<%= yield(:body_class) %>"<% end %>>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header wrap<%= " home-header" if controller_name == "pages" && %w[home althomepage about].include?(action_name) %>">
       <%= link_to root_path, class: "wordmark", aria: { label: "Commonbound home" } do %><span class="brand-mark" aria-hidden="true">cb.</span> Commonbound<% end %>
