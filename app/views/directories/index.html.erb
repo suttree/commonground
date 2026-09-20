@@ -18,7 +18,12 @@
         <% if profile.location.present? %><p><%= profile.location %></p><% end %>
         <p><%= truncate(profile.purpose, length: 220) %></p>
         <p><%= (Array(profile.sectors_past) + Array(profile.sectors_future)).uniq.join(" · ") %></p>
-        <ul><% Array(profile.target_ids).map { |id| id.split(".").first }.uniq.each do |id| %><li><%= link_to "SDG #{id}", sdg_goal_path(id) %></li><% end %></ul>
+        <% goal_ids = Array(profile.target_ids).map { |id| id.split(".").first }.uniq %>
+        <ul>
+          <% ProfileOptions::GOALS.select { |goal| goal_ids.include?(goal.fetch("id")) }.each do |goal| %>
+            <li><%= link_to "SDG #{goal.fetch('id')}: #{goal.fetch('name')}", sdg_goal_path(goal.fetch("id")) %></li>
+          <% end %>
+        </ul>
       </article>
     <% end %>
   </div>
