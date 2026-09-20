@@ -12,6 +12,7 @@ primary_region = 'lhr'
   SMTP_ADDRESS = 'email-smtp.eu-west-2.amazonaws.com'
   SMTP_PORT = '587'
   SMTP_DOMAIN = 'commonground-pilot.fly.dev'
+  MAIL_FROM = 'Commonbound <duncan@suttree.com>'
 
 [[mounts]]
   source = 'data'

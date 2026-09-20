@@ -1,0 +1,16 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SendCommonboundLoginEmails",
+      "Effect": "Allow",
+      "Action": "ses:SendRawEmail",
+      "Resource": "arn:aws:ses:eu-west-2:438465129655:identity/duncan@suttree.com",
+      "Condition": {
+        "StringEquals": {
+          "ses:FromAddress": "duncan@suttree.com"
+        }
+      }
+    }
+  ]
+}

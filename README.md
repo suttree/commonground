@@ -123,8 +123,10 @@ Login-code rows retain request timestamps and IPs for throttling. Run `bin/rails
 
 The Fly configuration targets SES in London, `eu-west-2`, at `email-smtp.eu-west-2.amazonaws.com:587`. SMTP requires STARTTLS and verifies the server certificate. The sender identity and SMTP credentials must belong to the same SES region.
 
-Store `SMTP_USERNAME`, `SMTP_PASSWORD`, and `MAIL_FROM` as Fly secrets. Use SES SMTP credentials rather than the AWS console password or an unconverted AWS secret access key. Keep the SMTP user limited to sending email for the verified sender identity. Do not put credentials in `fly.toml` or Git.
+The sender is `Commonbound <duncan@suttree.com>`, configured in `fly.toml`. Store `SMTP_USERNAME` and `SMTP_PASSWORD` as Fly secrets. Use SES SMTP credentials rather than the AWS console password or an unconverted AWS secret access key. Keep the SMTP user limited to sending email for the verified sender identity. Do not put credentials in `fly.toml` or Git.
 
 Before enabling public signup, verify the sender identity, configure the domain's DKIM records when using a domain identity, and confirm SES production access in London. Sandbox accounts can send only to verified recipients or the SES mailbox simulator. Verify a real login-code delivery after configuring the secrets and deploying.
 
 References: [SES SMTP credentials](https://docs.aws.amazon.com/ses/latest/dg/smtp-credentials.html), [SES endpoints](https://docs.aws.amazon.com/general/latest/gr/ses.html), and [production access](https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html).
+
+The proposed dedicated SMTP user is `commonbound-smtp`. Its sending policy is in `config/aws/commonbound-ses-smtp-policy.json` and permits only `ses:SendRawEmail` for `duncan@suttree.com` in London. Creating the AWS user and installing its credentials are separate setup steps; the policy file alone does not grant access.
