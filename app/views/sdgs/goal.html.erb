@@ -5,6 +5,7 @@
     <p class="eyebrow">Goal <%= @goal.fetch("id") %> · <%= @goal.fetch("targets").size %> targets</p>
     <h1><%= @goal.fetch("name") %></h1>
     <p class="intro"><%= @guide.fetch("summary") %></p>
+    <p><%= link_to "Find people who selected this goal", people_path(goal: @goal.fetch("id")), class: "button" %></p>
   </header>
   <h2 class="sdg-section-title">The targets</h2>
   <p class="small-note">Short titles are a reading guide. Each target page includes the full source wording and a direct link you can share.</p>
