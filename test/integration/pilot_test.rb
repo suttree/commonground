@@ -47,16 +47,16 @@ class PilotTest < ActionDispatch::IntegrationTest
     assert_equal "Received", entry.status
     assert_nil entry.notes
     assert entry.consented_at
-    assert_redirected_to thanks_path
+    assert_redirected_to create_account_path
     follow_redirect!
     assert_response :success
-    assert_select "h1", text: /Thanks/
-    assert_no_match "alex@example.test", response.body
+    assert_select "h1", text: /Create your account/
+    assert_select "input[name=email][value='alex@example.test'][readonly]"
   end
 
   test "organisation brief is stored and can be reviewed and updated privately" do
     post organisations_path, params: { submission: answers.except(:experience).merge(mission: "Reduce food waste", offering: "Local juice", challenge_kind: "Challenges", organisation_name: "Orchard Co-op", challenge: "We need help figuring this out.") }
-    assert_redirected_to thanks_path
+    assert_redirected_to create_account_path
     entry = Submission.last
     assert_equal "organisation", entry.kind
     get admin_root_path, headers: admin_headers
@@ -155,7 +155,7 @@ class PilotTest < ActionDispatch::IntegrationTest
     assert_difference "Submission.count", 1 do
       post people_path, params: { authenticity_token: token, submission: answers }
     end
-    assert_redirected_to thanks_path
+    assert_redirected_to create_account_path
     follow_redirect!
     assert_response :success
   ensure
@@ -182,7 +182,7 @@ class PilotTest < ActionDispatch::IntegrationTest
       satisfaction_feeling: "Alive", satisfaction_notes: "Working with others",
       skills: [ skill, skill.merge(skill: "Design") ], projects: [ project, project ],
       mission: "Should not be accepted", profile_version: 1) }
-    assert_redirected_to thanks_path
+    assert_redirected_to create_account_path
     entry = Submission.last
     assert_equal 2, entry.profile_version
     assert_equal [ "12.3", "2.1" ], entry.target_ids
@@ -229,14 +229,14 @@ class PilotTest < ActionDispatch::IntegrationTest
   test "company products persist and blank optional personal sections can be skipped" do
     post people_path, params: { submission: answers.merge(skills: [ { skill: "", results: "", organisation: "", time: "" } ],
       projects: [ { problem: "", context: "", approach: "", results: "" } ], satisfaction_feeling: "", satisfaction_notes: "") }
-    assert_redirected_to thanks_path
+    assert_redirected_to create_account_path
     assert_empty Submission.last.skills
     assert_empty Submission.last.projects
     product = { name: "Juice", special: "Surplus apples", impact: "Less waste" }
     post organisations_path, params: { submission: answers.merge(organisation_name: "Orchard", mission: "Reduce waste",
       offering: "Juice", challenge_kind: "Goals", challenge: "Reach more growers", impact_metrics: "Tonnes saved",
       products: [ product, product.merge(name: "Cider") ], help_needed: "Grower relationships") }
-    assert_redirected_to thanks_path
+    assert_redirected_to create_account_path
     entry = Submission.last
     assert_equal 2, entry.products.size
     get admin_submission_path(entry), headers: admin_headers

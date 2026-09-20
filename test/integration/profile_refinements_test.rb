@@ -30,12 +30,12 @@ class ProfileRefinementsTest < ActionDispatch::IntegrationTest
     assert_select "#target_ids-error", text: /three/
     assert_select ".target-choice input[checked]", count: 4
     post people_path, params: { submission: answers.merge(target_ids: ids.first(3)) }
-    assert_redirected_to thanks_path
+    assert_redirected_to create_account_path
     assert_equal ids.first(3), Submission.last.target_ids
     post people_path, params: { submission: answers.merge(exploring: "1", target_ids: ids.first(1)) }
     assert_response :unprocessable_entity
     post people_path, params: { submission: answers.merge(exploring: "1", target_ids: [ "" ]) }
-    assert_redirected_to thanks_path
+    assert_redirected_to create_account_path
     entry = Submission.last
     entry.update!(published: true)
     get profile_path(entry.public_slug)
@@ -75,7 +75,7 @@ class ProfileRefinementsTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     assert_select "img.portfolio-image", count: 1
     post people_path, params: { submission: answers.merge(projects: [ project.merge(image_token: draft_token) ]) }
-    assert_redirected_to thanks_path
+    assert_redirected_to create_account_path
     entry = Submission.last
     assert_equal entry.id, image.reload.submission_id
     assert_equal image.id, entry.projects.first["image_id"]
@@ -114,7 +114,7 @@ class ProfileRefinementsTest < ActionDispatch::IntegrationTest
     assert_difference "PortfolioImage.count", -1 do
       post people_path, params: { submission: answers.merge(projects: [ project.merge(image_token: token, remove_image: "1") ]) }
     end
-    assert_redirected_to thanks_path
+    assert_redirected_to create_account_path
     assert_nil Submission.last.projects.first["image_id"]
   end
 end

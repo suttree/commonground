@@ -8,6 +8,7 @@
   <h1 id="quiz-question"><%= question.fetch("question") %></h1>
   <%= form_with url: quiz_path do %>
     <%= hidden_field_tag :question, @index %>
+    <%= hidden_field_tag :profile_id, current_profile.id if current_profile %>
     <fieldset class="wizard-options" aria-labelledby="quiz-question">
       <legend class="small-note">Pick the closest fit.</legend>
       <% question.fetch("options").each_with_index do |option, index| %>
@@ -20,8 +21,8 @@
     </fieldset>
     <div class="actions">
       <button class="button"><%= @index == SdgQuiz::QUESTIONS.size - 1 ? "See my suggestions" : "Next question" %></button>
-      <% if @index.positive? %><%= link_to "Back", quiz_path(question: @index - 1) %><% end %>
+      <% if @index.positive? %><%= link_to "Back", quiz_path(question: @index - 1, profile_id: current_profile&.id) %><% end %>
     </div>
   <% end %>
-  <p class="small-note">Your answers stay in this browser session and aren't added to a profile.</p>
+  <p class="small-note"><%= current_profile ? "When you finish, your answers and suggested priorities will be saved to #{current_profile.display_name}. They will be visible if that profile is public." : "Your answers stay in this browser session. Log in before taking the quiz to save them to your profile." %></p>
 </div>

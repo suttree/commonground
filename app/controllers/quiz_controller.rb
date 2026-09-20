@@ -1,8 +1,9 @@
 class QuizController < ApplicationController
+  before_action :select_profile
   before_action { response.headers["Cache-Control"] = "no-store" }
 
   def show
-    @answers = session.fetch(:quiz_answers, {})
+    @answers = session.fetch(:quiz_answers, current_profile&.profile&.fetch("quiz_answers", {}) || {})
     completed = (0...SdgQuiz::QUESTIONS.size).find { |index| !@answers.key?(index.to_s) } || SdgQuiz::QUESTIONS.size
     requested = params[:question].to_s.match?(/\A[0-7]\z/) ? params[:question].to_i : completed
     @index = [ requested, completed ].min
@@ -16,10 +17,10 @@ class QuizController < ApplicationController
 
   def create
     if params[:restart] == "1"
-      session.delete(:quiz_answers)
-      return redirect_to quiz_path, status: :see_other
+      session[:quiz_answers] = {}
+      return redirect_to quiz_path(profile_id: current_profile&.id), status: :see_other
     end
-    @answers = session.fetch(:quiz_answers, {})
+    @answers = session.fetch(:quiz_answers, current_profile&.profile&.fetch("quiz_answers", {}) || {})
     completed = (0...SdgQuiz::QUESTIONS.size).find { |index| !@answers.key?(index.to_s) } || SdgQuiz::QUESTIONS.size
     return redirect_to quiz_path unless params[:question].to_s.match?(/\A[0-7]\z/) && params[:question].to_i <= completed
     @index = params[:question].to_i
@@ -29,7 +30,10 @@ class QuizController < ApplicationController
     end
     @answers[@index.to_s] = params[:answer]
     session[:quiz_answers] = @answers
-    redirect_to quiz_path(question: @index + 1), status: :see_other
+    if current_profile && (0...SdgQuiz::QUESTIONS.size).all? { |index| @answers.key?(index.to_s) }
+      current_profile.save_quiz!(@answers)
+    end
+    redirect_to quiz_path(question: @index + 1, profile_id: current_profile&.id), status: :see_other
   end
 
   def explore
@@ -60,6 +64,17 @@ class QuizController < ApplicationController
   end
 
   private
+
+  def select_profile
+    if current_account && params[:profile_id].present?
+      profile = current_account.submissions.find(params[:profile_id])
+      session[:active_profile_id] = profile.id
+    end
+    if session[:quiz_profile_id] != current_profile&.id
+      session.delete(:quiz_answers)
+      session[:quiz_profile_id] = current_profile&.id
+    end
+  end
 
   def choices(key)
     value = params[key]

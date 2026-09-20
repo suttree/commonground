@@ -1,4 +1,6 @@
 class Submission < ApplicationRecord
+  belongs_to :account, optional: true
+
   KINDS = %w[person organisation].freeze
   WORKING_STYLES = [ "Figuring things out", "Improving something established", "Both" ].freeze
   ENGAGEMENTS = [ "Permanent role", "Freelance project", "Fractional / part-time", "Open to discussing" ].freeze
@@ -77,10 +79,15 @@ class Submission < ApplicationRecord
     value.is_a?(Array) ? value.select { |row| row.is_a?(Hash) } : []
   end
 
+  def save_quiz!(answers)
+    targets = SdgQuiz.matches(answers).keys
+    update!(profile: profile.merge("quiz_answers" => answers, "quiz_completed_at" => Time.current.iso8601,
+      "target_ids" => targets, "exploring" => targets.empty? ? "1" : "0"))
+  end
+
   private
 
   def valid_priorities
-    return if organisation?
     errors.add(:exploring, "is invalid") unless [ nil, "", "0", "1" ].include?(exploring)
     changed = new_record? || profile.fetch("target_ids", nil) != (profile_in_database || {})["target_ids"] || exploring != (profile_in_database || {})["exploring"]
     return unless changed

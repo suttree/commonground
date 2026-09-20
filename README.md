@@ -93,10 +93,27 @@ Skills on public profiles use horizontally scrollable preview cards with native 
 
 Portfolio projects use the same carousel pattern, with image previews linking to `/profiles/:slug/projects/:position`. The case-study page contains the full image and caption, role, dates, problem, context, approach, results and external project link. These pages are available only while the parent profile is published.
 
-The SDG quiz at `/quiz` asks eight short scenario questions, one per screen, with back, skip and restart controls. Answer mappings in `config/data/quiz_questions.json` cover all 17 goals. The three targets connected to the most answers become suggestions, each with an explanation. Ties follow question order; skipped answers add no matches. Answers stay in the browser session and are not attached to profiles.
+The SDG quiz at `/quiz` asks eight short scenario questions, one per screen, with back, skip and restart controls. Answer mappings in `config/data/quiz_questions.json` cover all 17 goals. The three targets connected to the most answers become suggestions, each with an explanation. Ties follow question order; skipped answers add no matches. Guest answers stay in the browser session. For logged-in users, completing the quiz saves all eight answers and up to three suggested targets to the active profile.
 
 The full selector at `/quiz/explore` includes all 169 targets. Short editorial labels live in `config/data/quiz_labels.json`; expandable details retain the original target wording. `SdgQuiz::EXAMPLES` provides explicitly labelled demonstration answers for Nika's published profile without changing her submitted answers.
 
 The reference directory at `/sustainable-development-goals` has goal pages at `/sustainable-development-goals/:id` and shareable target pages such as `/sustainable-development-goals/targets/12.6`. Search combines the target identifier, short label, source wording and goal name, supports a goal filter, and paginates at 18 results. `config/data/sdg_guides.json` supplies short goal introductions and colour accents. The directory retains the source wording and retrieval date, and distinguishes editorial labels from that source. Quiz suggestions and example profile answers link to target references; the main navigation links to the directory.
 
 Quiz results offer three next steps for Nika: pitch a problem, suggest a Zoom coffee chat or request services. Each opens `/profiles/:slug/contact` with the intent selected. Requests require contact consent, accept optional quiz suggestions from the current session, and appear privately at `/admin/contact_requests`. They do not send email or book meetings automatically.
+
+
+## Accounts and directories
+
+Signup now leads to `/create-account`. `/login` sends a six-digit email code. Verification links unclaimed submissions with the same normalized email to an account. An email can manage personal and company profiles; `/dashboard?profile_id=ID` switches between profiles owned by that account. Existing applicants can log in with their original email to claim their profiles.
+
+Codes expire in ten minutes, allow five attempts, and work once. They are stored as keyed hashes. Database-backed request limits allow three codes per email and twenty per IP in ten minutes. Sessions rotate at login, expire after thirty days, and clear at logout. Profile editing is scoped to the signed-in account. Email addresses, ownership, review status and admin notes cannot be changed through profile editing.
+
+`/people` and `/companies` list published profiles only, with combined name, location, sector and SDG goal filters and 24 results per page. Owners can publish or unpublish from the edit form. Company profiles now include location, sectors and SDG priorities. Completed quiz answers are visible when their profile is published. Switching profiles clears the quiz draft from the browser session.
+
+### Email setup
+
+Production uses SMTP. Set `SMTP_ADDRESS`, `SMTP_PORT` (defaults to 587), `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_DOMAIN`, and `MAIL_FROM` to a sender verified with your email provider. `APP_HOST` defaults to `commonground-pilot.fly.dev`. Keep credentials in deployment secrets. STARTTLS is enabled, and delivery errors display a retry message without granting access.
+
+Development writes messages to `tmp/mail` without sending them. Tests use Action Mailer's test delivery. Restart the development server after changing mail settings. Live delivery must be checked with the configured provider before opening account signup to users.
+
+Login-code rows retain request timestamps and IPs for throttling. Run `bin/rails accounts:prune_codes` regularly to remove rows older than one day.

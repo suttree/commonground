@@ -62,7 +62,7 @@ class PublicProfilesTest < ActionDispatch::IntegrationTest
   test "public applicants cannot publish themselves" do
     post people_path, params: { submission: { name: "Test", email: "test@example.test", purpose: "Useful work",
       experience: "A project", consent: "1", published: true, public_slug: "injected" } }
-    assert_redirected_to thanks_path
+    assert_redirected_to create_account_path
     assert_not Submission.last.published?
     assert_nil Submission.last.public_slug
   end

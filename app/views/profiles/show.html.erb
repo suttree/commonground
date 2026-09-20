@@ -54,7 +54,15 @@
       </aside>
     <% end %>
   </div>
-  <% if (example = SdgQuiz::EXAMPLES[@profile.public_slug]) && !@profile.organisation? %>
+  <% if @profile.profile["quiz_completed_at"].present? %>
+    <section class="profile-section"><h2>SDG quiz answers</h2>
+      <% SdgQuiz::QUESTIONS.each_with_index do |question, index| %>
+        <% answer = @profile.profile.fetch("quiz_answers", {})[index.to_s] %>
+        <p><strong><%= question["question"] || question["title"] %></strong><br><%= answer.to_s.match?(/\A[0-3]\z/) ? question.fetch("options")[answer.to_i].fetch("label") : "Skipped" %></p>
+      <% end %>
+    </section>
+  <% end %>
+  <% if (example = SdgQuiz::EXAMPLES[@profile.public_slug]) && !@profile.organisation? && @profile.profile["quiz_completed_at"].blank? %>
     <section class="profile-targets profile-section" id="quiz-answers">
       <p class="eyebrow">Example quiz answers</p>
       <h2>Problems to work on next</h2>
@@ -63,9 +71,9 @@
       <p class="quiz-footnote"><%= link_to "Find your own priorities", quiz_path %></p>
     </section>
   <% end %>
-  <% if !@profile.organisation? && @profile.exploring == "1" %>
+  <% if @profile.exploring == "1" %>
     <section class="profile-targets profile-section"><h2>My current priorities</h2><p>I'm still exploring which problems I want to work on next.</p></section>
-  <% elsif !@profile.organisation? && @profile.target_ids.present? && @profile.target_ids.size <= 3 %>
+  <% elsif @profile.target_ids.present? && @profile.target_ids.size <= 3 %>
     <section class="profile-targets profile-section">
       <p class="eyebrow">Sustainable development goals</p>
       <h2>Problems I want to work on next</h2>

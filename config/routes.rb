@@ -1,5 +1,17 @@
 Rails.application.routes.draw do
   root "pages#home"
+  get "create-account", to: "sessions#create_account", as: :create_account
+  get "login", to: "sessions#new", as: :login
+  post "login", to: "sessions#create"
+  get "login/verify", to: "sessions#verify", as: :verify_login
+  post "login/verify", to: "sessions#authenticate"
+  delete "logout", to: "sessions#destroy", as: :logout
+  get "dashboard", to: "dashboards#show", as: :dashboard
+  get "account/profile/edit", to: "submissions#edit", as: :edit_account_profile
+  patch "account/profile", to: "submissions#update", as: :account_profile
+  get "people", to: "directories#people"
+  get "companies", to: "directories#companies", as: :companies
+
   get "sustainable-development-goals", to: "sdgs#index", as: :sdgs
   get "sustainable-development-goals/targets/:id", to: "sdgs#target", as: :sdg_target, constraints: { id: /[0-9]+\.[0-9a-z]+/ }, format: false
   get "sustainable-development-goals/:id", to: "sdgs#goal", as: :sdg_goal, constraints: { id: /[0-9]+/ }
@@ -13,7 +25,7 @@ Rails.application.routes.draw do
   get "privacy", to: "pages#privacy"
   get "thanks", to: "pages#thanks"
   get "people/new", to: "submissions#new", as: :new_person
-  post "people", to: "submissions#create", as: :people
+  post "people", to: "submissions#create"
   get "organisations/new", to: "submissions#new", as: :new_organisation
   post "organisations", to: "submissions#create", as: :organisations
   get "profiles/:slug/contact", to: "contact_requests#new", as: :new_profile_contact

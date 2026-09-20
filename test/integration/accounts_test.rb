@@ -1,0 +1,213 @@
+require "test_helper"
+
+class AccountsTest < ActionDispatch::IntegrationTest
+  def profile(email: "owner@example.test", kind: "person", **attributes)
+    Submission.create!({ kind: kind, profile_version: 2, name: "Alex", email: email,
+      purpose: "Help communities", experience: "Community projects", consent: "1",
+      organisation_name: "Orchard", mission: "Reduce waste", offering: "Food", challenge_kind: "Goals", challenge: "Grow" }.merge(attributes))
+  end
+
+  def login(email)
+    post login_path, params: { email: email }
+    assert_redirected_to verify_login_path
+    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    assert code
+    post verify_login_path, params: { code: code }
+    assert_redirected_to dashboard_path
+  end
+
+  test "verification claims only matching profiles and logout protects edits" do
+    owned = profile
+    other = profile(email: "other@example.test")
+    get dashboard_path
+    assert_redirected_to login_path
+    patch account_profile_path, params: { submission: { name: "Changed" } }
+    assert_redirected_to login_path
+    login(" OWNER@example.test ")
+    assert_equal "owner@example.test", owned.reload.account.email
+    assert_nil other.reload.account_id
+    get dashboard_path
+    assert_response :success
+    [ people_path, companies_path, sdgs_path, quiz_path, edit_account_profile_path(profile_id: owned.id) ].each { |path| assert_select "a[href='#{path}']" }
+    get dashboard_path(profile_id: other.id)
+    assert_response :not_found
+    delete logout_path
+    get edit_account_profile_path
+    assert_redirected_to login_path
+  end
+
+  test "profile edit preserves private fields and controls publication" do
+    owned = profile(notes: "Private note")
+    login(owned.email)
+    get edit_account_profile_path
+    assert_response :success
+    patch account_profile_path, params: { submission: { name: "Updated", published: "1", email: "attacker@example.test", account_id: 1234, notes: "Injected", status: "Introduced" } }
+    assert_redirected_to dashboard_path(profile_id: owned.id)
+    owned.reload
+    assert_equal "Updated", owned.name
+    assert_equal "owner@example.test", owned.email
+    assert_equal "Private note", owned.notes
+    assert_equal "Received", owned.status
+    get profile_path(owned.public_slug)
+    assert_response :success
+    assert_no_match owned.email, response.body
+    patch account_profile_path, params: { submission: { published: "0" } }
+    get profile_path(owned.public_slug)
+    assert_response :not_found
+  end
+
+  test "quiz saves to active company or person without leaking between profiles" do
+    person = profile
+    company = profile(kind: "organisation")
+    login(person.email)
+    get dashboard_path(profile_id: company.id)
+    assert_select ".eyebrow", text: "Company dashboard"
+    8.times { |index| post quiz_path, params: { question: index, answer: "1" } }
+    assert_equal 8, company.reload.profile.fetch("quiz_answers").size
+    assert_equal SdgQuiz.matches((0..7).to_h { |index| [ index.to_s, "1" ] }).keys, company.target_ids
+    assert_nil person.reload.target_ids
+    get quiz_path
+    assert_select "p", text: /saved to your profile/
+    get dashboard_path(profile_id: person.id)
+    get quiz_path
+    assert_select "input[name=question][value='0']"
+    8.times { |index| post quiz_path, params: { question: index, answer: "0" } }
+    assert_equal 8, person.reload.profile.fetch("quiz_answers").size
+    assert_equal "1", company.reload.profile.fetch("quiz_answers")["0"]
+    company.update!(published: true)
+    get profile_path(company.public_slug)
+    assert_select "h2", text: "SDG quiz answers"
+    assert_select "h2", text: "Problems I want to work on next"
+  end
+
+  test "failed codes do not log in" do
+    post login_path, params: { email: "alex@example.test" }
+    5.times do
+      post verify_login_path, params: { code: "wrong" }
+      assert_response :unprocessable_entity
+    end
+    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    post verify_login_path, params: { code: code }
+    assert_response :unprocessable_entity
+    get dashboard_path
+    assert_redirected_to login_path
+  end
+
+  test "both directories filter only public profiles" do
+    person = profile(published: true, location: "Bristol", sectors_future: [ ProfileOptions::SECTORS.first ], target_ids: [ "12.3" ])
+    profile(email: "private@example.test", name: "Secret", location: "Bristol")
+    company = profile(kind: "organisation", published: true, location: "Bristol", sectors_past: [ ProfileOptions::SECTORS.first ], target_ids: [ "12.3" ])
+    [ [ people_path, person ], [ companies_path, company ] ].each do |path, record|
+      get path, params: { q: record.display_name, location: "bristol", sector: ProfileOptions::SECTORS.first, goal: "12" }
+      assert_response :success
+      assert_select ".directory-card", count: 1
+      assert_select ".directory-card a[href='#{profile_path(record.public_slug)}']"
+      assert_no_match "Secret", response.body
+      assert_no_match record.email, response.body
+      get path, params: { goal: "1" }
+      assert_select ".directory-card", count: 0
+    end
+  end
+
+  test "company profile edits retain repeaters and apply sector and priority changes" do
+    company = profile(kind: "organisation")
+    login(company.email)
+    get edit_account_profile_path
+    assert_response :success
+    patch account_profile_path, params: { add_section: "products", submission: { organisation_name: "New orchard", products: [ { name: "Juice", special: "Local", impact: "Less waste" } ] } }
+    assert_response :success
+    assert_select "textarea#submission_products_1_name"
+    assert_equal "Orchard", company.reload.organisation_name
+    patch account_profile_path, params: { submission: { organisation_name: "New orchard", target_ids: [ "12.3" ], sectors_past: [ ProfileOptions::SECTORS.first ] } }
+    assert_redirected_to dashboard_path(profile_id: company.id)
+    assert_equal [ "12.3" ], company.reload.target_ids
+  end
+  test "expired sessions require login and codes cannot be replayed" do
+    owned = profile
+    login(owned.email)
+    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    post verify_login_path, params: { code: code }
+    assert_response :unprocessable_entity
+    travel 31.days do
+      get dashboard_path
+      assert_redirected_to login_path
+      patch account_profile_path, params: { submission: { name: "Expired" } }
+      assert_redirected_to login_path
+    end
+    assert_equal "Alex", owned.reload.name
+  end
+
+  test "delivery failures do not report a sent code or grant access" do
+    original_method = LoginMailer.delivery_method
+    failing_delivery = Class.new do
+      def initialize(*)
+      end
+
+      def deliver!(_mail)
+        raise IOError, "Delivery unavailable"
+      end
+    end
+    LoginMailer.delivery_method = failing_delivery
+    post login_path, params: { email: "delivery@example.test" }
+    assert_response :service_unavailable
+    assert_select "p[role=alert]", text: /couldn't send/
+    assert LoginCode.last.used_at
+    get dashboard_path
+    assert_redirected_to login_path
+  ensure
+    LoginMailer.delivery_method = original_method
+  end
+
+  test "login requests require CSRF tokens" do
+    previous = ActionController::Base.allow_forgery_protection
+    ActionController::Base.allow_forgery_protection = true
+    assert_no_difference "LoginCode.count" do
+      post login_path, params: { email: "csrf@example.test" }
+    end
+    assert_response :unprocessable_entity
+  ensure
+    ActionController::Base.allow_forgery_protection = previous
+  end
+
+  test "image removal survives validation and repeaters without accepting other image IDs" do
+    project = { "title" => "Local food", "role" => "Researcher", "problem" => "Waste", "context" => "Food", "approach" => "Reuse", "results" => "Less waste" }
+    owned = profile(projects: [ project ])
+    image = PortfolioImage.create!(submission: owned, upload_owner: "test", content_type: "image/png", data: "test image")
+    owned.update!(projects: [ project.merge("image_id" => image.id) ])
+    login(owned.email)
+    patch account_profile_path, params: { submission: { name: "Updated", projects: [ project.merge("image_id" => 999999) ] } }
+    assert_redirected_to dashboard_path(profile_id: owned.id)
+    assert_equal image.id, owned.reload.projects.first["image_id"]
+    patch account_profile_path, params: { add_section: "skills", submission: { projects: [ project.merge("remove_image" => "1") ] } }
+    assert_response :success
+    assert_select "input[type=hidden][name='submission[projects][][remove_image]'][value='1']"
+    patch account_profile_path, params: { submission: { projects: [ project.merge("remove_image" => "1") ] } }
+    assert_redirected_to dashboard_path(profile_id: owned.id)
+    assert_nil owned.reload.projects.first["image_id"]
+    assert_not PortfolioImage.exists?(image.id)
+  end
+  test "editing another tab's profile remains scoped to the original owned profile" do
+    person = profile
+    company = profile(kind: "organisation")
+    other = profile(email: "other@example.test")
+    login(person.email)
+    get dashboard_path(profile_id: company.id)
+    patch account_profile_path, params: { profile_id: person.id, submission: { name: "Personal edit" } }
+    assert_redirected_to dashboard_path(profile_id: person.id)
+    assert_equal "Personal edit", person.reload.name
+    assert_equal "Alex", company.reload.name
+    patch account_profile_path, params: { profile_id: other.id, submission: { name: "Not allowed" } }
+    assert_response :not_found
+    assert_equal "Alex", other.reload.name
+    post quiz_path, params: { profile_id: other.id, question: 0, answer: "0" }
+    assert_response :not_found
+  end
+
+  test "account creation verifies the submitted email even if the request is changed" do
+    post people_path, params: { submission: { name: "Alex", email: "signup@example.test", purpose: "Help communities", experience: "Local work", consent: "1" } }
+    assert_redirected_to create_account_path
+    post login_path, params: { signup: "1", email: "different@example.test" }
+    assert_redirected_to verify_login_path
+    assert_equal [ "signup@example.test" ], ActionMailer::Base.deliveries.last.to
+  end
+end

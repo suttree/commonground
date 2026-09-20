@@ -9,21 +9,28 @@
     <p class="small-note">All fields are required unless marked optional. Your answers stay private unless you agree to a public profile.</p>
   </div>
   <%= render "shared/errors", record: @submission %>
-  <%= form_with model: @submission, url: organisation ? organisations_path : people_path, local: true, html: { multipart: true } do |form| %>
+  <%= form_with model: @submission, url: @submission.persisted? ? account_profile_path : (organisation ? organisations_path : people_path), local: true, html: { multipart: true } do |form| %>
+    <%= hidden_field_tag :profile_id, @submission.id if @submission.persisted? %>
     <fieldset>
       <legend><%= organisation ? "You & your organisation" : "A little about you" %></legend>
       <% if organisation %>
         <div class="field"><%= form.label :organisation_name, "Organisation name" %><%= form.text_field :organisation_name, required: true, maxlength: 200, autocomplete: "organization", **field_options(@submission, :organisation_name) %><%= render "shared/field_error", record: @submission, attribute: :organisation_name %></div>
       <% end %>
       <div class="field"><%= form.label :name, "Your name" %><%= form.text_field :name, required: true, maxlength: 200, autocomplete: "name", **field_options(@submission, :name) %><%= render "shared/field_error", record: @submission, attribute: :name %></div>
-      <div class="field"><%= form.label :email, "Email address" %><p id="email-hint" class="hint">So we can follow up with you. We won't add you to a mailing list.</p><%= form.email_field :email, required: true, maxlength: 254, autocomplete: "email", **field_options(@submission, :email, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :email %></div>
+      <div class="field"><%= form.label :email, "Email address" %><p id="email-hint" class="hint">Use this address to receive your login code.</p><%= form.email_field :email, readonly: @submission.persisted?, required: true, maxlength: 254, autocomplete: "email", **field_options(@submission, :email, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :email %></div>
       <div class="field"><%= form.label :website, organisation ? "Organisation website (optional)" : "A link to your work or profile (optional)" %><p id="website-hint" class="hint">Use the full address, starting with https://.</p><%= form.url_field :website, maxlength: 500, autocomplete: "url", **field_options(@submission, :website, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :website %></div>
     </fieldset>
 
-    <%= render organisation ? "organisation" : "person", form: form %>
+    <%= render organisation ? "submissions/organisation" : "submissions/person", form: form %>
     <div class="honeypot" aria-hidden="true"><%= form.label :website_confirmation, "Leave this empty" %><%= form.text_field :website_confirmation, tabindex: -1, autocomplete: "off" %></div>
+    <% unless @submission.persisted? %>
     <div class="consent field"><%= form.check_box :consent, { required: true, **field_options(@submission, :consent) }, "1", "0" %><%= form.label :consent, "I'm happy for the Commonbound team to review my answers and contact me about the pilot." %><%= render "shared/field_error", record: @submission, attribute: :consent %></div>
+    <% end %>
+    <% if @submission.persisted? %>
+      <div class="check-choice"><%= form.check_box :published %><%= form.label :published, "Publish my profile in the directory" %></div>
+      <p class="hint">Your profile and quiz answers will be public. Your email and private account details stay hidden.</p>
+    <% end %>
     <p class="hint">We'll ask before sharing your details for an introduction. Read <%= link_to "how we use your details", privacy_path %>.</p>
-    <%= form.submit "Send your profile", class: "button" %>
+    <%= form.submit(@submission.persisted? ? "Save profile" : "Continue to create account", class: "button") %>
   <% end %>
 </div>

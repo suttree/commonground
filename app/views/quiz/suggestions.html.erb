@@ -17,6 +17,7 @@
   <% else %>
     <p>You skipped every question, so we haven't suggested any priorities. You can try again whenever you're ready.</p>
   <% end %>
+  <% if current_profile %><p><%= link_to "Return to dashboard", dashboard_path %></p><% end %>
   <section class="quiz-next-steps" aria-labelledby="next-steps-heading">
     <h2 id="next-steps-heading">What would you like to do next?</h2>
     <p>Start a conversation with Nika.</p>
@@ -33,7 +34,7 @@
       <button class="button">Continue</button>
     <% end %>
   </section>
-  <div class="actions"><%= link_to "Review my answers", quiz_path(question: 0), class: "button secondary" %></div>
-  <%= form_with url: quiz_path do %><button class="quiz-restart" name="restart" value="1">Start again</button><% end %>
-  <p class="small-note quiz-footnote">Your answers haven't been added to a profile.</p>
+  <div class="actions"><%= link_to "Review my answers", quiz_path(question: 0, profile_id: current_profile&.id), class: "button secondary" %></div>
+  <%= form_with url: quiz_path do %><%= hidden_field_tag :profile_id, current_profile.id if current_profile %><button class="quiz-restart" name="restart" value="1">Start again</button><% end %>
+  <p class="small-note quiz-footnote"><%= current_profile ? "Your answers and suggested priorities are saved to your profile." : "Log in before taking the quiz to save your answers to your profile." %></p>
 </div>
