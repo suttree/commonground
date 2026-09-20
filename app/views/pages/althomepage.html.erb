@@ -13,14 +13,25 @@
         <pattern id="bauhaus-lines" width="12" height="12" patternUnits="userSpaceOnUse">
           <path d="M0 0V12" stroke="#20211f" stroke-width="2"/>
         </pattern>
+        <filter id="paper-raised" x="-35%" y="-35%" width="180%" height="190%" color-interpolation-filters="sRGB">
+          <feDropShadow dx="7" dy="12" stdDeviation="7" flood-color="#403525" flood-opacity=".2" result="cast-shadow"/>
+          <feDropShadow in="SourceGraphic" dx="2" dy="3" stdDeviation="0" flood-color="#403525" flood-opacity=".28" result="edge"/>
+          <feMerge><feMergeNode in="cast-shadow"/><feMergeNode in="edge"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="paper-layer" x="-40%" y="-40%" width="190%" height="200%" color-interpolation-filters="sRGB">
+          <feDropShadow dx="3" dy="5" stdDeviation="3" flood-color="#30291f" flood-opacity=".27"/>
+        </filter>
       </defs>
-      <circle cx="449" cy="95" r="49" fill="#f5ce43"/>
+      <circle filter="url(#paper-raised)" cx="449" cy="95" r="49" fill="#f5ce43"/>
       <path d="M195 235v315M402 342v208" stroke="#20211f" stroke-width="12"/>
-      <path d="M195 440A132 132 0 0 1 63 308a132 132 0 0 1 132 132Z" fill="#2d50bd"/>
+      <path filter="url(#paper-raised)" d="M195 440A132 132 0 0 1 63 308a132 132 0 0 1 132 132Z" fill="#2d50bd"/>
+      <path d="M63 308 195 440A132 132 0 0 1 63 308Z" fill="#fff9ed" opacity=".14"/>
       <path d="M195 494A132 132 0 0 0 327 362a132 132 0 0 0-132 132Z" fill="url(#bauhaus-lines)"/>
-      <path d="M402 495a92 92 0 0 1-92-92 92 92 0 0 1 92 92Z" fill="#e74b32"/>
-      <path d="M402 438a92 92 0 0 0 92-92 92 92 0 0 0-92 92Z" fill="#f5ce43"/>
-      <g fill="#e74b32">
+      <path filter="url(#paper-raised)" d="M402 495a92 92 0 0 1-92-92 92 92 0 0 1 92 92Z" fill="#e74b32"/>
+      <path filter="url(#paper-raised)" d="M402 438a92 92 0 0 0 92-92 92 92 0 0 0-92 92Z" fill="#f5ce43"/>
+      <path d="m310 403 92 92a92 92 0 0 1-92-92Z" fill="#fff9ed" opacity=".17"/>
+      <path d="m494 346-92 92a92 92 0 0 0 92-92Z" fill="#fff9ed" opacity=".2"/>
+      <g fill="#e74b32" filter="url(#paper-raised)">
         <circle cx="195" cy="108" r="64"/>
         <circle cx="270" cy="152" r="64"/>
         <circle cx="270" cy="238" r="64"/>
@@ -28,13 +39,13 @@
         <circle cx="120" cy="238" r="64"/>
         <circle cx="120" cy="152" r="64"/>
       </g>
-      <circle cx="195" cy="195" r="57" fill="#f5ce43"/>
-      <circle cx="195" cy="195" r="19" fill="#20211f"/>
-      <path d="M402 205c-58-50-104 12-58 58-73 9-63 87 3 86-30 65 42 99 69 40 34 61 103 18 66-40 68-9 63-86-8-86 39-57-25-108-72-58Z" fill="#2d50bd"/>
-      <circle cx="411" cy="300" r="39" fill="#f2eee3"/>
-      <circle cx="411" cy="300" r="13" fill="#20211f"/>
+      <circle filter="url(#paper-layer)" cx="195" cy="195" r="57" fill="#f5ce43"/>
+      <circle filter="url(#paper-layer)" cx="195" cy="195" r="19" fill="#20211f"/>
+      <path filter="url(#paper-raised)" d="M402 205c-58-50-104 12-58 58-73 9-63 87 3 86-30 65 42 99 69 40 34 61 103 18 66-40 68-9 63-86-8-86 39-57-25-108-72-58Z" fill="#2d50bd"/>
+      <circle filter="url(#paper-layer)" cx="411" cy="300" r="39" fill="#f2eee3"/>
+      <circle filter="url(#paper-layer)" cx="411" cy="300" r="13" fill="#20211f"/>
       <path d="M40 550h480v40H40z" fill="#20211f"/>
-      <path d="M60 590a135 135 0 0 1 270 0" fill="#f5ce43"/>
+      <path filter="url(#paper-raised)" d="M60 590a135 135 0 0 1 270 0" fill="#f5ce43"/>
       <path d="m358 74 22-22m-22 0 22 22" stroke="#20211f" stroke-width="3"/>
     </svg>
     <p>A shared purpose. A different way to work.</p>
