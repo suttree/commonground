@@ -131,7 +131,7 @@ References: [SES SMTP credentials](https://docs.aws.amazon.com/ses/latest/dg/smt
 
 The dedicated SMTP user is `commonbound-smtp`. Its sending policy is in `config/aws/commonbound-ses-smtp-policy.json` and permits only `ses:SendRawEmail` for `duncan@suttree.com` in London. The user and policy have been created, and its SMTP credentials are stored in Fly secrets. The policy file alone does not grant access.
 
-The `suttree.com` domain identity uses Easy DKIM with 2048-bit signing keys. Add these CNAME records in Joker's DNS settings to verify it:
+The `suttree.com` domain identity uses Easy DKIM with 2048-bit signing keys. These CNAME records are configured in Joker's DNS settings:
 
 | Name (relative to suttree.com) | Target |
 | --- | --- |
@@ -139,4 +139,4 @@ The `suttree.com` domain identity uses Easy DKIM with 2048-bit signing keys. Add
 | `7liqle2ifftqgsodhmmhyvuuvvi3qeqg._domainkey` | `7liqle2ifftqgsodhmmhyvuuvvi3qeqg.dkim.amazonses.com` |
 | `n6r2u3hrib4mid5msinuumjecf74zvn6._domainkey` | `n6r2u3hrib4mid5msinuumjecf74zvn6.dkim.amazonses.com` |
 
-As of 20 September 2026, the app is deployed and SES SMTP authentication succeeds. Sender verification, DNS verification, production access and a real login-code delivery still need to be completed.
+As of 20 September 2026, the app is deployed, the sender and domain are verified, and all three DKIM records resolve publicly. A live login code was delivered to `duncan@suttree.com` and used successfully to reach the dashboard. SES remains in the London sandbox until AWS approves production access; other recipients must be verified while that restriction applies.
