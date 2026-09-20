@@ -28,7 +28,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_nil other.reload.account_id
     get dashboard_path
     assert_response :success
-    [ people_path, companies_path, sdgs_path, quiz_path, edit_account_profile_path ].each { |path| assert_select "a[href='#{path}']" }
+    [ people_path, companies_path, sdgs_path, quiz_path, profile_path(owned.public_slug) ].each { |path| assert_select "a[href='#{path}']" }
     get dashboard_path(profile_id: other.id)
     assert_response :not_found
     delete logout_path
@@ -221,8 +221,8 @@ class AccountsTest < ActionDispatch::IntegrationTest
       assert_redirected_to edit_account_profile_path
     end
     get dashboard_path
-    assert_select "a", text: "Edit profile"
-    assert_select "a[href='#{profile_path(owned.reload.public_slug)}']", text: "View profile"
+    assert_select "a", text: "Edit profile", count: 0
+    assert_select "h1 a[href='#{profile_path(owned.reload.public_slug)}']", text: owned.display_name
     assert_select "a[href='#{new_person_path}']", count: 0
     assert_select "a[href='#{new_organisation_path}']", count: 0
     delete logout_path
