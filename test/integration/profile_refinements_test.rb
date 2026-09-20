@@ -27,8 +27,8 @@ class ProfileRefinementsTest < ActionDispatch::IntegrationTest
     ids = ProfileOptions::TARGETS.keys.first(4)
     post people_path, params: { submission: answers.merge(target_ids: ids) }
     assert_response :unprocessable_entity
-    assert_select "#target_ids-error", text: /three/
-    assert_select ".target-choice input[checked]", count: 4
+    assert_select ".error-summary", text: /three/
+    assert_select ".target-choice", count: 0
     post people_path, params: { submission: answers.merge(target_ids: ids.first(3)) }
     assert_redirected_to create_account_path
     assert_equal ids.first(3), Submission.last.target_ids

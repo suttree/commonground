@@ -7,7 +7,7 @@
     <%= form.number_field :radius_km, min: 0, max: 20000, step: "any", **field_options(@submission, :radius_km) %>
     <%= render "shared/field_error", record: @submission, attribute: :radius_km %>
   </div>
-  <%= render "shared/priorities", form: form %>
+  <%= render "shared/priorities", form: form if @submission.persisted? %>
 </fieldset>
 <fieldset>
   <legend>Experience & direction</legend>

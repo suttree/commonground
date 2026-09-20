@@ -209,7 +209,7 @@ class PilotTest < ActionDispatch::IntegrationTest
     assert_select "input#submission_name[value=Alex]"
     assert_select "textarea#submission_projects_0_problem", text: "Waste"
     assert_select "textarea#submission_projects_1_problem"
-    assert_select "input[name='submission[target_ids][]'][value='12.3'][checked]"
+    assert_select "input[name='submission[target_ids][]']", count: 0
     assert_select "input#submission_consent[checked]"
   end
 

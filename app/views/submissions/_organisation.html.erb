@@ -18,8 +18,8 @@
   <%= render "text_field", form: form, attribute: :help_needed, label: "We’re looking for people that can help us solve them or reach them", hint: "Tell us what help would make a difference." %>
 </fieldset>
 
-<fieldset><legend>Location, sector & priorities</legend>
+<fieldset><legend><%= @submission.persisted? ? "Location, sector & priorities" : "Location & sector" %></legend>
   <%= render "text_field", form: form, attribute: :location, label: "Where we work", rows: 2 %>
   <%= render "sectors", form: form, attribute: :sectors_past, label: "Our sectors" %>
-  <%= render "shared/priorities", form: form %>
+  <%= render "shared/priorities", form: form if @submission.persisted? %>
 </fieldset>
