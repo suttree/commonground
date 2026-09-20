@@ -21,6 +21,15 @@
         <filter id="paper-layer" x="-40%" y="-40%" width="190%" height="200%" color-interpolation-filters="sRGB">
           <feDropShadow dx="3" dy="5" stdDeviation="3" flood-color="#30291f" flood-opacity=".27"/>
         </filter>
+        <g id="red-petals">
+          <circle cx="195" cy="108" r="64"/>
+          <circle cx="270" cy="152" r="64"/>
+          <circle cx="270" cy="238" r="64"/>
+          <circle cx="195" cy="282" r="64"/>
+          <circle cx="120" cy="238" r="64"/>
+          <circle cx="120" cy="152" r="64"/>
+        </g>
+        <path id="blue-petals" d="M402 205c-58-50-104 12-58 58-73 9-63 87 3 86-30 65 42 99 69 40 34 61 103 18 66-40 68-9 63-86-8-86 39-57-25-108-72-58Z"/>
       </defs>
       <circle filter="url(#paper-raised)" cx="449" cy="95" r="49" fill="#f5ce43"/>
       <path d="M195 235v315M402 342v208" stroke="#20211f" stroke-width="12"/>
@@ -31,19 +40,17 @@
       <path filter="url(#paper-raised)" d="M402 438a92 92 0 0 0 92-92 92 92 0 0 0-92 92Z" fill="#f5ce43"/>
       <path d="m310 403 92 92a92 92 0 0 1-92-92Z" fill="#fff9ed" opacity=".17"/>
       <path d="m494 346-92 92a92 92 0 0 0 92-92Z" fill="#fff9ed" opacity=".2"/>
-      <g fill="#e74b32" filter="url(#paper-raised)">
-        <circle cx="195" cy="108" r="64"/>
-        <circle cx="270" cy="152" r="64"/>
-        <circle cx="270" cy="238" r="64"/>
-        <circle cx="195" cy="282" r="64"/>
-        <circle cx="120" cy="238" r="64"/>
-        <circle cx="120" cy="152" r="64"/>
-      </g>
-      <circle filter="url(#paper-layer)" cx="195" cy="195" r="57" fill="#f5ce43"/>
-      <circle filter="url(#paper-layer)" cx="195" cy="195" r="19" fill="#20211f"/>
-      <path filter="url(#paper-raised)" d="M402 205c-58-50-104 12-58 58-73 9-63 87 3 86-30 65 42 99 69 40 34 61 103 18 66-40 68-9 63-86-8-86 39-57-25-108-72-58Z" fill="#2d50bd"/>
-      <circle filter="url(#paper-layer)" cx="411" cy="300" r="39" fill="#f2eee3"/>
-      <circle filter="url(#paper-layer)" cx="411" cy="300" r="13" fill="#20211f"/>
+      <!-- Each smaller cutout sits above the darker paper beneath it. -->
+      <use href="#red-petals" fill="#ab3528" filter="url(#paper-raised)"/>
+      <use href="#red-petals" fill="#d94a34" transform="translate(195 190) scale(.86) translate(-195 -195)" filter="url(#paper-layer)"/>
+      <use href="#red-petals" fill="#ee6447" transform="translate(193 185) scale(.70) translate(-195 -195)" filter="url(#paper-layer)"/>
+      <circle filter="url(#paper-layer)" cx="191" cy="180" r="49" fill="#f5ce43"/>
+      <circle filter="url(#paper-layer)" cx="189" cy="177" r="17" fill="#20211f"/>
+      <use href="#blue-petals" fill="#203779" filter="url(#paper-raised)"/>
+      <use href="#blue-petals" fill="#2d50bd" transform="translate(409 296) scale(.84) translate(-411 -300)" filter="url(#paper-layer)"/>
+      <use href="#blue-petals" fill="#5575d3" transform="translate(407 291) scale(.67) translate(-411 -300)" filter="url(#paper-layer)"/>
+      <circle filter="url(#paper-layer)" cx="405" cy="287" r="32" fill="#f2eee3"/>
+      <circle filter="url(#paper-layer)" cx="403" cy="284" r="11" fill="#20211f"/>
       <path d="M40 550h480v40H40z" fill="#20211f"/>
       <path filter="url(#paper-raised)" d="M60 590a135 135 0 0 1 270 0" fill="#f5ce43"/>
       <path d="m358 74 22-22m-22 0 22 22" stroke="#20211f" stroke-width="3"/>
