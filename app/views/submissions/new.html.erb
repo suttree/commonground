@@ -28,7 +28,7 @@
     <% end %>
     <% if @submission.persisted? %>
       <div class="check-choice"><%= form.check_box :published %><%= form.label :published, "Publish my profile in the directory" %></div>
-      <p class="hint">Your profile and quiz answers will be public. Your email and private account details stay hidden.</p>
+      <p class="hint">Your profile and SDG priorities will be public. Your email and private account details stay hidden.</p>
     <% end %>
     <p class="hint">We'll ask before sharing your details for an introduction. Read <%= link_to "how we use your details", privacy_path %>.</p>
     <%= form.submit(@submission.persisted? ? "Save profile" : (current_account ? "Create profile" : "Continue to create account"), class: "button") %>

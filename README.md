@@ -108,7 +108,7 @@ Signup now leads to `/create-account`. `/login` sends a six-digit email code. Ea
 
 Codes expire in ten minutes, allow five attempts, and work once. They are stored as keyed hashes. Database-backed request limits allow three codes per email and twenty per IP in ten minutes. Sessions rotate at login, expire after thirty days, and clear at logout. Profile editing is scoped to the signed-in account. Email addresses, ownership, review status and admin notes cannot be changed through profile editing.
 
-`/people` and `/companies` list published profiles only, with combined name, location, sector and SDG goal filters and 24 results per page. Owners can publish or unpublish from the edit form. Company profiles now include location, sectors and SDG priorities. Completed quiz answers are visible when their profile is published. Quiz answers are saved to the account’s single profile.
+`/people` and `/companies` list published profiles only, with combined name, location, sector and SDG goal filters and 24 results per page. Owners can publish or unpublish from the edit form. Company profiles now include location, sectors and SDG priorities. Published profiles show the SDG priorities suggested by the quiz, without displaying individual quiz answers. Quiz answers are saved to the account’s single profile.
 
 ### Email setup
 

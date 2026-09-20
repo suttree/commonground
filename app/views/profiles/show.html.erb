@@ -58,14 +58,6 @@
       </aside>
     <% end %>
   </div>
-  <% if @profile.profile["quiz_completed_at"].present? %>
-    <section class="profile-section"><h2>SDG quiz answers</h2>
-      <% SdgQuiz::QUESTIONS.each_with_index do |question, index| %>
-        <% answer = @profile.profile.fetch("quiz_answers", {})[index.to_s] %>
-        <p><strong><%= question["question"] || question["title"] %></strong><br><%= answer.to_s.match?(/\A[0-3]\z/) ? question.fetch("options")[answer.to_i].fetch("label") : "Skipped" %></p>
-      <% end %>
-    </section>
-  <% end %>
   <% if (example = SdgQuiz::EXAMPLES[@profile.public_slug]) && !@profile.organisation? && @profile.profile["quiz_completed_at"].blank? %>
     <section class="profile-targets profile-section" id="quiz-answers">
       <p class="eyebrow">Example quiz answers</p>

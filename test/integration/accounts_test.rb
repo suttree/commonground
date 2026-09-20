@@ -73,7 +73,8 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_select "p", text: /saved to your profile/
     company.update!(published: true)
     get profile_path(company.public_slug)
-    assert_select "h2", text: "SDG quiz answers"
+    assert_select "h2", text: "SDG quiz answers", count: 0
+    assert_select ".profile-targets .eyebrow", text: "Sustainable development goals"
     assert_select "h2", text: "Problems I want to work on next"
   end
 
