@@ -335,8 +335,9 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .dashboard-directory-links li { border-top: 1px solid var(--line); padding: 1.25rem 0; }
 .dashboard-directory-links h3 { margin-bottom: .35rem; }
 .dashboard-directory-links p { color: var(--muted); font-size: 1rem; margin: 0; }
-.dashboard-priorities { margin-top: 2rem; border-top: 1px solid var(--line); padding-top: 1.5rem; }
-.dashboard-priorities ul { padding-left: 1.25rem; margin-bottom: 0; }
+.dashboard-priorities { padding-left: 1.25rem; margin: 1.5rem 0; }
+.dashboard-priorities li + li { margin-top: .75rem; }
+.dashboard-retake { font-size: 1rem; margin: 1.5rem 0 0; }
 .dashboard-signup { margin-top: 1.5rem; font-size: 1rem; }
 .dashboard-footer { margin-top: 2.5rem; }
 @media (max-width: 760px) {

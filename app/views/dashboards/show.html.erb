@@ -6,25 +6,23 @@
   </header>
   <div class="dashboard-columns">
     <section class="dashboard-quiz" aria-labelledby="dashboard-quiz-title">
-      <p class="eyebrow">Eight questions</p>
-      <h2 id="dashboard-quiz-title">Find the problems you want to work on</h2>
-      <p>Discover your Sustainable Development Goal priorities through a short quiz.</p>
-      <% if @profile %>
-        <% if @profile.profile["quiz_completed_at"].present? %>
-          <p>Your priorities are saved to your profile. You can revisit the quiz whenever you want to change your answers.</p>
-        <% else %>
-          <p>Your results will be saved to your profile.</p>
-        <% end %>
-        <%= link_to "Take the eight-question SDG quiz", quiz_path, class: "button" %>
+      <p class="eyebrow">Sustainable Development Goals</p>
+      <% if @profile&.profile&.fetch("quiz_completed_at", nil).present? %>
+        <h2 id="dashboard-quiz-title">Your current priorities</h2>
         <% if Array(@profile.target_ids).any? %>
-          <div class="dashboard-priorities">
-            <h3>Your current priorities</h3>
-            <ul><% @profile.target_ids.each do |id| %><li><%= link_to "#{id}: #{SdgQuiz::LABELS.fetch(id)}", sdg_target_path(id) %></li><% end %></ul>
-          </div>
+          <ul class="dashboard-priorities"><% @profile.target_ids.each do |id| %><li><%= link_to "#{id}: #{SdgQuiz::LABELS.fetch(id)}", sdg_target_path(id) %></li><% end %></ul>
+        <% else %>
+          <p>You're still exploring which problems you want to work on.</p>
         <% end %>
+        <p class="dashboard-retake"><%= link_to "Retake the quiz", quiz_path(question: 0) %></p>
       <% else %>
+        <h2 id="dashboard-quiz-title">Find the problems you want to work on</h2>
+        <p>Discover your Sustainable Development Goal priorities through a short quiz.</p>
+        <% if @profile %><p>Your results will be saved to your profile.</p><% end %>
         <%= link_to "Take the eight-question SDG quiz", quiz_path, class: "button" %>
-        <p class="dashboard-signup">Create a <%= link_to "personal profile", new_person_path %> or <%= link_to "company profile", new_organisation_path %> to save your results.</p>
+        <% unless @profile %>
+          <p class="dashboard-signup">Create a <%= link_to "personal profile", new_person_path %> or <%= link_to "company profile", new_organisation_path %> to save your results.</p>
+        <% end %>
       <% end %>
     </section>
     <section class="dashboard-directories" aria-labelledby="dashboard-browse-title">
