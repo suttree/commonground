@@ -51,7 +51,7 @@ class PilotTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_response :success
     assert_select "h1", text: /Create your account/
-    assert_select "input[name=email][value='alex@example.test'][readonly]"
+    assert_select "input[name=email][value='alex@example.test']:not([readonly])"
   end
 
   test "organisation brief is stored and can be reviewed and updated privately" do

@@ -281,12 +281,33 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_redirected_to create_account_path
     post login_path, params: { signup: "1", email: "different@example.test" }
     assert_redirected_to verify_login_path
-    assert_equal [ "signup@example.test" ], ActionMailer::Base.deliveries.last.to
+    assert_equal [ "different@example.test" ], ActionMailer::Base.deliveries.last.to
     pending = Submission.order(:id).last
     code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
     post verify_login_path, params: { code: code }
     assert_redirected_to dashboard_path
-    assert_equal pending.id, Account.find_by!(email: "signup@example.test").submission.id
+    assert_equal "different@example.test", pending.reload.email
+    assert_equal pending.id, Account.find_by!(email: "different@example.test").submission.id
     assert_nil older.reload.account_id
+  end
+  test "signup email corrections validate and preserve the form" do
+    post people_path, params: { submission: { name: "Alex", email: "typo@example.test", purpose: "Help", experience: "Work", consent: "1" } }
+    pending = Submission.last
+    get create_account_path
+    assert_select "input[name=email][readonly]", count: 0
+    assert_no_difference "LoginCode.count" do
+      post login_path, params: { signup: "1", email: "invalid" }
+    end
+    assert_response :unprocessable_entity
+    assert_select "input[name=email][value=invalid]"
+    assert_select "input[name=signup][value='1']"
+    assert_equal "typo@example.test", pending.reload.email
+    owned = profile(email: "existing@example.test", account: Account.create!(email: "existing@example.test"))
+    assert_no_difference "LoginCode.count" do
+      post login_path, params: { signup: "1", email: owned.email }
+    end
+    assert_response :unprocessable_entity
+    assert_equal "typo@example.test", pending.reload.email
+    assert_equal owned.id, owned.account.submission.id
   end
 end
