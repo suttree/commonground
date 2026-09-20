@@ -7,6 +7,9 @@
     <div class="field"><%= form.label :location, "Location" %><%= form.search_field :location, value: @location %></div>
     <div class="field"><%= form.label :sector, "Sector" %><%= form.select :sector, options_for_select(ProfileOptions::SECTORS, @sector), include_blank: "All sectors" %></div>
     <div class="field"><%= form.label :goal, "SDG goal" %><%= form.select :goal, options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("id")] }, @goal), include_blank: "All goals" %></div>
+    <% if @target.present? %>
+      <div class="field"><%= form.label :target, "SDG target" %><%= form.select :target, options_for_select(SdgDirectory::LABELS.map { |id, label| ["#{id}: #{label}", id] }, @target), include_blank: "All targets" %></div>
+    <% end %>
     <%= form.submit "Search", class: "button" %>
     <%= link_to "Clear filters", @company ? companies_path : people_path %>
   <% end %>
@@ -29,7 +32,7 @@
   </div>
   <% if @profiles.empty? %><p>No profiles match. Try another name or remove a filter.</p><% end %>
   <nav aria-label="Directory pages">
-    <% if @page > 1 %><%= link_to "Previous", url_for(q: @query, location: @location, sector: @sector, goal: @goal, page: @page - 1) %><% end %>
-    <% if @page * 24 < @count %><%= link_to "Next", url_for(q: @query, location: @location, sector: @sector, goal: @goal, page: @page + 1) %><% end %>
+    <% if @page > 1 %><%= link_to "Previous", url_for(q: @query, location: @location, sector: @sector, goal: @goal, target: @target, page: @page - 1) %><% end %>
+    <% if @page * 24 < @count %><%= link_to "Next", url_for(q: @query, location: @location, sector: @sector, goal: @goal, target: @target, page: @page + 1) %><% end %>
   </nav>
 </div>

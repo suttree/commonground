@@ -15,6 +15,7 @@ class DirectoriesController < ApplicationController
     @location = params[:location].to_s.strip.first(200)
     @sector = params[:sector].to_s
     @goal = params[:goal].to_s
+    @target = params[:target].to_s
     profiles = Submission.published.where(kind: kind)
     name_column = @company ? :organisation_name : :name
     profiles = profiles.where("#{name_column} LIKE ?", "%#{Submission.sanitize_sql_like(@query)}%") if @query.present?
@@ -24,6 +25,9 @@ class DirectoriesController < ApplicationController
     end
     if @goal.present?
       profiles = profiles.where("EXISTS (SELECT 1 FROM json_each(submissions.profile, '$.target_ids') WHERE value LIKE ?)", "#{Submission.sanitize_sql_like(@goal)}.%")
+    end
+    if @target.present?
+      profiles = profiles.where("EXISTS (SELECT 1 FROM json_each(submissions.profile, '$.target_ids') WHERE value = ?)", @target)
     end
     @count = profiles.count
     @page = [ params[:page].to_i, 1 ].max

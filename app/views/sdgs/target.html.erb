@@ -5,6 +5,7 @@
     <p class="eyebrow">Target <%= @target.fetch("id") %> · <%= @goal.fetch("name") %></p>
     <h1><%= SdgDirectory::LABELS.fetch(@target.fetch("id")) %></h1>
     <p class="small-note">Commonbound's short title for this target.</p>
+    <p><%= link_to "Find people who selected this target", people_path(target: @target.fetch("id")), class: "button" %></p>
   </header>
   <section class="sdg-full-target"><h2>Full target wording</h2><p><%= @target.fetch("text") %></p></section>
   <section class="sdg-context"><h2>Part of goal <%= @goal.fetch("id") %></h2><p><%= @guide.fetch("summary") %></p><%= link_to "Explore #{@goal.fetch('name').downcase}", sdg_goal_path(@goal.fetch("id")) %></section>

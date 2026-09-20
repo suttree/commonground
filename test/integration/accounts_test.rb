@@ -107,6 +107,19 @@ class AccountsTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "target searches match the exact selected target and keep other filters" do
+    matching = profile(published: true, target_ids: [ "11.2" ], location: "Bristol")
+    profile(email: "different@example.test", published: true, target_ids: [ "11.7" ])
+    profile(email: "private@example.test", target_ids: [ "11.2" ])
+    get people_path(target: "11.2", location: "Bristol")
+    assert_response :success
+    assert_select ".directory-card", count: 1
+    assert_select ".directory-card a[href='#{profile_path(matching.public_slug)}']"
+    assert_select "select[name=target] option[selected][value='11.2']"
+    get people_path(target: "11.2", location: "London")
+    assert_select ".directory-card", count: 0
+  end
+
   test "company profile edits retain repeaters and apply sector and priority changes" do
     company = profile(kind: "organisation")
     login(company.email)
