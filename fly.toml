@@ -9,6 +9,9 @@ primary_region = 'lhr'
   RAILS_ENV = 'production'
   DATABASE_PATH = '/data/production.sqlite3'
   RAILS_MAX_THREADS = '3'
+  SMTP_ADDRESS = 'email-smtp.eu-west-2.amazonaws.com'
+  SMTP_PORT = '587'
+  SMTP_DOMAIN = 'commonground-pilot.fly.dev'
 
 [[mounts]]
   source = 'data'

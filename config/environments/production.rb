@@ -62,7 +62,7 @@ Rails.application.configure do
     port: ENV.fetch("SMTP_PORT", "587").to_i,
     domain: ENV.fetch("SMTP_DOMAIN", "commonbound.org"),
     user_name: ENV["SMTP_USERNAME"], password: ENV["SMTP_PASSWORD"],
-    authentication: :plain, enable_starttls_auto: true,
+    authentication: :plain, enable_starttls: :always, openssl_verify_mode: "peer",
     open_timeout: 10, read_timeout: 10
   }
 

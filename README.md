@@ -16,9 +16,9 @@ Open http://localhost:3000. The public site needs no account. It contains the la
 
 ## Review applications
 
-Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the server environment to enable `/admin`. If either is absent, admin access is disabled. The browser asks for HTTP Basic credentials; there are no user accounts, registration or password-reset flows.
+Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the server environment to enable `/admin`. If either is absent, admin access is disabled. The admin area uses HTTP Basic credentials. Applicant accounts use the separate email-code login flow.
 
-The admin area lists people and organisations, filters by type and status, and shows their full answers. Reviewers can update status and add private notes. All introductions and follow-up emails are handled manually. The app sends no email.
+The admin area lists people and organisations, filters by type and status, and shows their full answers. Reviewers can update status and add private notes. All introductions and follow-up emails are handled manually. The app sends transactional login codes.
 
 Production credentials are kept in Fly secrets. The initial deployment also has a local, ignored `.env.production` file with restrictive file permissions. Do not commit or share that file. It contains the admin credentials and Rails session secret.
 
@@ -117,3 +117,14 @@ Production uses SMTP. Set `SMTP_ADDRESS`, `SMTP_PORT` (defaults to 587), `SMTP_U
 Development writes messages to `tmp/mail` without sending them. Tests use Action Mailer's test delivery. Restart the development server after changing mail settings. Live delivery must be checked with the configured provider before opening account signup to users.
 
 Login-code rows retain request timestamps and IPs for throttling. Run `bin/rails accounts:prune_codes` regularly to remove rows older than one day.
+
+
+### Amazon SES
+
+The Fly configuration targets SES in London, `eu-west-2`, at `email-smtp.eu-west-2.amazonaws.com:587`. SMTP requires STARTTLS and verifies the server certificate. The sender identity and SMTP credentials must belong to the same SES region.
+
+Store `SMTP_USERNAME`, `SMTP_PASSWORD`, and `MAIL_FROM` as Fly secrets. Use SES SMTP credentials rather than the AWS console password or an unconverted AWS secret access key. Keep the SMTP user limited to sending email for the verified sender identity. Do not put credentials in `fly.toml` or Git.
+
+Before enabling public signup, verify the sender identity, configure the domain's DKIM records when using a domain identity, and confirm SES production access in London. Sandbox accounts can send only to verified recipients or the SES mailbox simulator. Verify a real login-code delivery after configuring the secrets and deploying.
+
+References: [SES SMTP credentials](https://docs.aws.amazon.com/ses/latest/dg/smtp-credentials.html), [SES endpoints](https://docs.aws.amazon.com/general/latest/gr/ses.html), and [production access](https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html).
