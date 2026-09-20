@@ -21,7 +21,9 @@ class ProfilesController < ApplicationController
   private
 
   def find_profile
-    @profile = Submission.published.find_by!(public_slug: params[:slug])
+    profiles = Submission.published
+    profiles = profiles.or(Submission.where(account_id: current_account.id)) if current_account
+    @profile = profiles.find_by!(public_slug: params[:slug])
     response.headers["Cache-Control"] = "no-store"
   end
 end

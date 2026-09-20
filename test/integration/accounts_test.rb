@@ -28,7 +28,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_nil other.reload.account_id
     get dashboard_path
     assert_response :success
-    [ people_path, companies_path, sdgs_path, quiz_path, edit_account_profile_path(profile_id: owned.id) ].each { |path| assert_select "a[href='#{path}']" }
+    [ people_path, companies_path, sdgs_path, quiz_path, edit_account_profile_path ].each { |path| assert_select "a[href='#{path}']" }
     get dashboard_path(profile_id: other.id)
     assert_response :not_found
     delete logout_path
@@ -42,7 +42,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
     get edit_account_profile_path
     assert_response :success
     patch account_profile_path, params: { submission: { name: "Updated", published: "1", email: "attacker@example.test", account_id: 1234, notes: "Injected", status: "Introduced" } }
-    assert_redirected_to dashboard_path(profile_id: owned.id)
+    assert_redirected_to dashboard_path
     owned.reload
     assert_equal "Updated", owned.name
     assert_equal "owner@example.test", owned.email
@@ -53,27 +53,24 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_no_match owned.email, response.body
     patch account_profile_path, params: { submission: { published: "0" } }
     get profile_path(owned.public_slug)
+    assert_response :success
+    delete logout_path
+    get profile_path(owned.public_slug)
     assert_response :not_found
   end
 
-  test "quiz saves to active company or person without leaking between profiles" do
-    person = profile
+  test "quiz saves to the single company profile" do
     company = profile(kind: "organisation")
-    login(person.email)
-    get dashboard_path(profile_id: company.id)
+    other = profile(email: "other@example.test")
+    login(company.email)
+    get dashboard_path
     assert_select ".eyebrow", text: "Company dashboard"
     8.times { |index| post quiz_path, params: { question: index, answer: "1" } }
     assert_equal 8, company.reload.profile.fetch("quiz_answers").size
     assert_equal SdgQuiz.matches((0..7).to_h { |index| [ index.to_s, "1" ] }).keys, company.target_ids
-    assert_nil person.reload.target_ids
+    assert_nil other.reload.target_ids
     get quiz_path
     assert_select "p", text: /saved to your profile/
-    get dashboard_path(profile_id: person.id)
-    get quiz_path
-    assert_select "input[name=question][value='0']"
-    8.times { |index| post quiz_path, params: { question: index, answer: "0" } }
-    assert_equal 8, person.reload.profile.fetch("quiz_answers").size
-    assert_equal "1", company.reload.profile.fetch("quiz_answers")["0"]
     company.update!(published: true)
     get profile_path(company.public_slug)
     assert_select "h2", text: "SDG quiz answers"
@@ -119,7 +116,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_select "textarea#submission_products_1_name"
     assert_equal "Orchard", company.reload.organisation_name
     patch account_profile_path, params: { submission: { organisation_name: "New orchard", target_ids: [ "12.3" ], sectors_past: [ ProfileOptions::SECTORS.first ] } }
-    assert_redirected_to dashboard_path(profile_id: company.id)
+    assert_redirected_to dashboard_path
     assert_equal [ "12.3" ], company.reload.target_ids
   end
   test "expired sessions require login and codes cannot be replayed" do
@@ -176,26 +173,20 @@ class AccountsTest < ActionDispatch::IntegrationTest
     owned.update!(projects: [ project.merge("image_id" => image.id) ])
     login(owned.email)
     patch account_profile_path, params: { submission: { name: "Updated", projects: [ project.merge("image_id" => 999999) ] } }
-    assert_redirected_to dashboard_path(profile_id: owned.id)
+    assert_redirected_to dashboard_path
     assert_equal image.id, owned.reload.projects.first["image_id"]
     patch account_profile_path, params: { add_section: "skills", submission: { projects: [ project.merge("remove_image" => "1") ] } }
     assert_response :success
     assert_select "input[type=hidden][name='submission[projects][][remove_image]'][value='1']"
     patch account_profile_path, params: { submission: { projects: [ project.merge("remove_image" => "1") ] } }
-    assert_redirected_to dashboard_path(profile_id: owned.id)
+    assert_redirected_to dashboard_path
     assert_nil owned.reload.projects.first["image_id"]
     assert_not PortfolioImage.exists?(image.id)
   end
-  test "editing another tab's profile remains scoped to the original owned profile" do
+  test "profile and quiz requests cannot target someone else's profile" do
     person = profile
-    company = profile(kind: "organisation")
     other = profile(email: "other@example.test")
     login(person.email)
-    get dashboard_path(profile_id: company.id)
-    patch account_profile_path, params: { profile_id: person.id, submission: { name: "Personal edit" } }
-    assert_redirected_to dashboard_path(profile_id: person.id)
-    assert_equal "Personal edit", person.reload.name
-    assert_equal "Alex", company.reload.name
     patch account_profile_path, params: { profile_id: other.id, submission: { name: "Not allowed" } }
     assert_response :not_found
     assert_equal "Alex", other.reload.name
@@ -203,11 +194,98 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test "account creation verifies the submitted email even if the request is changed" do
+  test "login claims only one legacy profile and never replaces it" do
+    first = profile
+    second = profile(kind: "organisation")
+    login(first.email)
+    assert first.reload.account_id
+    assert_nil second.reload.account_id
+    delete logout_path
+    login(first.email)
+    assert_equal first.id, Account.find_by!(email: first.email).submission.id
+    assert_nil second.reload.account_id
+  end
+
+  test "existing owners cannot create additional personal or company profiles" do
+    owned = profile
+    login(owned.email)
+    [ new_person_path, new_organisation_path ].each do |path|
+      get path
+      assert_redirected_to edit_account_profile_path
+    end
+    [ people_path, organisations_path ].each do |path|
+      assert_no_difference "Submission.count" do
+        post path, params: { submission: { name: "Duplicate", email: owned.email } }
+      end
+      assert_redirected_to edit_account_profile_path
+    end
+    get dashboard_path
+    assert_select "a", text: "Edit profile"
+    assert_select "a[href='#{profile_path(owned.reload.public_slug)}']", text: "View profile"
+    assert_select "a[href='#{new_person_path}']", count: 0
+    assert_select "a[href='#{new_organisation_path}']", count: 0
+    delete logout_path
+    assert_no_difference "Submission.count" do
+      post people_path, params: { submission: { name: "Duplicate", email: owned.email } }
+    end
+    assert_redirected_to login_path
+  end
+
+  test "an account without a profile creates its one profile using its verified email" do
+    login("new@example.test")
+    post people_path, params: { submission: { name: "New owner", email: "other@example.test", purpose: "Help", experience: "Work", consent: "1" } }
+    assert_redirected_to dashboard_path
+    owned = Account.find_by!(email: "new@example.test").submission
+    assert_equal "new@example.test", owned.email
+    assert_equal "New owner", owned.name
+  end
+
+  test "private previews and their images are visible only to the owner" do
+    owned = profile
+    image = PortfolioImage.create!(submission: owned, upload_owner: "test", content_type: "image/png", data: "private image")
+    get profile_path(owned.public_slug)
+    assert_response :not_found
+    login(owned.email)
+    get profile_path(owned.public_slug)
+    assert_response :success
+    assert_select "p", text: /Only you can see this preview/
+    assert_no_match owned.email, response.body
+    get portfolio_image_path(image)
+    assert_response :success
+    delete logout_path
+    login("stranger@example.test")
+    get profile_path(owned.public_slug)
+    assert_response :not_found
+    get portfolio_image_path(image)
+    assert_response :not_found
+    get people_path
+    assert_select ".directory-card", count: 0
+  end
+
+  test "account ownership is unique in both validation and the database" do
+    owned = profile
+    login(owned.email)
+    duplicate = profile(email: "duplicate@example.test")
+    duplicate.account_id = owned.reload.account_id
+    assert_not duplicate.valid?
+    assert duplicate.errors[:account_id].any?
+    assert_raises(ActiveRecord::RecordNotUnique) do
+      duplicate.update_columns(account_id: owned.account_id)
+    end
+  end
+
+  test "account creation verifies the submitted email and claims the pending profile" do
+    older = profile(email: "signup@example.test")
     post people_path, params: { submission: { name: "Alex", email: "signup@example.test", purpose: "Help communities", experience: "Local work", consent: "1" } }
     assert_redirected_to create_account_path
     post login_path, params: { signup: "1", email: "different@example.test" }
     assert_redirected_to verify_login_path
     assert_equal [ "signup@example.test" ], ActionMailer::Base.deliveries.last.to
+    pending = Submission.order(:id).last
+    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    post verify_login_path, params: { code: code }
+    assert_redirected_to dashboard_path
+    assert_equal pending.id, Account.find_by!(email: "signup@example.test").submission.id
+    assert_nil older.reload.account_id
   end
 end

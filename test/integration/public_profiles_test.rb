@@ -36,8 +36,8 @@ class PublicProfilesTest < ActionDispatch::IntegrationTest
 
   test "only explicitly published profiles are public and slugs stay stable" do
     entry = profile
-    assert_nil entry.public_slug
-    get profile_path(entry.id)
+    assert entry.public_slug.present?
+    get profile_path(entry.public_slug)
     assert_response :not_found
     entry.update!(published: true)
     assert_match(/\Aduncan-gough-[a-f0-9]{12}\z/, entry.public_slug)
@@ -64,7 +64,9 @@ class PublicProfilesTest < ActionDispatch::IntegrationTest
       experience: "A project", consent: "1", published: true, public_slug: "injected" } }
     assert_redirected_to create_account_path
     assert_not Submission.last.published?
-    assert_nil Submission.last.public_slug
+    assert_not_equal "injected", Submission.last.public_slug
+    get profile_path(Submission.last.public_slug)
+    assert_response :not_found
   end
 
   test "publication requires authenticated admin access" do

@@ -104,11 +104,11 @@ Quiz results offer three next steps for Nika: pitch a problem, suggest a Zoom co
 
 ## Accounts and directories
 
-Signup now leads to `/create-account`. `/login` sends a six-digit email code. Verification links unclaimed submissions with the same normalized email to an account. An email can manage personal and company profiles; `/dashboard?profile_id=ID` switches between profiles owned by that account. Existing applicants can log in with their original email to claim their profiles.
+Signup now leads to `/create-account`. `/login` sends a six-digit email code. Each account owns one personal or company profile, enforced by a unique database index. Verification claims the pending signup profile with the same normalized email, or the earliest unclaimed profile for an existing applicant. It never replaces an account’s existing profile. Signed-in owners who open another signup form go to their profile editor. The dashboard links to edit and view the profile; owners can preview a private profile and its portfolio without publishing it.
 
 Codes expire in ten minutes, allow five attempts, and work once. They are stored as keyed hashes. Database-backed request limits allow three codes per email and twenty per IP in ten minutes. Sessions rotate at login, expire after thirty days, and clear at logout. Profile editing is scoped to the signed-in account. Email addresses, ownership, review status and admin notes cannot be changed through profile editing.
 
-`/people` and `/companies` list published profiles only, with combined name, location, sector and SDG goal filters and 24 results per page. Owners can publish or unpublish from the edit form. Company profiles now include location, sectors and SDG priorities. Completed quiz answers are visible when their profile is published. Switching profiles clears the quiz draft from the browser session.
+`/people` and `/companies` list published profiles only, with combined name, location, sector and SDG goal filters and 24 results per page. Owners can publish or unpublish from the edit form. Company profiles now include location, sectors and SDG priorities. Completed quiz answers are visible when their profile is published. Quiz answers are saved to the account’s single profile.
 
 ### Email setup
 

@@ -1,5 +1,6 @@
 class Submission < ApplicationRecord
   belongs_to :account, optional: true
+  validates :account_id, uniqueness: true, allow_nil: true
 
   KINDS = %w[person organisation].freeze
   WORKING_STYLES = [ "Figuring things out", "Improving something established", "Both" ].freeze
@@ -55,7 +56,7 @@ class Submission < ApplicationRecord
 
   before_validation :clean_profile_collections, if: :structured_profile?
   before_create { self.consented_at = Time.current }
-  before_validation :assign_public_slug, if: :published?
+  before_validation :assign_public_slug
 
   validates :public_slug, uniqueness: true, allow_nil: true
   validates :public_slug, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/ }, allow_nil: true

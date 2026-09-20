@@ -1,10 +1,8 @@
 class DashboardsController < ApplicationController
   before_action :require_account
+  before_action :check_profile_id
 
   def show
-    @profiles = current_account.submissions.order(:id)
-    @profile = params[:profile_id].present? ? @profiles.find(params[:profile_id]) : @profiles.first
-    session.delete(:quiz_answers) if session[:active_profile_id] != @profile&.id
-    session[:active_profile_id] = @profile&.id
+    @profile = current_profile
   end
 end

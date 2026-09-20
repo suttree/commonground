@@ -50,7 +50,13 @@ class SessionsController < ApplicationController
       return render :verify, status: :unprocessable_entity
     end
     account = Account.find_or_create_by!(email: challenge.email)
-    Submission.where(account_id: nil, email: account.email).update_all(account_id: account.id)
+    account.with_lock do
+      unless account.submission
+        candidates = Submission.where(account_id: nil, email: account.email)
+        profile = candidates.find_by(id: session[:pending_submission_id]) || candidates.order(:id).first
+        profile&.update!(account: account)
+      end
+    end
     reset_session
     session[:account_id] = account.id
     session[:authenticated_at] = Time.current.to_i

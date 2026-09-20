@@ -1,5 +1,9 @@
 <% content_for :title, @profile.display_name %>
 <article class="public-profile">
+  <% if current_profile == @profile %>
+    <p><%= link_to "Back to dashboard", dashboard_path %> · <%= link_to "Edit profile", edit_account_profile_path %></p>
+    <% unless @profile.published? %><p class="small-note">Only you can see this preview. Publish your profile from the edit page to make it public.</p><% end %>
+  <% end %>
   <header class="profile-opening">
     <div>
       <p class="eyebrow"><%= @profile.organisation? ? "Organisation" : "Personal profile" %></p>

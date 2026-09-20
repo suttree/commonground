@@ -6,12 +6,21 @@ class SubmissionsController < ApplicationController
 
   before_action :require_account, only: [ :edit, :update ]
 
+  before_action :redirect_existing_profile, only: [ :new, :create ]
+  before_action :check_profile_id, only: [ :edit, :update ]
+
   def new
-    @submission = Submission.new(kind: submission_kind, profile_version: 2)
+    @submission = Submission.new(kind: submission_kind, profile_version: 2, email: current_account&.email)
   end
 
   def create
     @submission = Submission.new(submission_params.merge(kind: submission_kind, profile_version: 2))
+    if current_account
+      @submission.account = current_account
+      @submission.email = current_account.email
+    elsif Account.joins(:submission).exists?(email: @submission.email)
+      return redirect_to login_path, notice: "Log in to edit your existing profile.", status: :see_other
+    end
     if @submission.website_confirmation.present?
       redirect_to thanks_path, status: :see_other
       return
@@ -40,21 +49,25 @@ class SubmissionsController < ApplicationController
         @submission.save!
         @draft_images.each_value { |image| image.update!(submission: @submission) }
       end
-      session[:pending_submission_id] = @submission.id
-      redirect_to create_account_path, status: :see_other
+      if current_account
+        redirect_to dashboard_path, status: :see_other
+      else
+        session[:pending_submission_id] = @submission.id
+        redirect_to create_account_path, status: :see_other
+      end
     else
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @submission = params[:profile_id].present? ? current_account.submissions.find(params[:profile_id]) : current_profile
+    @submission = current_profile
     return redirect_to new_person_path unless @submission
     render :new
   end
 
   def update
-    @submission = params[:profile_id].present? ? current_account.submissions.find(params[:profile_id]) : current_profile
+    @submission = current_profile
     return head :not_found unless @submission
     existing_projects = @submission.profile_entries("projects").deep_dup
     @submission.assign_attributes(submission_params.except(:email, :consent))
@@ -80,13 +93,17 @@ class SubmissionsController < ApplicationController
         kept_images = @submission.profile_entries("projects").filter_map { |row| row["image_id"] }
         @submission.portfolio_images.where.not(id: kept_images).destroy_all
       end
-      redirect_to dashboard_path(profile_id: @submission.id), notice: "Your profile has been updated.", status: :see_other
+      redirect_to dashboard_path, notice: "Your profile has been updated.", status: :see_other
     else
       render :new, status: :unprocessable_entity
     end
   end
 
   private
+
+  def redirect_existing_profile
+    redirect_to edit_account_profile_path, notice: "You already have a profile. You can edit it here.", status: :see_other if current_profile
+  end
 
   def prepare_project_images
     @image_errors = []

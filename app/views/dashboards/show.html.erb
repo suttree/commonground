@@ -2,13 +2,10 @@
 <div class="form-page narrow">
   <p class="eyebrow"><%= @profile&.organisation? ? "Company dashboard" : "Your dashboard" %></p>
   <h1><%= @profile ? @profile.display_name : "Welcome to Commonbound" %></h1>
-  <% if @profiles.size > 1 %>
-    <nav aria-label="Your profiles"><ul><% @profiles.each do |profile| %><li><%= link_to profile.display_name, dashboard_path(profile_id: profile.id), aria: { current: profile == @profile ? "page" : nil } %></li><% end %></ul></nav>
-  <% end %>
   <% if @profile %>
-    <p><%= link_to "Edit profile", edit_account_profile_path(profile_id: @profile.id), class: "button" %></p>
-    <p><%= @profile.published? ? "Your profile is listed in the directory." : "Your profile is private. You can publish it when you edit your profile." %>
-    <% if @profile.published? %><%= link_to "View public profile", profile_path(@profile.public_slug) %><% end %></p>
+    <p><%= link_to "Edit profile", edit_account_profile_path, class: "button" %>
+      <%= link_to "View profile", profile_path(@profile.public_slug), class: "button secondary" %></p>
+    <p><%= @profile.published? ? "Your profile is listed in the directory." : "Your profile is private. View it to see how it will look when published." %></p>
     <section class="profile-section"><h2>Your SDG priorities</h2>
       <p>Answer eight questions to find problems you want to work on. Completing the quiz saves your answers and suggested priorities to this profile.</p>
       <% if @profile.profile["quiz_completed_at"].present? %><p>You have completed the quiz. You can review or change your answers.</p><% end %>
@@ -16,13 +13,13 @@
       <% if Array(@profile.target_ids).any? %><ul><% @profile.target_ids.each do |id| %><li><%= link_to "#{id}: #{SdgQuiz::LABELS.fetch(id)}", sdg_target_path(id) %></li><% end %></ul><% end %>
     </section>
   <% else %>
-    <p>Create a profile to save your answers and describe the work you want to do.</p>
+    <p>Create a personal or company profile to save your answers and describe the work you want to do.</p>
+    <p><%= link_to "Create a personal profile", new_person_path %> · <%= link_to "Create a company profile", new_organisation_path %></p>
   <% end %>
   <section class="profile-section"><h2>Browse Commonbound</h2><ul>
     <li><%= link_to "People directory", people_path %></li>
     <li><%= link_to "Company directory", companies_path %></li>
     <li><%= link_to "Sustainable Development Goals directory", sdgs_path %></li>
   </ul></section>
-  <p><%= link_to "Add a personal profile", new_person_path %> · <%= link_to "Add a company profile", new_organisation_path %></p>
   <%= button_to "Log out", logout_path, method: :delete, class: "button secondary" %>
 </div>

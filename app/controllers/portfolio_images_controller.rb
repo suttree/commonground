@@ -1,6 +1,8 @@
 class PortfolioImagesController < ApplicationController
   def show
-    image = PortfolioImage.joins(:submission).where(submissions: { published: true }).find(params[:id])
+    profiles = Submission.published
+    profiles = profiles.or(Submission.where(account_id: current_account.id)) if current_account
+    image = PortfolioImage.where(submission_id: profiles.select(:id)).find(params[:id])
     deliver(image)
   end
 

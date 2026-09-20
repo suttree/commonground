@@ -66,10 +66,7 @@ class QuizController < ApplicationController
   private
 
   def select_profile
-    if current_account && params[:profile_id].present?
-      profile = current_account.submissions.find(params[:profile_id])
-      session[:active_profile_id] = profile.id
-    end
+    check_profile_id if current_account
     if session[:quiz_profile_id] != current_profile&.id
       session.delete(:quiz_answers)
       session[:quiz_profile_id] = current_profile&.id
