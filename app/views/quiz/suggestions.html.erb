@@ -37,4 +37,7 @@
   <div class="actions"><%= link_to "Review my answers", quiz_path(question: 0, profile_id: current_profile&.id), class: "button secondary" %></div>
   <%= form_with url: quiz_path do %><%= hidden_field_tag :profile_id, current_profile.id if current_profile %><button class="quiz-restart" name="restart" value="1">Start again</button><% end %>
   <p class="small-note quiz-footnote"><%= current_profile ? "Your answers and suggested priorities are saved to your profile." : "Log in before taking the quiz to save your answers to your profile." %></p>
+  <% if current_profile %>
+    <div class="actions"><%= link_to "Review profile", profile_path(current_profile.public_slug), class: "button" %></div>
+  <% end %>
 </div>
