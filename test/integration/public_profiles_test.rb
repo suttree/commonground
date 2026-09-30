@@ -79,6 +79,6 @@ class PublicProfilesTest < ActionDispatch::IntegrationTest
     entry.update_columns(published: true, public_slug: "unsafe-test", website: "javascript:alert(1)", purpose: '<script>alert(1)</script><img src=x onerror="alert(1)">')
     get profile_path(entry.public_slug)
     assert_response :success
-    assert_select "script, [onerror], a[href^='javascript:']", count: 0
+    assert_select "script:not([src='https://scripts.withcabin.com/hello.js']), [onerror], a[href^='javascript:']", count: 0
   end
 end

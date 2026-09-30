@@ -27,14 +27,17 @@ class PilotTest < ActionDispatch::IntegrationTest
     { "HTTP_AUTHORIZATION" => ActionController::HttpAuthentication::Basic.encode_credentials("test-admin", "test-password-for-this-suite") }
   end
 
-  test "public pages use semantic HTML without scripts or account requirements" do
+  test "public pages use semantic HTML and load only Cabin analytics" do
     [ root_path, new_person_path, new_organisation_path, privacy_path, thanks_path ].each do |path|
       get path
       assert_response :success
       assert_select "html[lang=en]"
       assert_select "main", count: 1
       assert_select "h1", count: 1
-      assert_select "script", count: 0
+      assert_select "script", count: 1
+      assert_select "script[src='https://scripts.withcabin.com/hello.js'][async][defer]", count: 1
+      assert_includes response.headers["Content-Security-Policy"], "script-src https://scripts.withcabin.com"
+      assert_includes response.headers["Content-Security-Policy"], "connect-src 'self' https://ping.withcabin.com"
     end
   end
 
@@ -141,7 +144,8 @@ class PilotTest < ActionDispatch::IntegrationTest
     entry = Submission.create!(answers.merge(kind: "person", purpose: '<script>alert("bad")</script>'))
     get admin_submission_path(entry), headers: admin_headers
     assert_response :success
-    assert_select "script", count: 0
+    assert_select "script", count: 1
+    assert_select "script[src='https://scripts.withcabin.com/hello.js'][async][defer]", count: 1
   end
 
   test "a browser session can navigate and submit with CSRF protection enabled" do

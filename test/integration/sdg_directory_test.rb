@@ -36,7 +36,8 @@ class SdgDirectoryTest < ActionDispatch::IntegrationTest
     get sdgs_path(q: "nothing-matches-this")
     assert_select ".empty-state", text: /No targets match/
     get sdgs_path(q: "<script>alert(1)</script>")
-    assert_select "script", count: 0
+    assert_select "script", count: 1
+    assert_select "script[src='https://scripts.withcabin.com/hello.js'][async][defer]", count: 1
   end
 
   test "legacy URLs redirect to the new directory and preserve searches" do
