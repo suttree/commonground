@@ -36,11 +36,12 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_redirected_to login_path
   end
 
-  test "profile edit preserves private fields and controls publication" do
+  test "profile edit preserves private fields and cannot change publication" do
     owned = profile(notes: "Private note")
     login(owned.email)
     get edit_account_profile_path
     assert_response :success
+    assert_select "input[name='submission[published]']", count: 0
     patch account_profile_path, params: { submission: { name: "Updated", published: "1", email: "attacker@example.test", account_id: 1234, notes: "Injected", status: "Introduced" } }
     assert_redirected_to dashboard_path
     owned.reload
@@ -52,11 +53,12 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_no_match owned.email, response.body
     patch account_profile_path, params: { submission: { published: "0" } }
+    assert owned.reload.published?
     get profile_path(owned.public_slug)
     assert_response :success
     delete logout_path
     get profile_path(owned.public_slug)
-    assert_response :not_found
+    assert_response :success
   end
 
   test "quiz saves to the single company profile" do
@@ -93,7 +95,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
 
   test "both directories filter only public profiles" do
     person = profile(published: true, location: "Bristol", sectors_future: [ ProfileOptions::SECTORS.first ], target_ids: [ "12.3" ])
-    profile(email: "private@example.test", name: "Secret", location: "Bristol")
+    profile(published: false, email: "private@example.test", name: "Secret", location: "Bristol")
     company = profile(kind: "organisation", published: true, location: "Bristol", sectors_past: [ ProfileOptions::SECTORS.first ], target_ids: [ "12.3" ])
     [ [ people_path, person ], [ companies_path, company ] ].each do |path, record|
       get path, params: { q: record.display_name, location: "bristol", sector: ProfileOptions::SECTORS.first, goal: "12" }
@@ -110,7 +112,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
   test "target searches match the exact selected target and keep other filters" do
     matching = profile(published: true, target_ids: [ "11.2" ], location: "Bristol")
     profile(email: "different@example.test", published: true, target_ids: [ "11.7" ])
-    profile(email: "private@example.test", target_ids: [ "11.2" ])
+    profile(published: false, email: "private@example.test", target_ids: [ "11.2" ])
     get people_path(target: "11.2", location: "Bristol")
     assert_response :success
     assert_select ".directory-card", count: 1
@@ -255,7 +257,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
   end
 
   test "private previews and their images are visible only to the owner" do
-    owned = profile
+    owned = profile(published: false)
     image = PortfolioImage.create!(submission: owned, upload_owner: "test", content_type: "image/png", data: "private image")
     get profile_path(owned.public_slug)
     assert_response :not_found

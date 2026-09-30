@@ -71,7 +71,6 @@ class SubmissionsController < ApplicationController
     return head :not_found unless @submission
     existing_projects = @submission.profile_entries("projects").deep_dup
     @submission.assign_attributes(submission_params.except(:email, :consent))
-    @submission.published = params.dig(:submission, :published) == "1" if params[:submission].key?(:published)
     @submission.profile_entries("projects").each_with_index do |row, index|
       row["image_id"] = existing_projects.dig(index, "image_id") if existing_projects.dig(index, "image_id")
     end

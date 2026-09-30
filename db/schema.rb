@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_20_000200) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_30_000000) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -73,7 +73,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_000200) do
     t.json "profile", default: {}, null: false
     t.integer "profile_version", default: 1, null: false
     t.string "public_slug"
-    t.boolean "published", default: false, null: false
+    t.boolean "published", default: true, null: false
     t.text "purpose", null: false
     t.string "status", default: "Received", null: false
     t.datetime "updated_at", null: false

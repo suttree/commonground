@@ -80,9 +80,9 @@ class ProfileRefinementsTest < ActionDispatch::IntegrationTest
     assert_equal entry.id, image.reload.submission_id
     assert_equal image.id, entry.projects.first["image_id"]
     assert_nil entry.projects.first["image_token"]
+    assert entry.published?
     get portfolio_image_path(image)
-    assert_response :not_found
-    entry.update!(published: true)
+    assert_response :success
     get profile_path(entry.public_slug)
     assert_select "h3", text: "Community garden"
     assert_select "img[alt='Plan of the garden']"

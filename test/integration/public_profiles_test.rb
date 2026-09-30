@@ -6,7 +6,7 @@ class PublicProfilesTest < ActionDispatch::IntegrationTest
       organisation_name: "Ara the Songbird", email: "private@example.test", consent: "1",
       purpose: "People adjacent to loneliness", mission: "Provide companionship", offering: "A robot songbird",
       challenge_kind: "Challenges", challenge: "Local production", help_needed: "Product design and research",
-      notes: "Private review", published: true,
+      notes: "Private review",
       products: [ { "name" => "Ara", "special" => "Birdsong without surveillance", "impact" => "Reduce loneliness" } ])
     assert_match(/\Aara-the-songbird-[a-f0-9]{12}\z/, entry.public_slug)
     get profile_path(entry.public_slug)
@@ -34,12 +34,10 @@ class PublicProfilesTest < ActionDispatch::IntegrationTest
       skills: [ { "skill" => "Delivery", "results" => "Launched a service", "organisation" => "Example", "time" => "2025" } ])
   end
 
-  test "only explicitly published profiles are public and slugs stay stable" do
+  test "profiles are public by default and slugs stay stable" do
     entry = profile
     assert entry.public_slug.present?
-    get profile_path(entry.public_slug)
-    assert_response :not_found
-    entry.update!(published: true)
+    assert entry.published?
     assert_match(/\Aduncan-gough-[a-f0-9]{12}\z/, entry.public_slug)
     slug = entry.public_slug
     get profile_path(slug)
@@ -59,21 +57,21 @@ class PublicProfilesTest < ActionDispatch::IntegrationTest
     assert_not_equal slug, other.public_slug
   end
 
-  test "public applicants cannot publish themselves" do
+  test "new profiles are public and clients cannot override visibility or slug" do
     post people_path, params: { submission: { name: "Test", email: "test@example.test", purpose: "Useful work",
-      experience: "A project", consent: "1", published: true, public_slug: "injected" } }
+      experience: "A project", consent: "1", published: false, public_slug: "injected" } }
     assert_redirected_to create_account_path
-    assert_not Submission.last.published?
+    assert Submission.last.published?
     assert_not_equal "injected", Submission.last.public_slug
     get profile_path(Submission.last.public_slug)
-    assert_response :not_found
+    assert_response :success
   end
 
   test "publication requires authenticated admin access" do
     entry = profile
-    patch admin_submission_path(entry), params: { submission: { published: true } }
+    patch admin_submission_path(entry), params: { submission: { published: false } }
     assert_includes [ 401, 503 ], response.status
-    assert_not entry.reload.published?
+    assert entry.reload.published?
   end
 
   test "public profile escapes submitted markup and rejects unsafe website links" do
