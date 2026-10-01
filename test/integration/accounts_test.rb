@@ -236,7 +236,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
       assert_redirected_to edit_account_profile_path
     end
     get dashboard_path
-    assert_select "a", text: "Edit profile", count: 0
+    assert_select "a.button[href='#{edit_account_profile_path}']", text: "Edit profile", count: 1
     assert_select "h1 a[href='#{profile_path(owned.reload.public_slug)}']", text: owned.display_name
     assert_select "a[href='#{new_person_path}']", count: 0
     assert_select "a[href='#{new_organisation_path}']", count: 0
