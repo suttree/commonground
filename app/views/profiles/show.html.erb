@@ -52,7 +52,7 @@
     <% else %>
       <aside class="profile-interests" aria-label="Sector interests">
         <% { sectors_future: "Where I'd like to work", sectors_past: "Where I've worked" }.each do |field, heading| %>
-          <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><ul class="profile-tags"><% @profile.public_send(field).each do |sector| %><li><%= sector %></li><% end %></ul></section><% end %>
+          <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><ul class="profile-tags"><% @profile.public_send(field).each do |sector| %><li><%= link_to sector, people_path(sector: sector) %></li><% end %></ul></section><% end %>
         <% end %>
         <% if @profile.sector_reason.present? %><section class="profile-section"><h2>Why these sectors</h2><%= simple_format @profile.sector_reason %></section><% end %>
       </aside>
@@ -85,5 +85,8 @@
         <% end %>
       </div>
     </section>
+  <% end %>
+  <% if @profile.contact_link.present? %>
+    <section class="profile-contact profile-section" aria-label="Contact <%= @profile.display_name %>"><%= link_to @profile.contact_action, @profile.contact_link, class: "button", rel: "noopener noreferrer" %></section>
   <% end %>
 </article>

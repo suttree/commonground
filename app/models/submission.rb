@@ -8,7 +8,10 @@ class Submission < ApplicationRecord
   STATUSES = [ "Received", "Needs a conversation", "Ready for introductions", "Introduced", "Outcome recorded" ].freeze
   PROFILE_FIELDS = %i[target_ids sectors_past sectors_future sector_reason radius_km education_topics satisfaction_feeling satisfaction_notes skills projects mission offering impact_metrics proud_of challenge_kind help_needed products].freeze
 
-  store_accessor :profile, *PROFILE_FIELDS, :exploring
+  CONTACT_ACTIONS = [ "Email me", "Follow me", "Connect on LinkedIn" ].freeze
+
+  store_accessor :profile, *PROFILE_FIELDS, :exploring, :contact_action, :contact_destination
+  validate :valid_contact_action
   has_many :contact_requests, dependent: :destroy
   has_many :portfolio_images, dependent: :destroy
   attr_accessor :consent, :website_confirmation
@@ -80,6 +83,15 @@ class Submission < ApplicationRecord
     value.is_a?(Array) ? value.select { |row| row.is_a?(Hash) } : []
   end
 
+  def contact_link
+    return if contact_action.blank? || contact_destination.blank?
+    contact_action == "Email me" ? "mailto:#{contact_destination}" : contact_destination
+  end
+
+  def priorities_selected?
+    Array(target_ids).any? || exploring == "1" || profile["quiz_completed_at"].present?
+  end
+
   def save_quiz!(answers)
     targets = SdgQuiz.matches(answers).keys
     update!(profile: profile.merge("quiz_answers" => answers, "quiz_completed_at" => Time.current.iso8601,
@@ -87,6 +99,22 @@ class Submission < ApplicationRecord
   end
 
   private
+
+  def valid_contact_action
+    return if contact_action.blank? && contact_destination.blank?
+    errors.add(:contact_action, "must be selected") unless CONTACT_ACTIONS.include?(contact_action)
+    destination = contact_destination.to_s
+    valid = if contact_action == "Email me"
+      destination.length <= 254 && destination.match?(URI::MailTo::EMAIL_REGEXP)
+    else
+      uri = URI.parse(destination)
+      uri.is_a?(URI::HTTP) && uri.host.present? && uri.userinfo.nil? &&
+        (contact_action != "Connect on LinkedIn" || uri.host.downcase.match?(/\A(?:[a-z0-9-]+\.)*linkedin\.com\z/))
+    end
+    errors.add(:contact_destination, "must be a valid email address or full web address for your chosen action") unless valid && destination.length <= 500 && !destination.match?(/\s/)
+  rescue URI::InvalidURIError
+    errors.add(:contact_destination, "must be a valid full web address")
+  end
 
   def valid_priorities
     errors.add(:exploring, "is invalid") unless [ nil, "", "0", "1" ].include?(exploring)

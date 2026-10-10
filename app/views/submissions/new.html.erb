@@ -22,6 +22,12 @@
     </fieldset>
 
     <%= render organisation ? "submissions/organisation" : "submissions/person", form: form %>
+    <fieldset>
+      <legend>Your profile button</legend>
+      <p class="hint">Choose what you want people to do after reading your profile. Both fields are optional. To remove the button, clear both fields.</p>
+      <div class="field"><%= form.label :contact_action, "What do you want people to do?" %><%= form.select :contact_action, Submission::CONTACT_ACTIONS, include_blank: "No button" %></div>
+      <div class="field"><%= form.label :contact_destination, "Email address or full web address" %><p class="hint">Use an email address for Email me, or an https:// link for Follow me or Connect on LinkedIn. This destination will be public. Your login email stays private unless you enter it here.</p><%= form.text_field :contact_destination, maxlength: 500 %></div>
+    </fieldset>
     <div class="honeypot" aria-hidden="true"><%= form.label :website_confirmation, "Leave this empty" %><%= form.text_field :website_confirmation, tabindex: -1, autocomplete: "off" %></div>
     <% unless @submission.persisted? %>
     <div class="consent field"><%= form.check_box :consent, { required: true, **field_options(@submission, :consent) }, "1", "0" %><%= form.label :consent, "I'm happy for the Commonbound team to review my answers and contact me about the pilot." %><%= render "shared/field_error", record: @submission, attribute: :consent %></div>

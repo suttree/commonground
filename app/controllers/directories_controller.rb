@@ -13,6 +13,7 @@ class DirectoriesController < ApplicationController
     @company = kind == "organisation"
     @query = params[:q].to_s.strip.first(200)
     @location = params[:location].to_s.strip.first(200)
+    @skill = params[:skill].to_s.strip.first(200)
     @sector = params[:sector].to_s
     @goal = params[:goal].to_s
     @target = params[:target].to_s
@@ -20,6 +21,9 @@ class DirectoriesController < ApplicationController
     name_column = @company ? :organisation_name : :name
     profiles = profiles.where("#{name_column} LIKE ?", "%#{Submission.sanitize_sql_like(@query)}%") if @query.present?
     profiles = profiles.where("location LIKE ?", "%#{Submission.sanitize_sql_like(@location)}%") if @location.present?
+    if @skill.present?
+      profiles = profiles.where("EXISTS (SELECT 1 FROM json_each(submissions.profile, '$.skills') WHERE LOWER(TRIM(json_extract(value, '$.skill'))) = LOWER(?))", @skill)
+    end
     if @sector.present?
       profiles = profiles.where("EXISTS (SELECT 1 FROM json_each(submissions.profile, '$.sectors_past') WHERE value = ?) OR EXISTS (SELECT 1 FROM json_each(submissions.profile, '$.sectors_future') WHERE value = ?)", @sector, @sector)
     end

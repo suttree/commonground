@@ -1,7 +1,7 @@
 <fieldset>
   <legend>People & problems</legend>
   <%= render "text_field", form: form, attribute: :purpose, label: "People I strive to serve with my work", required: true, hint: "Tell us about the social group or community you want to serve." %>
-  <%= render "text_field", form: form, attribute: :location, label: "Where are the people I want to serve?", hint: "Name a place or region, or say anywhere. This is the community you want to serve, rather than a commuting preference.", rows: 2 %>
+  <%= render "text_field", form: form, attribute: :location, label: "Where are the people I want to serve?", hint: "Name a city, region or country, or say anywhere. This location appears on your profile and helps people find you in the directory. Use the area you want to serve.", rows: 2 %>
   <div class="field">
     <%= form.label :radius_km, "Radius around that location, in kilometres (optional)" %>
     <%= form.number_field :radius_km, min: 0, max: 20000, step: "any", **field_options(@submission, :radius_km) %>

@@ -13,4 +13,5 @@
       <% if @position < @skills.size %><%= link_to "#{@skills[@position]['skill']} →", profile_skill_path(@profile.public_slug, @position + 1) %><% end %>
     </nav>
   <% end %>
+  <p><%= link_to "Find people with this skill", people_path(skill: @skill["skill"]) %></p>
 </article>

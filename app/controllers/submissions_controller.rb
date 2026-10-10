@@ -149,7 +149,7 @@ class SubmissionsController < ApplicationController
   end
 
   def submission_params
-    common = [ :name, :email, :website, :purpose, :consent, :website_confirmation ]
+    common = [ :name, :email, :website, :purpose, :consent, :website_confirmation, :contact_action, :contact_destination ]
     fields = if submission_kind == "organisation"
       [ :organisation_name, :location, :exploring, :challenge, :mission, :offering, :impact_metrics, :proud_of, :challenge_kind, :help_needed,
         { target_ids: [], sectors_past: [], products: ProfileOptions::REPEATED_FIELDS.fetch("products").keys } ]

@@ -424,3 +424,19 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
   .bauhaus-explore { grid-template-columns: 1fr; gap: 24px; padding-block: 32px; }
   .bauhaus-explore-symbol { width: 84px; }
 }
+
+/* Profile discovery and account navigation. */
+.site-header nav { align-items: center; }
+.site-header nav form { margin: 0; }
+.nav-logout { appearance: none; border: 0; padding: 0; background: none; color: var(--green); font: inherit; text-decoration: underline; text-underline-offset: .22em; cursor: pointer; }
+.bauhaus-page .nav-logout { color: var(--ink); text-decoration: none; }
+.nav-logout:hover { text-decoration: underline; }
+.profile-contact { margin-top: 36px; }
+.directory-location { font-weight: 500; }
+@media (min-width: 1000px) {
+  .public-profile .skill-carousel.has-many .skill-card { flex-basis: calc((100% - 16px) / 2); }
+}
+@media (max-width: 760px) {
+  .site-header { flex-wrap: wrap; gap: 14px; padding-block: 20px; }
+  .site-header nav { width: 100%; gap: 12px 22px; font-size: .95rem; }
+}

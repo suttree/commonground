@@ -8,14 +8,14 @@
   <div class="dashboard-columns">
     <section class="dashboard-quiz" aria-labelledby="dashboard-quiz-title">
       <p class="eyebrow">Sustainable Development Goals</p>
-      <% if @profile&.profile&.fetch("quiz_completed_at", nil).present? %>
+      <% if @profile&.priorities_selected? %>
         <h2 id="dashboard-quiz-title">Your current priorities</h2>
         <% if Array(@profile.target_ids).any? %>
           <ul class="dashboard-priorities"><% @profile.target_ids.each do |id| %><li><%= link_to "#{id}: #{SdgQuiz::LABELS.fetch(id)}", sdg_target_path(id) %></li><% end %></ul>
         <% else %>
           <p>You're still exploring which problems you want to work on.</p>
         <% end %>
-        <p class="dashboard-retake"><%= link_to "Retake the quiz", quiz_path(question: 0) %></p>
+        <p class="dashboard-retake"><%= link_to "Explore people with shared priorities", people_path(goal: Array(@profile.target_ids).first.to_s.split(".").first.presence) %> · <%= link_to "Review your priorities", edit_account_profile_path %></p>
       <% else %>
         <h2 id="dashboard-quiz-title">Find the problems you want to work on</h2>
         <p>Discover your Sustainable Development Goal priorities through a short quiz.</p>
