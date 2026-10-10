@@ -29,6 +29,29 @@ class ProfileSectionsTest < ActionDispatch::IntegrationTest
     assert_select "[role=status]", text: "Basics saved."
   end
 
+  test "both signup forms include one location field in basics" do
+    delete logout_path
+    [ new_person_path, new_organisation_path ].each do |path|
+      get path
+      assert_response :success
+      assert_select "input[name='submission[location]']", count: 1
+      assert_select "textarea[name='submission[location]']", count: 0
+      assert_select "form fieldset:first-of-type input[name='submission[location]']"
+    end
+  end
+
+  test "location saves from basics and can be found in the people directory" do
+    get edit_account_profile_path
+    assert_select "input[name='submission[location]']", count: 1
+    patch account_profile_path, params: { section: "basics", profile_id: @profile.id, submission: { location: "Bristol, UK", radius_km: "25" } }
+    assert_redirected_to edit_account_profile_path(section: "basics", profile_id: @profile.id)
+    assert_equal "Bristol, UK", @profile.reload.location
+    assert_equal "25", @profile.radius_km
+    assert_equal "Help communities", @profile.purpose
+    get people_path(location: "Bristol")
+    assert_select ".directory-card h2", text: "Alex"
+  end
+
   test "each personal tab renders and invalid sections are rejected" do
     ProfileSections::PERSONAL.each do |key, (label, _fields)|
       get edit_account_profile_path(section: key)
@@ -89,6 +112,14 @@ class ProfileSectionsTest < ActionDispatch::IntegrationTest
     company = Submission.create!(account: @account, kind: "organisation", profile_version: 2, name: "Alex", email: @account.email,
       organisation_name: "Orchard", mission: "Food", purpose: "Community", offering: "Fruit", challenge_kind: "Goals", challenge: "Grow", consent: "1")
     patch switch_profile_path, params: { selected_profile_id: company.id }
+    get edit_account_profile_path
+    assert_select "input[name='submission[location]']", count: 1
+    patch account_profile_path, params: { section: "basics", profile_id: company.id, submission: { location: "Bath, UK" } }
+    assert_redirected_to edit_account_profile_path(section: "basics", profile_id: company.id)
+    assert_equal "Bath, UK", company.reload.location
+    get companies_path(location: "Bath")
+    assert_select ".directory-card h2", text: "Orchard"
+
     ProfileSections::COMPANY.each do |key, (label, _fields)|
       get edit_account_profile_path(section: key)
       assert_response :success

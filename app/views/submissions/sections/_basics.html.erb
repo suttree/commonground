@@ -7,4 +7,17 @@
       <div class="field"><%= form.label :name, "Your name" %><%= form.text_field :name, required: true, maxlength: 200, autocomplete: "name", **field_options(@submission, :name) %><%= render "shared/field_error", record: @submission, attribute: :name %></div>
       <div class="field"><%= form.label :email, "Email address" %><p id="email-hint" class="hint">Use this address to receive your login code.</p><%= form.email_field :email, readonly: @submission.persisted? || current_account.present?, required: true, maxlength: 254, autocomplete: "email", **field_options(@submission, :email, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :email %></div>
       <div class="field"><%= form.label :website, organisation ? "Organisation website (optional)" : "A link to your work or profile (optional)" %><p id="website-hint" class="hint">Use the full address, starting with https://.</p><%= form.url_field :website, maxlength: 500, autocomplete: "url", **field_options(@submission, :website, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :website %></div>
+      <div class="field">
+        <%= form.label :location, "Location (optional)" %>
+        <p id="location-hint" class="hint">Where <%= organisation ? "is your company" : "are you" %> based? Add a town or city, region and country so people can find you by location. This appears on your public profile. No street address needed.</p>
+        <%= form.text_field :location, maxlength: 5000, placeholder: "e.g. Bristol, UK", **field_options(@submission, :location, hint: true) %>
+        <%= render "shared/field_error", record: @submission, attribute: :location %>
+      </div>
+      <% unless organisation %>
+        <div class="field">
+          <%= form.label :radius_km, "Radius around this location, in kilometres (optional)" %>
+          <%= form.number_field :radius_km, min: 0, max: 20000, step: "any", **field_options(@submission, :radius_km) %>
+          <%= render "shared/field_error", record: @submission, attribute: :radius_km %>
+        </div>
+      <% end %>
     </fieldset>

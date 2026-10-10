@@ -1,7 +1,7 @@
 class ProfileSections
   PERSONAL = {
-    "basics" => [ "Basics", %w[name website] ],
-    "purpose" => [ "Purpose", %w[purpose location radius_km] ],
+    "basics" => [ "Basics", %w[name website location radius_km] ],
+    "purpose" => [ "Purpose", %w[purpose] ],
     "experience" => [ "Experience", %w[experience sectors_past sectors_future sector_reason] ],
     "skills" => [ "Skills", %w[skills] ],
     "about" => [ "About you", %w[education_topics satisfaction_feeling satisfaction_notes] ],
@@ -10,11 +10,11 @@ class ProfileSections
     "contact" => [ "Contact", %w[contact_action contact_destination] ]
   }.freeze
   COMPANY = {
-    "basics" => [ "Basics", %w[name organisation_name website] ],
+    "basics" => [ "Basics", %w[name organisation_name website location] ],
     "offering" => [ "Purpose & impact", %w[mission purpose offering impact_metrics proud_of] ],
     "products" => [ "Products & services", %w[products] ],
     "goals" => [ "Goals & challenges", %w[challenge_kind challenge help_needed] ],
-    "location" => [ "Location & sectors", %w[location sectors_past] ],
+    "location" => [ "Sectors", %w[sectors_past] ],
     "priorities" => PERSONAL.fetch("priorities"),
     "contact" => PERSONAL.fetch("contact")
   }.freeze
