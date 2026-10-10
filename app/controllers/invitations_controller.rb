@@ -25,7 +25,7 @@ class InvitationsController < ApplicationController
   def find_invitation
     response.headers["Cache-Control"] = "no-store"
     response.headers["Referrer-Policy"] = "no-referrer"
-    @invitation = CollaboratorInvitation.find_signed(params[:token], purpose: :collaborator_invitation)
+    @invitation = CollaboratorInvitation.find_by_token(params[:token])
     unless @invitation
       render plain: "This invitation link is invalid or has expired. Ask the owner for a new invitation.", status: :not_found
     end

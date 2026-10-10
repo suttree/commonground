@@ -56,6 +56,40 @@ class CollaboratorInvitationsTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "new emails use a short random token and the configured public domain" do
+    login(@owner.email)
+    invitation = invite
+    assert_match(/\A[A-Za-z0-9_-]{32}\z/, invitation.token)
+    assert_equal invitation.token, invitation.reload.token
+    assert_equal invitation, CollaboratorInvitation.find_by_token(invitation.token)
+    assert_nil CollaboratorInvitation.find_by_token("x" * 32)
+    mail = CollaboratorInvitationMailer.with({}).invite(invitation)
+    original_options = CollaboratorInvitationMailer.default_url_options
+    begin
+      CollaboratorInvitationMailer.default_url_options = { host: "commonbound.work", protocol: "https" }
+      assert_includes mail.body.decoded, "https://commonbound.work/invitation?token=#{invitation.token}"
+    ensure
+      CollaboratorInvitationMailer.default_url_options = original_options
+    end
+    travel 15.days do
+      assert_nil CollaboratorInvitation.find_by_token(invitation.token)
+    end
+  end
+
+  test "previously emailed signed links still allow acceptance" do
+    login(@owner.email)
+    invitation = invite
+    invitation.update_column(:short_token, nil)
+    old_token = invitation.token
+    assert_operator old_token.length, :>, 32
+    delete logout_path
+    get invitation_path(token: old_token)
+    assert_response :success
+    login(@recipient.email)
+    patch invitation_path(token: old_token)
+    assert invitation.reload.accepted_at
+  end
+
   test "new recipient returns after profile creation" do
     login(@owner.email)
     invitation = invite("new@example.test")

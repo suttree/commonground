@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_10_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_10_020000) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -53,9 +53,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_010000) do
     t.datetime "expires_at", null: false
     t.datetime "revoked_at"
     t.datetime "sent_at"
+    t.string "short_token"
     t.datetime "updated_at", null: false
     t.index ["challenge_id", "email"], name: "index_collaborator_invitations_on_challenge_id_and_email"
     t.index ["challenge_id"], name: "index_collaborator_invitations_on_challenge_id"
+    t.index ["short_token"], name: "index_collaborator_invitations_on_short_token", unique: true
   end
 
   create_table "contact_requests", force: :cascade do |t|

@@ -7,6 +7,7 @@ primary_region = 'lhr'
 [env]
   PORT = '3000'
   RAILS_ENV = 'production'
+  APP_HOST = 'commonbound.work'
   DATABASE_PATH = '/data/production.sqlite3'
   RAILS_MAX_THREADS = '3'
   SMTP_ADDRESS = 'email-smtp.eu-west-2.amazonaws.com'

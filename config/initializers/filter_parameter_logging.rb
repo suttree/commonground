@@ -8,3 +8,5 @@ Rails.application.config.filter_parameters += [
 ]
 
 Rails.application.config.filter_parameters += [ :submission, :contact_request, :code ]
+
+Rails.application.config.filter_parameters += [ :short_token ]

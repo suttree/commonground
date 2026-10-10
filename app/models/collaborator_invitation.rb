@@ -1,5 +1,6 @@
 class CollaboratorInvitation < ApplicationRecord
   belongs_to :challenge
+  before_create { self.short_token = SecureRandom.urlsafe_base64(24) }
   normalizes :email, with: ->(value) { value.strip.downcase }
   validates :email, presence: true, length: { maximum: 254 }, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :expires_at, presence: true
@@ -24,7 +25,18 @@ class CollaboratorInvitation < ApplicationRecord
   end
 
   def token
-    signed_id(purpose: :collaborator_invitation, expires_at: expires_at)
+    short_token || signed_id(purpose: :collaborator_invitation, expires_at: expires_at)
+  end
+
+  def self.find_by_token(token)
+    value = token.to_s
+    invitation = if value.match?(/\A[A-Za-z0-9_-]{32}\z/)
+      find_by(short_token: value)
+    elsif value.length <= 512
+      # Keep previously emailed signed links valid until their original expiry.
+      find_signed(value, purpose: :collaborator_invitation)
+    end
+    invitation if invitation && invitation.expires_at > Time.current
   end
 
   def accept!(account)
