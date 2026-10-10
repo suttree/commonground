@@ -27,6 +27,7 @@
         <section class="profile-section"><h2>I feel most <%= @profile.satisfaction_feeling.to_s.downcase %> when...</h2><%= simple_format @profile.satisfaction_notes %></section>
       <% end %>
       <% unless @profile.organisation? %>
+        <% if @profile.skills_summary.present? %><section class="profile-section"><h2>Skills & interests</h2><%= simple_format @profile.skills_summary %></section><% end %>
         <%= render "skills", profile: @profile %>
         <%= render "projects", profile: @profile %>
       <% else %>

@@ -68,11 +68,13 @@ class AccountsTest < ActionDispatch::IntegrationTest
     get dashboard_path
     assert_select ".eyebrow", text: "Company dashboard"
     8.times { |index| post quiz_path, params: { question: index, answer: "1" } }
+    assert_nil company.reload.profile["quiz_answers"]
+    post confirm_quiz_path, params: { target_ids: SdgQuiz.matches((0..7).to_h { |index| [ index.to_s, "1" ] }).keys }
     assert_equal 8, company.reload.profile.fetch("quiz_answers").size
     assert_equal SdgQuiz.matches((0..7).to_h { |index| [ index.to_s, "1" ] }).keys, company.target_ids
     assert_nil other.reload.target_ids
     get quiz_path
-    assert_select "p", text: /saved to your profile/
+    assert_select "p", text: /your answers stay private/
     company.update!(published: true)
     get profile_path(company.public_slug)
     assert_select "h2", text: "SDG quiz answers", count: 0

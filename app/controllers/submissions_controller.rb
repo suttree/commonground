@@ -10,6 +10,14 @@ class SubmissionsController < ApplicationController
   before_action :check_profile_id, only: [ :edit, :update ]
 
   def new
+    if submission_kind == "person"
+      if current_account
+        session[:onboarding_person] = true
+        current_account.update!(onboarding: { "name" => "" }) if current_account.onboarding.empty?
+        return redirect_to(current_account.onboarding["quiz_done"] ? onboarding_profile_path : quiz_path)
+      end
+      return render "onboarding/new"
+    end
     @submission = Submission.new(kind: submission_kind, profile_version: 2, email: current_account&.email)
   end
 
@@ -176,7 +184,7 @@ class SubmissionsController < ApplicationController
       [ :organisation_name, :location, :exploring, :challenge, :mission, :offering, :impact_metrics, :proud_of, :challenge_kind, :help_needed,
         { target_ids: [], sectors_past: [], products: ProfileOptions::REPEATED_FIELDS.fetch("products").keys } ]
     else
-      [ :experience, :location, :radius_km, :sector_reason, :education_topics, :satisfaction_feeling, :satisfaction_notes, :exploring,
+      [ :experience, :skills_summary, :location, :radius_km, :sector_reason, :education_topics, :satisfaction_feeling, :satisfaction_notes, :exploring,
         { target_ids: [], sectors_past: [], sectors_future: [],
           skills: ProfileOptions::REPEATED_FIELDS.fetch("skills").keys, projects: ProfileOptions::REPEATED_FIELDS.fetch("projects").keys + ProfileOptions::PROJECT_DETAILS.keys + %w[image_token remove_image] } ]
     end

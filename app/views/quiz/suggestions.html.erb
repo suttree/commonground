@@ -17,9 +17,22 @@
   <% else %>
     <p>You skipped every question, so we haven't suggested any priorities. You can try again whenever you're ready.</p>
   <% end %>
-  <% if current_profile %><p><%= link_to "Return to dashboard", dashboard_path %></p><% end %>
+  <% if @error %><p class="error-summary" role="alert"><%= @error %></p><% end %>
+  <%= form_with url: confirm_quiz_path do |form| %>
+    <%= hidden_field_tag :profile_id, current_profile.id if current_profile %>
+    <fieldset>
+      <legend>Choose your priorities</legend>
+      <p class="hint">Keep or change these suggestions. Choose up to three, or clear them to keep exploring. Confirmed priorities appear on your public profile; your answers stay private.</p>
+      <%= hidden_field_tag "target_ids[]", "" %>
+      <% 3.times do |index| %>
+        <div class="field"><%= label_tag "priority_#{index}", "Priority #{index + 1} (optional)" %><%= select_tag "target_ids[]", grouped_options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("targets").map { |target| ["#{target.fetch('id')}: #{SdgQuiz::LABELS.fetch(target.fetch('id'))}", target.fetch("id")] }] }, @selected_targets[index]), include_blank: "Still exploring", id: "priority_#{index}" %></div>
+      <% end %>
+    </fieldset>
+    <div class="actions"><%= form.submit(onboarding_person? ? "Continue to your profile" : "Find companies with these priorities", class: "button") %><%= link_to "Explore projects", challenges_path %></div>
+  <% end %>
+
   <section class="quiz-next-steps" aria-labelledby="next-steps-heading">
-    <h2 id="next-steps-heading">What would you like to do next?</h2>
+    <h2 id="next-steps-heading">Prefer a conversation?</h2>
     <p>Start a conversation with Nika.</p>
     <%= form_with url: new_profile_contact_path("nika-van-olst-3e4265d5c4bf"), method: :get do %>
       <fieldset class="wizard-options">
@@ -36,7 +49,7 @@
   </section>
   <div class="actions"><%= link_to "Review my answers", quiz_path(question: 0, profile_id: current_profile&.id), class: "button secondary" %></div>
   <%= form_with url: quiz_path do %><%= hidden_field_tag :profile_id, current_profile.id if current_profile %><button class="quiz-restart" name="restart" value="1">Start again</button><% end %>
-  <p class="small-note quiz-footnote"><%= current_profile ? "Your answers and suggested priorities are saved to your profile." : "Log in before taking the quiz to save your answers to your profile." %></p>
+  <% unless current_account %><p class="small-note quiz-footnote"><%= link_to "Create your account", new_person_path %> to build a profile. You can also browse companies without joining.</p><% end %>
   <% if current_profile %>
     <div class="actions"><%= link_to "Review profile", profile_path(current_profile.public_slug), class: "button" %></div>
   <% end %>

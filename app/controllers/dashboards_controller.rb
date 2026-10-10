@@ -4,6 +4,7 @@ class DashboardsController < ApplicationController
 
   def switch_profile
     profile = current_account.submissions.find(params[:selected_profile_id])
+    session.delete(:onboarding_person)
     session[:active_profile_id] = profile.id
     session.delete(:quiz_answers)
     session.delete(:quiz_profile_id)

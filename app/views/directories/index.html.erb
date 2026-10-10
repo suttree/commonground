@@ -3,7 +3,9 @@
   <%= render "shared/discovery_nav", current_section: @company ? "companies" : "people" %>
   <h1><%= @company ? "Company directory" : "People directory" %></h1>
   <p>Find <%= @company ? "companies" : "people" %> by name, skill, location, sector or the goals they want to work on.</p>
+  <% if @use_priorities %><p class="notice"><%= @priority_goals.any? ? "Showing profiles connected to your selected goals." : "No priorities selected yet. Explore all profiles." %> <%= link_to "Show all", @company ? companies_path : people_path %></p><% end %>
   <%= form_with url: @company ? companies_path : people_path, method: :get, class: "directory-filters" do |form| %>
+    <%= hidden_field_tag :priorities, "1" if @use_priorities %>
     <div class="field"><%= form.label :q, "Name" %><%= form.search_field :q, value: @query %></div>
     <% unless @company %><div class="field"><%= form.label :skill, "Skill" %><%= form.search_field :skill, value: @skill, placeholder: "e.g. Research" %></div><% end %>
     <div class="field"><%= form.label :location, "Location" %><%= form.search_field :location, value: @location %></div>
@@ -35,7 +37,7 @@
   </div>
   <% if @profiles.empty? %><p>No profiles match. Try another name or remove a filter.</p><% end %>
   <nav aria-label="Directory pages">
-    <% if @page > 1 %><%= link_to "Previous", url_for(q: @query, skill: @skill, location: @location, sector: @sector, goal: @goal, target: @target, page: @page - 1) %><% end %>
-    <% if @page * 24 < @count %><%= link_to "Next", url_for(q: @query, skill: @skill, location: @location, sector: @sector, goal: @goal, target: @target, page: @page + 1) %><% end %>
+    <% if @page > 1 %><%= link_to "Previous", url_for(priorities: @use_priorities ? "1" : nil, q: @query, skill: @skill, location: @location, sector: @sector, goal: @goal, target: @target, page: @page - 1) %><% end %>
+    <% if @page * 24 < @count %><%= link_to "Next", url_for(priorities: @use_priorities ? "1" : nil, q: @query, skill: @skill, location: @location, sector: @sector, goal: @goal, target: @target, page: @page + 1) %><% end %>
   </nav>
 </div>

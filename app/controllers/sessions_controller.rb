@@ -10,6 +10,11 @@ class SessionsController < ApplicationController
   end
 
   def create
+    signup_view = params[:individual_signup] == "1" ? "onboarding/new" : (params[:signup] == "1" ? :create_account : :new)
+    if params[:individual_signup] == "1" && (params[:name].to_s.strip.blank? || params[:name].to_s.length > 200)
+      @error = "Enter your name, up to 200 characters."
+      return render signup_view, status: :unprocessable_entity
+    end
     if params[:signup] == "1"
       @pending_submission = Submission.where(account_id: nil).find_by(id: session[:pending_submission_id])
       return redirect_to new_person_path unless @pending_submission
@@ -18,7 +23,7 @@ class SessionsController < ApplicationController
     @email = email
     unless email.length <= 254 && email.match?(URI::MailTo::EMAIL_REGEXP)
       @error = "Enter a valid email address."
-      return render(params[:signup] == "1" ? :create_account : :new, status: :unprocessable_entity)
+      return render(signup_view, status: :unprocessable_entity)
     end
     if @pending_submission
       if Account.joins(:submission).exists?(email: email)
@@ -33,7 +38,7 @@ class SessionsController < ApplicationController
     issued = LoginCode.issue(email, request.remote_ip)
     unless issued
       @error = "Too many codes requested. Please try again in ten minutes."
-      return render(params[:signup] == "1" ? :create_account : :new, status: :too_many_requests)
+      return render(signup_view, status: :too_many_requests)
     end
     challenge, code = issued
     begin
@@ -42,8 +47,9 @@ class SessionsController < ApplicationController
       challenge.update!(used_at: Time.current)
       Rails.logger.error("Login email delivery failed: #{error.class.name}")
       @error = "We couldn't send your code. Please try again later."
-      return render(params[:signup] == "1" ? :create_account : :new, status: :service_unavailable)
+      return render(signup_view, status: :service_unavailable)
     end
+    session[:individual_signup_name] = params[:individual_signup] == "1" ? params[:name].to_s.strip : nil
     session[:login_code_id] = challenge.id
     redirect_to verify_login_path, status: :see_other
   end
@@ -66,12 +72,30 @@ class SessionsController < ApplicationController
         profile&.update!(account: account)
       end
     end
+    signup_name = session[:individual_signup_name]
+    joining = signup_name.present? && !account.submissions.exists?(kind: "person")
+    if joining
+      draft = account.onboarding.merge("name" => signup_name)
+      if session[:confirmed_quiz_targets].is_a?(Array)
+        draft.merge!("target_ids" => session[:confirmed_quiz_targets], "quiz_answers" => session.fetch(:quiz_answers, {}),
+          "confirmed" => Time.current.iso8601, "quiz_done" => true)
+      end
+      account.update!(onboarding: draft)
+    end
     invitation_token = session[:collaborator_invitation_token]
     reset_session
     session[:collaborator_invitation_token] = invitation_token if invitation_token
     session[:account_id] = account.id
     session[:authenticated_at] = Time.current.to_i
-    redirect_to invitation_token.present? ? invitation_path(token: invitation_token) : dashboard_path, status: :see_other
+    session[:onboarding_person] = true if joining
+    destination = if joining
+      account.onboarding["quiz_done"] ? onboarding_profile_path : quiz_path
+    elsif invitation_token.present?
+      invitation_path(token: invitation_token)
+    else
+      dashboard_path
+    end
+    redirect_to destination, status: :see_other
   end
 
   def destroy

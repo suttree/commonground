@@ -1,0 +1,17 @@
+<% content_for :title, "Your profile" %>
+<div class="form-page narrow onboarding-page">
+  <p class="eyebrow">Your profile · Step 3 of 4</p>
+  <h1>A little about you.</h1>
+  <p>Give people a starting point for a conversation. You can add more later.</p>
+  <%= render "shared/errors", record: @submission %>
+  <%= form_with model: @submission, url: onboarding_profile_path do |form| %>
+    <div class="field"><%= form.label :name, "Your name" %><%= form.text_field :name, required: true, maxlength: 200, autocomplete: "name" %></div>
+    <div class="field"><%= form.label :location, "Location (optional)" %><%= form.text_field :location, maxlength: 5000, placeholder: "e.g. Bristol, UK" %><p class="hint">Town or city and country. No street address needed.</p></div>
+    <%= render "submissions/text_field", form: form, attribute: :purpose, label: "Who or what would you like your work to help?", required: true, rows: 2 %>
+    <%= render "submissions/text_field", form: form, attribute: :experience, label: "A short introduction to your work", required: true, rows: 3 %>
+    <%= render "submissions/text_field", form: form, attribute: :skills_summary, label: "Skills & interests", hint: "What would you like to contribute?", rows: 2 %>
+    <p class="hint">Your profile and confirmed priorities will be public. Your email and quiz answers stay private.</p>
+    <div class="consent field"><%= form.check_box :consent, { required: true }, "1", "0" %><%= form.label :consent, "I'm happy for the Commonbound team to review my profile and contact me about the pilot." %></div>
+    <div class="actions"><%= form.submit "Save profile & discover companies", class: "button" %><%= link_to "Finish later", companies_path %></div>
+  <% end %>
+</div>

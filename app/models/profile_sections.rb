@@ -3,7 +3,7 @@ class ProfileSections
     "basics" => [ "Basics", %w[name website location radius_km] ],
     "purpose" => [ "Purpose", %w[purpose] ],
     "experience" => [ "Experience", %w[experience sectors_past sectors_future sector_reason] ],
-    "skills" => [ "Skills", %w[skills] ],
+    "skills" => [ "Skills", %w[skills skills_summary] ],
     "about" => [ "About you", %w[education_topics satisfaction_feeling satisfaction_notes] ],
     "portfolio" => [ "Portfolio", %w[projects] ],
     "priorities" => [ "Priorities", %w[target_ids exploring] ],

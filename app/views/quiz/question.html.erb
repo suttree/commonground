@@ -24,5 +24,6 @@
       <% if @index.positive? %><%= link_to "Back", quiz_path(question: @index - 1, profile_id: current_profile&.id) %><% end %>
     </div>
   <% end %>
-  <p class="small-note"><%= current_profile ? "When you finish, your answers and suggested priorities will be saved to #{current_profile.display_name}. They will be visible if that profile is public." : "Your answers stay in this browser session. Log in before taking the quiz to save them to your profile." %></p>
+  <p class="small-note">Your answers stay private. You'll review your suggested priorities before saving them to your profile.</p>
+  <% if onboarding_person? %><%= button_to "Skip quiz for now", skip_onboarding_quiz_path, class: "button secondary" %><% end %>
 </div>

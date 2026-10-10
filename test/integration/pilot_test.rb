@@ -156,10 +156,10 @@ class PilotTest < ActionDispatch::IntegrationTest
     get new_person_path
     assert_response :success
     token = css_select("input[name=authenticity_token]").first["value"]
-    assert_difference "Submission.count", 1 do
-      post people_path, params: { authenticity_token: token, submission: answers }
+    assert_no_difference "Submission.count" do
+      post login_path, params: { authenticity_token: token, individual_signup: "1", name: "Alex", email: "new@example.test" }
     end
-    assert_redirected_to create_account_path
+    assert_redirected_to verify_login_path
     follow_redirect!
     assert_response :success
   ensure

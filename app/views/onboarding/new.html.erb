@@ -1,0 +1,16 @@
+<% content_for :title, "Join Commonbound" %>
+<div class="form-page narrow onboarding-page">
+  <p class="eyebrow">1. Join · 2. Priorities · 3. Profile · 4. Discover</p>
+  <h1>What brings you here?</h1>
+  <p>Create your account, find your priorities and meet companies doing work you care about.</p>
+  <% if @error %><p class="error-summary" role="alert"><%= @error %></p><% end %>
+  <%= form_with url: login_path do |form| %>
+    <%= hidden_field_tag :individual_signup, "1" %>
+    <div class="field"><%= form.label :name, "Your name" %><%= form.text_field :name, value: params[:name], required: true, maxlength: 200, autocomplete: "name" %></div>
+    <div class="field"><%= form.label :email, "Email address" %><%= form.email_field :email, value: params[:email], required: true, maxlength: 254, autocomplete: "email" %></div>
+    <p class="hint">We'll send a six-digit code. Your email stays private.</p>
+    <%= form.submit "Send verification code", class: "button" %>
+  <% end %>
+  <p class="small-note">Already a member? <%= link_to "Log in", login_path %>. Joining as a company? <%= link_to "Create a company profile", new_organisation_path %>.</p>
+  <p class="small-note"><%= link_to "How we use your details", privacy_path %></p>
+</div>

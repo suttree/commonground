@@ -29,9 +29,9 @@ class ProfileSectionsTest < ActionDispatch::IntegrationTest
     assert_select "[role=status]", text: "Basics saved."
   end
 
-  test "both signup forms include one location field in basics" do
+  test "company signup retains location and personal signup starts with account details" do
     delete logout_path
-    [ new_person_path, new_organisation_path ].each do |path|
+    [ new_organisation_path ].each do |path|
       get path
       assert_response :success
       assert_select "input[name='submission[location]']", count: 1

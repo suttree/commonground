@@ -4,6 +4,11 @@ Rails.application.routes.draw do
     resources :collaborator_invitations, only: [ :index, :create, :destroy ]
   end
   resource :invitation, only: [ :show, :update ]
+  get "join", to: "onboarding#new", as: :join
+  get "onboarding/profile", to: "onboarding#profile", as: :onboarding_profile
+  post "onboarding/profile", to: "onboarding#create_profile"
+  post "onboarding/skip-quiz", to: "onboarding#skip_quiz", as: :skip_onboarding_quiz
+  post "quiz/confirm", to: "quiz#confirm", as: :confirm_quiz
   get "create-account", to: "sessions#create_account", as: :create_account
   get "login", to: "sessions#new", as: :login
   post "login", to: "sessions#create"

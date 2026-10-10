@@ -10,7 +10,7 @@ class Submission < ApplicationRecord
 
   CONTACT_ACTIONS = [ "Email me", "Follow me", "Connect on LinkedIn" ].freeze
 
-  store_accessor :profile, *PROFILE_FIELDS, :exploring, :contact_action, :contact_destination
+  store_accessor :profile, *PROFILE_FIELDS, :exploring, :contact_action, :contact_destination, :skills_summary
   validate :valid_contact_action
   has_many :challenges, dependent: :destroy
   has_many :contact_requests, dependent: :destroy
@@ -33,6 +33,7 @@ class Submission < ApplicationRecord
   validates :website, length: { maximum: 500 }, format: { with: %r{\Ahttps?://[^\s]+\z}, message: "must start with https:// or http://" }, allow_blank: true
   validates :status, inclusion: { in: STATUSES }
   validates :purpose, :challenge, :experience, :availability, :location, :pay_expectations, length: { maximum: 5000 }
+  validates :skills_summary, length: { maximum: 5000 }
   validates :notes, length: { maximum: 10000 }
   validates :organisation_name, :challenge, presence: true, if: :organisation?
   validates :experience, presence: true, unless: :organisation?
@@ -93,8 +94,7 @@ class Submission < ApplicationRecord
     Array(target_ids).any? || exploring == "1" || profile["quiz_completed_at"].present?
   end
 
-  def save_quiz!(answers)
-    targets = SdgQuiz.matches(answers).keys
+  def save_quiz!(answers, targets: SdgQuiz.matches(answers).keys)
     update!(profile: profile.merge("quiz_answers" => answers, "quiz_completed_at" => Time.current.iso8601,
       "target_ids" => targets, "exploring" => targets.empty? ? "1" : "0"))
   end

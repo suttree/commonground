@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  helper_method :current_account, :current_profile, :owns_profile?
+  helper_method :current_account, :current_profile, :owns_profile?, :onboarding_person?
 
   private
 
@@ -21,6 +21,10 @@ class ApplicationController < ActionController::Base
     if params[:profile_id].present? && params[:profile_id].to_s != current_profile&.id.to_s
       raise ActiveRecord::RecordNotFound
     end
+  end
+
+  def onboarding_person?
+    current_account && session[:onboarding_person] && !current_account.submissions.exists?(kind: "person")
   end
 
   def require_account
