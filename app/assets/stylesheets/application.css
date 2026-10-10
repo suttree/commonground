@@ -492,3 +492,5 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .discovery-nav a[aria-current="page"] { background: var(--green); color: var(--paper); border-color: var(--green); }
 .discovery-nav a:hover { text-decoration: underline; }
 .discovery-nav a:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+.discovery-nav + .page-intro { padding-top: 0; }
