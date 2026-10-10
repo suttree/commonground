@@ -2,7 +2,7 @@
 <div class="form-page narrow">
   <p class="back-link"><%= link_to "Back to your work", challenge_path(@challenge) %></p>
   <h1>Invite collaborators</h1>
-  <p>Invite someone to <%= @challenge.title %>. They will receive an email and can create a profile before accepting. Their public profile will then be linked from this work. They will not have editing access.</p>
+  <p>Invite someone to <%= link_to @challenge.title, challenge_path(@challenge) %>. They will receive an email and can create a profile before accepting. Their public profile will then be linked from this work. They will not have editing access.</p>
   <% if @invitation.errors.any? %><div class="error-summary" role="alert"><ul><% @invitation.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul></div><% end %>
   <% if @challenge.public? %>
     <%= form_with model: [@challenge, @invitation] do |form| %>
