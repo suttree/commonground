@@ -14,7 +14,14 @@
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header wrap<%= " home-header" if controller_name == "pages" && %w[home althomepage about].include?(action_name) %>">
       <%= link_to(current_account ? dashboard_path : root_path, class: "wordmark", aria: { label: current_account ? "Commonbound dashboard" : "Commonbound home" }) do %><span class="brand-mark" aria-hidden="true">cb.</span> Commonbound<% end %>
-      <nav aria-label="Main navigation"><%= main_navigation_link "Discover", challenges_path, section: :discover %> <%= main_navigation_link "Goals", sdgs_path, section: :goals %> <%= main_navigation_link "About", about_path, section: :about %> <%= link_to "Blog", "https://commonbound.pika.page/" %> <% if current_account %><%= main_navigation_link "Dashboard", dashboard_path, section: :dashboard %> <%= button_to "Log out", logout_path, method: :delete, class: "nav-logout" %><% else %><%= main_navigation_link "Log in", login_path, section: :login %><% end %></nav>
+      <nav aria-label="Main navigation">
+        <%= main_navigation_link "About", about_path, section: :about %>
+        <%= link_to "Blog", "https://commonbound.pika.page/" %>
+        <% if current_account %><%= main_navigation_link "Dashboard", dashboard_path, section: :dashboard %><% end %>
+        <%= main_navigation_link "Discover", challenges_path, section: :discover %>
+        <%= main_navigation_link "Goals", sdgs_path, section: :goals %>
+        <% if current_account %><%= button_to "Log out", logout_path, method: :delete, class: "nav-logout" %><% else %><%= main_navigation_link "Log in", login_path, section: :login %><% end %>
+      </nav>
     </header>
     <main id="main" class="wrap" tabindex="-1">
       <% if notice %><p class="notice" role="status"><%= notice %></p><% end %>
