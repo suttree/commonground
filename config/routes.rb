@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   post "login/verify", to: "sessions#authenticate"
   delete "logout", to: "sessions#destroy", as: :logout
   get "dashboard", to: "dashboards#show", as: :dashboard
+  patch "dashboard/profile", to: "dashboards#switch_profile", as: :switch_profile
   get "account/profile/edit", to: "submissions#edit", as: :edit_account_profile
   patch "account/profile", to: "submissions#update", as: :account_profile
   get "people", to: "directories#people"

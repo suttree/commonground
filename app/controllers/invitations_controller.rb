@@ -10,7 +10,8 @@ class InvitationsController < ApplicationController
       session[:collaborator_invitation_token] = params[:token]
       return redirect_to login_path, notice: "Sign in with the email address that received this invitation."
     end
-    if @invitation.accept!(current_account)
+    check_profile_id
+    if @invitation.accept!(current_account, profile: current_profile)
       session.delete(:collaborator_invitation_token)
       redirect_to challenge_path(@invitation.challenge), notice: "You are now listed as a collaborator.", status: :see_other
     else

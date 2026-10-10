@@ -1,7 +1,7 @@
 <article class="challenge-card">
   <p class="eyebrow"><%= challenge.completed? ? "Completed project" : challenge.status.humanize %></p>
   <h3><%= link_to challenge.title, challenge_path(challenge) %></h3>
-  <p class="small-note"><%= link_to challenge.submission.display_name, profile_path(challenge.submission.public_slug) %><% if challenge.organisation_name.present? %> · <%= challenge.organisation_name %><% end %></p>
+  <p class="small-note"><%= link_to challenge.submission.display_name, profile_path(challenge.submission.public_slug) %><% if challenge.organisation_name.present? && !challenge.submission.organisation? %> · <%= challenge.organisation_name %><% end %></p>
   <p class="challenge-location"><%= challenge.location.presence || "Location not added" %></p>
   <p><%= truncate(challenge.completed? ? challenge.results : challenge.description, length: 180, separator: " ") %></p>
   <% if challenge.status == "active" && challenge.help_options.any? %><p class="small-note">Looking for help with <%= challenge.help_options.map(&:downcase).to_sentence %>.</p><% end %>

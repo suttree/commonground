@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  helper_method :current_account, :current_profile
+  helper_method :current_account, :current_profile, :owns_profile?
 
   private
 
@@ -10,7 +10,11 @@ class ApplicationController < ActionController::Base
 
   def current_profile
     return unless current_account
-    @current_profile ||= current_account.submission
+    @current_profile ||= current_account.submissions.find_by(id: session[:active_profile_id]) || current_account.submission
+  end
+
+  def owns_profile?(profile)
+    current_account.present? && profile.account_id == current_account.id
   end
 
   def check_profile_id

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_10_020000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_10_030000) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -123,7 +123,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_020000) do
     t.datetime "updated_at", null: false
     t.string "website"
     t.string "working_style", null: false
-    t.index ["account_id"], name: "index_submissions_on_account_id", unique: true
+    t.index ["account_id"], name: "index_submissions_on_account_id"
+    t.index ["account_id"], name: "one_person_profile_per_account", unique: true, where: "kind = 'person'"
     t.index ["kind", "created_at"], name: "index_submissions_on_kind_and_created_at"
     t.index ["public_slug"], name: "index_submissions_on_public_slug", unique: true
     t.index ["status"], name: "index_submissions_on_status"

@@ -14,19 +14,20 @@ class ChallengesController < ApplicationController
 
   def show
     @challenge = Challenge.includes(:submission).find(params[:id])
-    raise ActiveRecord::RecordNotFound unless @challenge.public? || @challenge.submission == current_profile
+    raise ActiveRecord::RecordNotFound unless @challenge.public? || owns_profile?(@challenge.submission)
     response.headers["Cache-Control"] = "no-store"
   end
 
   def new
-    @challenge = current_profile.challenges.new(location: current_profile.location,
-      organisation_name: current_profile.organisation? ? current_profile.organisation_name : nil,
-      target_ids: Array(current_profile.target_ids).first(3))
+    profile = params[:submission_id].present? ? current_account.submissions.find(params[:submission_id]) : current_profile
+    @challenge = profile.challenges.new(location: profile.location, target_ids: Array(profile.target_ids).first(3))
     prepare_form
   end
 
   def create
-    @challenge = current_profile.challenges.new(challenge_params)
+    profile_id = params.dig(:challenge, :submission_id)
+    profile = profile_id.present? ? current_account.submissions.find(profile_id) : current_profile
+    @challenge = profile.challenges.new(challenge_params)
     save_challenge
   end
 
@@ -35,6 +36,8 @@ class ChallengesController < ApplicationController
   end
 
   def update
+    profile_id = params.dig(:challenge, :submission_id)
+    @challenge.submission = current_account.submissions.find(profile_id) if profile_id.present?
     @challenge.assign_attributes(challenge_params)
     save_challenge
   end
@@ -46,12 +49,13 @@ class ChallengesController < ApplicationController
   end
 
   def find_owned_challenge
-    @challenge = current_profile.challenges.find(params[:id])
+    @challenge = current_account.challenges.find(params[:id])
   end
 
   def prepare_form
-    @members = Submission.published.where.not(id: current_profile.id).order(:name)
-    @active_challenge = current_profile.challenges.find_by(status: "active")
+    @owned_profiles = current_account.submissions.order(:kind, :organisation_name, :name)
+    @members = Submission.published.where.not(id: @challenge.submission_id).order(:name)
+    @active_challenge = @challenge.submission.challenges.find_by(status: "active")
   end
 
   def save_challenge

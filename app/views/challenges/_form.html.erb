@@ -8,7 +8,9 @@
   <fieldset>
     <legend>What are you working on?</legend>
     <div class="field"><%= form.label :title, "My current challenge" %><%= form.text_field :title, required: true, maxlength: 200 %></div>
-    <div class="field"><%= form.label :organisation_name, "On behalf of (optional)" %><p class="hint">The company, organisation or community behind this work.</p><%= form.text_field :organisation_name, maxlength: 200 %></div>
+    <div class="field"><%= form.label :submission_id, "Who is this project for?" %><%= form.collection_select :submission_id, @owned_profiles, :id, :display_name %><p class="hint">Choose your personal profile or a company you manage. The project will appear on that profile.</p></div>
+    <p class="hint">Need a company profile first? <%= link_to "Create a company profile", new_organisation_path %>.</p>
+    <% if @challenge.organisation_name.present? %><div class="field"><%= form.label :organisation_name, "Organisation name (optional)" %><p class="hint">This is the name previously entered for this work.</p><%= form.text_field :organisation_name, maxlength: 200 %></div><% end %>
     <div class="field"><%= form.label :industry, "Industry (optional)" %><%= form.select :industry, ProfileOptions::SECTORS, include_blank: "Choose an industry" %></div>
     <div class="field"><%= form.label :location, "Location" %><p class="hint">A city, region or country, or Anywhere for work that can happen remotely.</p><%= form.text_field :location, maxlength: 200 %></div>
     <div class="field"><%= form.label :description, "The problem or challenge" %><%= form.text_area :description, rows: 4, maxlength: 5000 %></div>

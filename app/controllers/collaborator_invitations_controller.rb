@@ -10,7 +10,7 @@ class CollaboratorInvitationsController < ApplicationController
     @invitation = @challenge.collaborator_invitations.new(params.require(:collaborator_invitation).permit(:email))
     @invitation.expires_at = 14.days.from_now
     current_account.with_lock do
-      if CollaboratorInvitation.joins(:challenge).where(challenges: { submission_id: current_profile.id }).where(created_at: 1.day.ago..).count >= 20
+      if CollaboratorInvitation.joins(:challenge).where(challenges: { submission_id: current_account.submissions.select(:id) }).where(created_at: 1.day.ago..).count >= 20
         @invitation.errors.add(:base, "You can send up to 20 invitations a day. Please try again tomorrow.")
       elsif !@challenge.public?
         @invitation.errors.add(:base, "Publish this work and your profile before inviting collaborators.")
@@ -46,6 +46,6 @@ class CollaboratorInvitationsController < ApplicationController
 
   def find_challenge
     raise ActiveRecord::RecordNotFound unless current_profile
-    @challenge = current_profile.challenges.find(params[:challenge_id])
+    @challenge = current_account.challenges.find(params[:challenge_id])
   end
 end

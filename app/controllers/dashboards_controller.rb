@@ -2,6 +2,14 @@ class DashboardsController < ApplicationController
   before_action :require_account
   before_action :check_profile_id
 
+  def switch_profile
+    profile = current_account.submissions.find(params[:selected_profile_id])
+    session[:active_profile_id] = profile.id
+    session.delete(:quiz_answers)
+    session.delete(:quiz_profile_id)
+    redirect_to dashboard_path, status: :see_other
+  end
+
   def show
     @profile = current_profile
     if @profile

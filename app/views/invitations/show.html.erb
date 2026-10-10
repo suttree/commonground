@@ -15,7 +15,8 @@
     <% elsif !current_profile.published? %>
       <p>Your profile must be public before it can be credited. Contact the Commonbound team if you want to publish it.</p>
     <% else %>
-      <%= button_to "Accept invitation", invitation_path(token: params[:token]), method: :patch, class: "button" %>
+      <p>You will be credited as <%= current_profile.display_name %>. <%= link_to "Choose a different profile on your dashboard", dashboard_path %>, then return to this invitation.</p>
+      <%= button_to "Accept invitation", invitation_path(token: params[:token]), method: :patch, params: { profile_id: current_profile.id }, class: "button" %>
     <% end %>
   <% else %><p>This invitation has already been accepted, was cancelled, or is no longer available.</p><% end %>
 </div>

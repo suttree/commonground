@@ -222,27 +222,37 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_nil second.reload.account_id
   end
 
-  test "existing owners cannot create additional personal or company profiles" do
+  test "owners can add companies but keep one personal profile" do
     owned = profile
     login(owned.email)
-    [ new_person_path, new_organisation_path ].each do |path|
-      get path
-      assert_redirected_to edit_account_profile_path
-    end
-    [ people_path, organisations_path ].each do |path|
-      assert_no_difference "Submission.count" do
-        post path, params: { submission: { name: "Duplicate", email: owned.email } }
-      end
-      assert_redirected_to edit_account_profile_path
-    end
+    get new_person_path
+    assert_redirected_to edit_account_profile_path
+    get new_organisation_path
+    assert_response :success
     get dashboard_path
-    assert_select "a.button[href='#{edit_account_profile_path}']", text: "Edit profile", count: 1
-    assert_select "h1 a[href='#{profile_path(owned.reload.public_slug)}']", text: owned.display_name
-    assert_select "a[href='#{new_person_path}']", count: 0
-    assert_select "a[href='#{new_organisation_path}']", count: 0
-    delete logout_path
+    assert_select "a[href='#{new_organisation_path}']", text: "Create a company profile"
+    assert_select "a[href='#{new_challenge_path}']", text: "Start a project"
     assert_no_difference "Submission.count" do
       post people_path, params: { submission: { name: "Duplicate", email: owned.email } }
+    end
+    assert_redirected_to edit_account_profile_path
+    assert_difference "Submission.count", 1 do
+      post organisations_path, params: { submission: { name: "Alex", organisation_name: "New company", mission: "Help", purpose: "Community", offering: "Services", challenge_kind: "Goals", challenge: "Grow", consent: "1", email: "forged@example.test", account_id: 1234 } }
+    end
+    company = Submission.last
+    assert_equal owned.reload.account_id, company.account_id
+    assert_equal owned.email, company.email
+    get dashboard_path
+    assert_select "h1 a", text: "New company"
+    assert_select "select[name=selected_profile_id] option", count: 2
+    patch switch_profile_path, params: { selected_profile_id: owned.id }
+    assert_redirected_to dashboard_path
+    get dashboard_path
+    assert_select "h1 a", text: owned.display_name
+    assert_equal owned.id, owned.account.submission.id
+    delete logout_path
+    assert_no_difference "Submission.count" do
+      post organisations_path, params: { submission: { name: "Duplicate", email: owned.email } }
     end
     assert_redirected_to login_path
   end
@@ -278,7 +288,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_select ".directory-card", count: 0
   end
 
-  test "account ownership is unique in both validation and the database" do
+  test "personal profile ownership is unique in both validation and the database" do
     owned = profile
     login(owned.email)
     duplicate = profile(email: "duplicate@example.test")

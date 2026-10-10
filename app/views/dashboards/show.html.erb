@@ -5,6 +5,22 @@
     <h1><%= @profile ? link_to(@profile.display_name, profile_path(@profile.public_slug)) : "Welcome to Commonbound" %></h1>
     <% if @profile %><%= link_to "Edit profile", edit_account_profile_path, class: "button secondary" %><% end %>
   </header>
+  <section class="dashboard-work" aria-labelledby="manage-profiles-title">
+    <h2 id="manage-profiles-title">Your profiles & projects</h2>
+    <% profiles = current_account.submissions.order(:kind, :organisation_name, :name) %>
+    <% if profiles.size > 1 %>
+      <%= form_with url: switch_profile_path, method: :patch do |form| %>
+        <div class="field"><%= form.label :selected_profile_id, "Manage profile" %><%= form.collection_select :selected_profile_id, profiles, :id, :display_name, selected: @profile.id %></div>
+        <%= form.submit "Switch profile", class: "button secondary" %>
+      <% end %>
+    <% end %>
+    <div class="actions">
+      <%= link_to "Create a company profile", new_organisation_path, class: "button secondary" %>
+      <% unless profiles.any? { |profile| !profile.organisation? } %><%= link_to "Create a personal profile", new_person_path, class: "button secondary" %><% end %>
+      <% if @profile %><%= link_to "Start a project", new_challenge_path, class: "button" %><% end %>
+    </div>
+    <p class="hint">Manage your personal and company profiles with this account. When you start a project, choose the profile it belongs to.</p>
+  </section>
   <% if @profile %>
     <section class="dashboard-work" aria-labelledby="current-work-title">
       <h2 id="current-work-title">Your current challenge</h2>
@@ -12,7 +28,6 @@
         <%= render "challenges/card", challenge: @active_challenge %>
         <div class="actions"><%= link_to "Update status or record results", edit_challenge_path(@active_challenge), class: "button secondary" %></div>
       <% else %><p>Share what you are working on and the help you need.</p><% end %>
-      <p><%= link_to "Working on something new?", new_challenge_path, class: "button" %></p>
       <% if @past_challenges.any? %><details class="challenge-optional"><summary>Your drafts & previous work</summary><ul class="work-archive"><% @past_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span> <%= link_to "Edit", edit_challenge_path(challenge), aria: { label: "Edit #{challenge.title}" } %></li><% end %></ul></details><% end %>
     </section>
   <% end %>

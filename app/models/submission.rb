@@ -1,6 +1,6 @@
 class Submission < ApplicationRecord
   belongs_to :account, optional: true
-  validates :account_id, uniqueness: true, allow_nil: true
+  validates :account_id, uniqueness: { conditions: -> { where(kind: "person") } }, allow_nil: true, if: -> { kind == "person" }
 
   KINDS = %w[person organisation].freeze
   WORKING_STYLES = [ "Figuring things out", "Improving something established", "Both" ].freeze

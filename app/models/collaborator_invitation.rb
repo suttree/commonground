@@ -39,12 +39,11 @@ class CollaboratorInvitation < ApplicationRecord
     invitation if invitation && invitation.expires_at > Time.current
   end
 
-  def accept!(account)
+  def accept!(account, profile: account.submission)
     challenge.with_lock do
       reload
       return false unless available? && account.email == email
-      profile = account.submission
-      return false unless profile&.published? && profile.id != challenge.submission_id
+      return false unless profile&.published? && profile.account_id == account.id && profile.id != challenge.submission_id
       challenge.update!(collaborator_ids: (challenge.collaborator_ids.map(&:to_i) + [ profile.id ]).uniq)
       update!(accepted_at: Time.current)
     end

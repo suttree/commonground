@@ -27,7 +27,7 @@ class ChallengesTest < ActionDispatch::IntegrationTest
     get new_challenge_path
     assert_response :success
     assert_select "option[value='active']"
-    post challenges_path, params: { challenge: { title: "Draft work", status: "draft", submission_id: @other.id } }
+    post challenges_path, params: { challenge: { title: "Draft work", status: "draft" } }
     entry = @owner.challenges.last
     assert entry
     assert_nil entry.published_at

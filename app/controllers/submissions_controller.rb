@@ -50,6 +50,7 @@ class SubmissionsController < ApplicationController
         @draft_images.each_value { |image| image.update!(submission: @submission) }
       end
       if current_account
+        session[:active_profile_id] = @submission.id
         redirect_to session[:collaborator_invitation_token].present? ? invitation_path(token: session[:collaborator_invitation_token]) : dashboard_path, status: :see_other
       else
         session[:pending_submission_id] = @submission.id
@@ -101,7 +102,12 @@ class SubmissionsController < ApplicationController
   private
 
   def redirect_existing_profile
-    redirect_to edit_account_profile_path, notice: "You already have a profile. You can edit it here.", status: :see_other if current_profile
+    return unless submission_kind == "person" && current_account
+    personal_profile = current_account.submissions.find_by(kind: "person")
+    if personal_profile
+      session[:active_profile_id] = personal_profile.id
+      redirect_to edit_account_profile_path, notice: "You already have a personal profile. You can edit it here.", status: :see_other
+    end
   end
 
   def prepare_project_images

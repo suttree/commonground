@@ -1,12 +1,14 @@
 <% content_for :title, @challenge.title %>
 <article class="challenge-detail narrow">
   <p class="back-link"><%= link_to "All challenges & projects", challenges_path %> · <%= link_to @challenge.submission.display_name, profile_path(@challenge.submission.public_slug) %></p>
-  <% if @challenge.submission == current_profile %><div class="actions"><%= link_to "Edit challenge", edit_challenge_path(@challenge), class: "button secondary" %><%= link_to "Invite collaborators", challenge_collaborator_invitations_path(@challenge), class: "button secondary" %><%= link_to "Dashboard", dashboard_path %></div><% end %>
+  <% if owns_profile?(@challenge.submission) %><div class="actions"><%= link_to "Edit challenge", edit_challenge_path(@challenge), class: "button secondary" %><%= link_to "Invite collaborators", challenge_collaborator_invitations_path(@challenge), class: "button secondary" %><%= link_to "Dashboard", dashboard_path %></div><% end %>
   <% unless @challenge.public? %><p class="notice">Only you can see this preview.</p><% end %>
   <header class="page-intro compact">
     <p class="eyebrow"><%= @challenge.completed? ? "Completed project" : "#{@challenge.status.humanize} challenge" %></p>
     <h1><%= @challenge.title %></h1>
-    <% if @challenge.organisation_name.present? %><p>On behalf of <%= @challenge.organisation_name %></p><% end %>
+    <% if @challenge.submission.organisation? %>
+      <p>On behalf of <%= link_to @challenge.submission.display_name, profile_path(@challenge.submission.public_slug) %></p>
+    <% elsif @challenge.organisation_name.present? %><p>On behalf of <%= @challenge.organisation_name %></p><% end %>
     <p><%= @challenge.location %><% if @challenge.industry.present? %> · <%= link_to @challenge.industry, challenges_path(industry: @challenge.industry) %><% end %></p>
     <% if @challenge.completed_at %><p class="small-note">Completed <%= @challenge.completed_at.strftime("%B %Y") %></p><% end %>
   </header>
