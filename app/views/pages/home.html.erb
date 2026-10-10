@@ -1,24 +1,23 @@
 <% content_for :title, "What are you working towards?" %>
-<section class="home-opening campaign-opening" aria-labelledby="hero-title">
-  <div class="opening-context">
-    <h1 id="hero-title">What are you working towards?</h1>
-    <p class="opening-questions">
-      <span>Not your job title.</span>
-      <span>Not your next promotion.</span>
-      <span>Not another PowerPoint.</span>
-    </p>
+<section class="common-home" aria-labelledby="hero-title">
+  <div class="common-home-copy">
+    <p class="eyebrow">People · Companies · Shared purpose</p>
+    <h1 id="hero-title">What are you<br>working towards?</h1>
+    <p class="intro">Find people and companies who care about the same problems. Start something together.</p>
+    <div class="actions"><%= link_to "Create a profile", new_person_path, class: "button" %><%= link_to "Find your priorities", quiz_path, class: "button secondary" %></div>
+    <p class="hint">Joining as a company? <%= link_to "Create a company profile", new_organisation_path %>.</p>
   </div>
-  <div class="opening-invitation">
-    <p class="intro">The problem you want to solve. The change you want to create. The impact you want to have.</p>
-    <p>Commonbound is building a new way to connect people and companies and organizations around meaningful work.</p>
-    <h2 class="join-heading">Tell us what you’re here to change.</h2>
-    <nav class="opening-links" aria-label="Join Commonbound">
-      <%= link_to new_person_path do %><span>Create a profile</span><span aria-hidden="true">→</span><% end %>
-      <%= link_to people_path do %><span>Find a collaborator</span><span aria-hidden="true">→</span><% end %>
-    </nav>
+  <div class="common-home-art" aria-hidden="true">
+    <span class="path-caption">Different paths.</span>
+    <%= render "shared/ambient_mark" %>
+    <span class="path-caption">Shared purpose.</span>
   </div>
 </section>
 
-<section class="directory-invitation"><h2>Find problems worth working on</h2><p>Explore the <%= link_to "Sustainable Development Goals directory", sdgs_path %>, browse <%= link_to "people", people_path %> or find <%= link_to "companies", companies_path %>.</p></section>
+<nav class="community-doors" aria-label="Explore Commonbound">
+  <%= link_to companies_path, class: "community-door" do %><%= render "shared/section_icon", section: "companies" %><h2>Find a company</h2><p>See who is working on the problems you care about.</p><span aria-hidden="true">↗</span><% end %>
+  <%= link_to people_path, class: "community-door" do %><%= render "shared/section_icon", section: "people" %><h2>Find a collaborator</h2><p>Find people with skills and interests that fit yours.</p><span aria-hidden="true">↗</span><% end %>
+  <%= link_to challenges_path, class: "community-door" do %><%= render "shared/section_icon", section: "challenges" %><h2>Join a project</h2><p>Find work you can help move forward.</p><span aria-hidden="true">↗</span><% end %>
+</nav>
 
 <%= render "challenges/recent", challenges: @recent_challenges %>

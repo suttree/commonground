@@ -9,7 +9,7 @@
     <section class="onboarding-reminder"><h2>Pick up where you left off</h2><p>Your personal profile isn't public yet. Finish your priorities and short introduction when you're ready.</p><%= link_to "Continue setting up your profile", new_person_path, class: "button" %></section>
   <% end %>
   <section class="dashboard-work" aria-labelledby="manage-profiles-title">
-    <h2 id="manage-profiles-title">Your profiles & projects</h2>
+    <h2 id="manage-profiles-title"><%= render "shared/section_icon", section: "people" %>Your profiles & projects</h2>
     <% profiles = current_account.submissions.order(:kind, :organisation_name, :name) %>
     <% if profiles.size > 1 %>
       <%= form_with url: switch_profile_path, method: :patch do |form| %>
@@ -26,7 +26,7 @@
   </section>
   <% if @profile %>
     <section class="dashboard-work" aria-labelledby="current-work-title">
-      <h2 id="current-work-title">Your current project</h2>
+      <h2 id="current-work-title"><%= render "shared/section_icon", section: "challenges" %>Your current project</h2>
       <% if @active_challenge %>
         <%= render "challenges/card", challenge: @active_challenge %>
         <div class="actions"><%= link_to "Update status or record results", edit_challenge_path(@active_challenge), class: "button secondary" %></div>
@@ -36,6 +36,7 @@
   <% end %>
   <div class="dashboard-columns">
     <section class="dashboard-quiz" aria-labelledby="dashboard-quiz-title">
+      <%= render "shared/ambient_mark" %>
       <p class="eyebrow">Sustainable Development Goals</p>
       <% if @profile&.priorities_selected? %>
         <h2 id="dashboard-quiz-title">Your current priorities</h2>
@@ -59,10 +60,10 @@
       <p class="eyebrow">Explore the community</p>
       <h2 id="dashboard-browse-title">Browse Commonbound</h2>
       <ul class="dashboard-directory-links">
-        <li><h3><%= link_to "Projects", challenges_path %></h3><p>Find projects to contribute to and see completed work.</p></li>
-        <li><h3><%= link_to "People directory", people_path %></h3><p>Find people who share your interests.</p></li>
-        <li><h3><%= link_to "Company directory", companies_path %></h3><p>Explore organisations and the work they do.</p></li>
-        <li><h3><%= link_to "Sustainable Development Goals directory", sdgs_path %></h3><p>Read the goals and discover their targets.</p></li>
+        <li><h3><%= render "shared/section_icon", section: "challenges" %><%= link_to "Projects", challenges_path %></h3><p>Find projects to contribute to and see completed work.</p></li>
+        <li><h3><%= render "shared/section_icon", section: "people" %><%= link_to "People directory", people_path %></h3><p>Find people who share your interests.</p></li>
+        <li><h3><%= render "shared/section_icon", section: "companies" %><%= link_to "Company directory", companies_path %></h3><p>Explore organisations and the work they do.</p></li>
+        <li><h3><%= render "shared/section_icon", section: "priorities" %><%= link_to "Sustainable Development Goals directory", sdgs_path %></h3><p>Read the goals and discover their targets.</p></li>
       </ul>
     </section>
   </div>
