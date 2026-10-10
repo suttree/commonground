@@ -1,5 +1,5 @@
 /* Plain CSS. The content and forms work without JavaScript. */
-:root { color-scheme: light; --paper: #f8f7f0; --ink: #253d35; --muted: #59625b; --line: #c9cdc1; --green: #285543; --wash: #e9eddf; --error: #9a3029; }
+:root { color-scheme: light; --paper: #f8f7f0; --ink: #253d35; --muted: #59625b; --line: #c9cdc1; --green: #285543; --wash: #e9eddf; --error: #9a3029; --peach: #f6d9c9; --sky: #dceaf2; --citrus: #e7edbe; --yellow: #f5e5a7; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 1.1875rem; line-height: 1.6; }
 a { color: var(--green); text-underline-offset: .22em; text-decoration-thickness: 1px; }
@@ -519,9 +519,9 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
   .ambient-mark { width: 140px; height: 84px; margin-block: 16px; }
 }
 
-/* Commonbound paths: individual routes meeting around a shared purpose. */
+/* Overlapping forms give the shared Commonbound illustration its colour. */
 .join-layout { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 72px); padding-top: 40px; }
-.join-story { background: var(--green); color: var(--paper); padding: clamp(24px, 4vw, 48px); border-radius: 4px 64px 4px 4px; --path-green: #f8f7f0; --path-clay: #e39b7c; --path-lime: #c9dc86; }
+.join-story { background: var(--green); color: var(--paper); padding: clamp(24px, 4vw, 48px); border-radius: 4px 64px 4px 4px; --mark-centre: #285543; }
 .join-story .eyebrow { color: #c9dc86; font-size: .8rem; }
 .join-story h1 { font-family: inherit; font-weight: 600; font-size: clamp(2.3rem, 4vw, 3.6rem); letter-spacing: -.05em; }
 .join-story .ambient-mark { width: 100%; max-width: 360px; height: auto; margin: 24px auto; }
@@ -568,12 +568,12 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
   .join-steps { display: none; }
 }
 
-/* Shared paths connect the homepage, onboarding and account views. */
+/* Homepage and account views. */
 .common-home { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 80px); align-items: center; padding: 56px 0; }
 .common-home h1 { font-family: inherit; font-weight: 600; font-size: clamp(2.6rem, 5.2vw, 4.5rem); letter-spacing: -.055em; line-height: 1.05; }
 .common-home .intro { max-width: 37ch; margin: 24px 0; }
 .common-home .hint { margin-top: 20px; }
-.common-home-art { background: #285543; color: var(--paper); --path-green: #f7f6ef; --path-clay: #e39b7c; padding: 32px; border-radius: 4px 80px 4px 4px; }
+.common-home-art { background: #285543; color: var(--paper); --mark-centre: #285543; padding: 32px; border-radius: 4px 80px 4px 4px; }
 .common-home-art .ambient-mark { width: 100%; height: auto; margin: 32px 0; }
 .path-caption { display: block; font-size: clamp(1.1rem, 2vw, 1.6rem); }
 .path-caption:last-child { text-align: right; }
@@ -628,4 +628,35 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
   .profile-opening { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   .profile-purpose .ambient-mark { width: 80px; margin-bottom: 16px; }
   .project-opening > .ambient-mark { width: 90px; margin-bottom: 20px; }
+}
+
+/* Colour marks places to explore and take part, while forms stay on paper. */
+.community-door:nth-child(1) { background: var(--sky); border-color: #6f96b2; }
+.community-door:nth-child(2) { background: var(--peach); border-color: #bc6348; }
+.community-door:nth-child(3) { background: var(--citrus); border-color: #819947; }
+.discovery-intro { background: var(--yellow); padding: 28px 264px 28px 28px; border-radius: 4px 48px 4px 4px; }
+.discovery-intro .ambient-mark { right: 24px; top: 50%; transform: translateY(-50%); width: 200px; }
+.directory-card { background: var(--sky); border: 0; border-top: 4px solid #6f96b2; border-radius: 0 28px 0 0; }
+.directory-card:nth-child(3n + 2) { background: var(--peach); border-color: #bc6348; }
+.directory-card:nth-child(3n) { background: var(--citrus); border-color: #819947; }
+.directory-card h2 { font-family: inherit; font-weight: 600; font-size: 1.7rem; letter-spacing: -.035em; }
+.challenge-card { background: #f0f2db; border-color: #a3b36e; }
+.challenge-grid > .challenge-card:nth-child(3n + 2) { background: var(--sky); border-color: #6f96b2; }
+.challenge-grid > .challenge-card:nth-child(3n) { background: var(--peach); border-color: #bc6348; }
+.dashboard-work { background: var(--sky); border-left-color: #6f96b2; }
+.dashboard-work + .dashboard-work { background: var(--peach); border-left-color: #bc6348; }
+.dashboard-quiz, .onboarding-reminder { background: var(--yellow); border-color: #d2b85f; }
+.dashboard-directory-links li { padding-inline: 16px; border-top: 0; border-left: 3px solid #6f96b2; background: var(--sky); margin-bottom: 10px; }
+.dashboard-directory-links li:nth-child(2) { background: var(--peach); border-color: #bc6348; }
+.dashboard-directory-links li:nth-child(3) { background: var(--citrus); border-color: #819947; }
+.dashboard-directory-links li:nth-child(4) { background: var(--yellow); border-color: #c5a544; }
+.profile-purpose, .challenge-help { background: var(--peach); }
+.profile-targets { background: var(--sky); padding: 28px; border-radius: 4px 32px 4px 4px; }
+.priority-suggestions .quiz-answer:nth-child(1) { background: var(--sky); border-color: #6f96b2; }
+.priority-suggestions .quiz-answer:nth-child(2) { background: var(--peach); }
+.priority-suggestions .quiz-answer:nth-child(3) { background: var(--citrus); }
+.wizard-option:has(input:checked) { background: var(--yellow); border-color: var(--green); }
+@media (max-width: 760px) {
+  .discovery-intro { padding: 24px 20px; border-top-right-radius: 32px; }
+  .profile-targets { padding: 24px 20px; }
 }
