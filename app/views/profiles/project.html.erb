@@ -2,7 +2,8 @@
 <% content_for :title, "#{title} · #{@profile.display_name}" %>
 <article class="narrow skill-detail project-detail">
   <p class="back-link"><%= link_to "← Back to #{@profile.display_name}", profile_path(@profile.public_slug, anchor: "project-#{@position}") %></p>
-  <header class="page-intro compact">
+  <header class="page-intro compact project-opening">
+    <%= render "shared/ambient_mark" %>
     <p class="eyebrow">Case study · <%= @profile.display_name %></p>
     <h1><%= title %></h1>
     <% if @project["role"].present? %><p><%= @project["role"] %></p><% end %>

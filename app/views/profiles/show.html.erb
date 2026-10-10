@@ -1,22 +1,24 @@
 <% content_for :title, @profile.display_name %>
 <article class="public-profile">
+  <p class="back-link"><%= link_to @profile.organisation? ? "All companies" : "All people", @profile.organisation? ? companies_path : people_path %></p>
   <% if current_profile == @profile %>
     <p><%= link_to "Back to dashboard", dashboard_path %> · <%= link_to "Edit profile", edit_account_profile_path %></p>
     <% unless @profile.published? %><p class="small-note">Only you can see this preview. Contact the team to restore your public profile.</p><% end %>
   <% end %>
   <header class="profile-opening">
     <div>
-      <p class="eyebrow"><%= @profile.organisation? ? "Organisation" : "Personal profile" %></p>
+      <p class="eyebrow profile-kind"><%= render "shared/section_icon", section: @profile.organisation? ? "companies" : "people" %><%= @profile.organisation? ? "Organisation" : "Personal profile" %></p>
       <h1><%= @profile.display_name %></h1>
       <% if @profile.location.present? %><p class="profile-location"><%= @profile.location %><% if @profile.radius_km.present? %> · Within <%= @profile.radius_km %> km<% end %></p><% end %>
       <% if @profile.website.to_s.match?(%r{\Ahttps?://}i) %><%= link_to "Website & work ↗", @profile.website, rel: "noopener noreferrer", class: "profile-website" %><% end %>
     </div>
     <div class="profile-purpose">
+      <%= render "shared/ambient_mark" %>
       <h2><%= @profile.organisation? ? "Who we serve" : "Who I want to serve" %></h2>
       <%= simple_format @profile.purpose %>
     </div>
   </header>
-  <% if @current_challenge %><section class="profile-section current-challenge"><h2>My current project</h2><%= render "challenges/card", challenge: @current_challenge %></section><% end %>
+  <% if @current_challenge %><section class="profile-section current-challenge"><h2><%= @profile.organisation? ? "Our current project" : "My current project" %></h2><%= render "challenges/card", challenge: @current_challenge %></section><% end %>
   <div class="profile-body">
     <div class="profile-main">
       <% fields = @profile.organisation? ? { mission: "Our purpose", offering: "What we offer", impact_metrics: "Our impact", proud_of: "What we're proud of" } : { experience: "The thread through my work", education_topics: "What shaped my thinking" } %>

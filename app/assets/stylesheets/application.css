@@ -602,3 +602,30 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
   .community-door h2 { margin-top: 8px; }
   .community-door p { max-width: none; }
 }
+
+/* Public profiles and projects use the same visual language as discovery. */
+.public-profile > .back-link { margin-bottom: 28px; }
+.profile-opening { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; border-bottom: 1px solid var(--line); }
+.profile-opening h1, .project-opening h1 { font-family: inherit; font-weight: 600; letter-spacing: -.045em; line-height: 1.1; font-size: clamp(2.3rem, 4.5vw, 3.8rem); }
+.profile-kind { display: flex; align-items: center; gap: 10px; }
+.profile-purpose { border-radius: 4px 48px 4px 4px; border-top: 4px solid #bc6348; }
+.profile-purpose .ambient-mark { width: 100px; height: auto; margin: 0 0 20px; }
+.profile-purpose p { font-family: inherit; font-size: clamp(1.25rem, 2vw, 1.6rem); line-height: 1.5; }
+.profile-main > .profile-section + .profile-section, .profile-interests > .profile-section + .profile-section { border-top: 1px solid var(--line); padding-top: 28px; }
+.project-opening { border-bottom: 1px solid var(--line); padding-bottom: 28px; }
+.project-opening > .ambient-mark { width: 120px; height: auto; margin: 16px 0 24px; }
+.challenge-detail .prose h2, .project-detail .prose h2 { font-family: inherit; font-weight: 600; font-size: clamp(1.4rem, 2.5vw, 1.8rem); letter-spacing: -.025em; }
+.challenge-detail .prose > section, .project-detail .prose > section { margin-block: 32px; }
+.challenge-help { border-left: 4px solid #bc6348; border-radius: 0 40px 0 0; }
+.challenge-help h2 { display: flex; align-items: center; gap: 12px; }
+.help-options { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 20px 0 24px; }
+.help-options li { padding: 6px 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 4px; font-size: 1rem; }
+.challenge-card { border-top: 3px solid #8c9d56; border-radius: 0 24px 0 0; }
+.challenge-card .eyebrow { display: flex; align-items: center; gap: 8px; }
+.challenge-card .eyebrow .section-icon { width: 18px; height: 18px; }
+.challenge-card h3, .project-card h3 { font-family: inherit; font-size: 1.4rem; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+@media (max-width: 760px) {
+  .profile-opening { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .profile-purpose .ambient-mark { width: 80px; margin-bottom: 16px; }
+  .project-opening > .ambient-mark { width: 90px; margin-bottom: 20px; }
+}

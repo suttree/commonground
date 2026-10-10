@@ -3,7 +3,8 @@
   <p class="back-link"><%= link_to "All projects", challenges_path %> · <%= link_to @challenge.submission.display_name, profile_path(@challenge.submission.public_slug) %></p>
   <% if owns_profile?(@challenge.submission) %><div class="actions"><%= link_to "Edit project", edit_challenge_path(@challenge), class: "button secondary" %><%= link_to "Invite collaborators", challenge_collaborator_invitations_path(@challenge), class: "button secondary" %><%= link_to "Dashboard", dashboard_path %></div><% end %>
   <% unless @challenge.public? %><p class="notice">Only you can see this preview.</p><% end %>
-  <header class="page-intro compact">
+  <header class="page-intro compact project-opening">
+    <%= render "shared/ambient_mark" %>
     <p class="eyebrow"><%= @challenge.completed? ? "Completed project" : "#{@challenge.status.humanize} project" %></p>
     <h1><%= @challenge.title %></h1>
     <% if @challenge.submission.organisation? %>
@@ -20,8 +21,8 @@
       <% { project_role: "My role", context: "Context", approach: "The approach", results: "Results & what changed" }.each do |field, label| %><section><h2><%= label %></h2><%= simple_format @challenge.public_send(field) %></section><% end %>
       <% if @challenge.validated_project_url.present? %><p><%= link_to "Visit the project website", @challenge.validated_project_url, rel: "noopener noreferrer" %></p><% end %>
     <% elsif @challenge.status == "active" %>
-      <section class="challenge-help"><h2>Ways to help</h2>
-        <% if @challenge.help_options.any? %><ul><% @challenge.help_options.each do |option| %><li><%= option %></li><% end %></ul><% else %><p>Start a conversation about how you could contribute.</p><% end %>
+      <section class="challenge-help"><h2><%= render "shared/section_icon", section: "people" %>Ways to help</h2>
+        <% if @challenge.help_options.any? %><ul class="help-options"><% @challenge.help_options.each do |option| %><li><%= option %></li><% end %></ul><% else %><p>Start a conversation about how you could contribute.</p><% end %>
         <% if @challenge.public? %><%= link_to "Get involved", new_profile_contact_path(@challenge.submission.public_slug, challenge_id: @challenge.id), class: "button" %><p class="hint">Send a private request to the Commonbound team for <%= @challenge.submission.display_name %>. The team will help arrange a reply.</p><% end %>
       </section>
     <% end %>
