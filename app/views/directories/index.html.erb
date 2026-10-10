@@ -1,5 +1,6 @@
 <% content_for :title, @company ? "Company directory" : "People directory" %>
 <div class="form-page">
+  <%= render "shared/discovery_nav", current_section: @company ? "companies" : "people" %>
   <h1><%= @company ? "Company directory" : "People directory" %></h1>
   <p>Find <%= @company ? "companies" : "people" %> by name, skill, location, sector or the goals they want to work on.</p>
   <%= form_with url: @company ? companies_path : people_path, method: :get, class: "directory-filters" do |form| %>

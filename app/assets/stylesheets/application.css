@@ -486,3 +486,9 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .profile-panel { max-width: 760px; }
 .profile-panel > h2 { font-size: 2rem; }
 @media (max-width: 600px) { .profile-tabs { gap: 6px; } .profile-tabs a { padding: 8px 12px; } }
+
+.discovery-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.discovery-nav a { padding: 10px 16px; border: 1px solid var(--line); border-radius: 4px; text-decoration: none; font-size: 1rem; }
+.discovery-nav a[aria-current="page"] { background: var(--green); color: var(--paper); border-color: var(--green); }
+.discovery-nav a:hover { text-decoration: underline; }
+.discovery-nav a:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }

@@ -1,0 +1,5 @@
+<nav class="discovery-nav" aria-label="Discover">
+  <% [["Companies", companies_path, "companies"], ["People", people_path, "people"], ["Challenges", challenges_path, "challenges"]].each do |label, path, section| %>
+    <%= link_to label, path, aria: { current: section == current_section ? "page" : nil } %>
+  <% end %>
+</nav>
