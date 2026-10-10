@@ -7,10 +7,13 @@ class ProjectPagesTest < ActionDispatch::IntegrationTest
     entry = Submission.create!(kind: "person", profile_version: 2, name: "Example", email: "private@example.test",
       purpose: "Useful work", experience: "Projects", consent: "1", published: true, notes: "Private review",
       projects: [ project, project.merge("title" => "Second project") ])
+    completed = entry.challenges.create!(title: "Completed community project", status: "completed", location: "Bristol", description: "A shared garden", objectives: "Grow food", project_role: "Designer", context: "Neighbourhood", approach: "Worked together", results: "A new garden")
     get profile_path(entry.public_slug)
     assert_response :success
+    assert_select "#projects", count: 1
+    assert_select "#projects a[href='#{challenge_path(completed)}']", text: "Completed community project"
     assert_select ".project-card", count: 2
-    assert_select "a[href='#project-2'][aria-label='Next project']"
+    assert_select ".profile-project-grid .project-card", count: 2
     assert_select ".project-card .skill-preview" do |elements|
       assert_operator elements.first.text.length, :<=, 140
     end

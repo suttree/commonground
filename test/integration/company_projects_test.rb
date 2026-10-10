@@ -49,7 +49,7 @@ class CompanyProjectsTest < ActionDispatch::IntegrationTest
     patch challenge_path(entry), params: { challenge: { status: "completed", project_role: "Founder", context: "Local", approach: "Planting", results: "A garden" } }
     assert entry.reload.completed?
     get profile_path(@company.public_slug)
-    assert_select "h2", text: "Completed projects"
+    assert_select "#projects h2", text: "Projects"
     assert_select "a[href='#{challenge_path(entry)}']"
   end
 

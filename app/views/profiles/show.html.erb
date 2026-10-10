@@ -29,7 +29,6 @@
       <% unless @profile.organisation? %>
         <% if @profile.skills_summary.present? %><section class="profile-section"><h2>Skills & interests</h2><%= simple_format @profile.skills_summary %></section><% end %>
         <%= render "skills", profile: @profile %>
-        <%= render "projects", profile: @profile %>
       <% else %>
         <% if @profile.profile_entries("products").any? %>
           <section class="profile-section"><h2>Products & services</h2>
@@ -88,7 +87,7 @@
       </div>
     </section>
   <% end %>
-  <% if @completed_challenges.any? %><section class="profile-section"><h2>Completed projects</h2><div class="challenge-grid"><%= render partial: "challenges/card", collection: @completed_challenges, as: :challenge %></div></section><% end %>
+  <%= render "projects", profile: @profile %>
   <% if @archived_challenges.any? %><details class="challenge-optional"><summary>Previous projects</summary><ul class="work-archive"><% @archived_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span></li><% end %></ul></details><% end %>
   <% if @profile.contact_link.present? %>
     <section class="profile-contact profile-section" aria-label="Contact <%= @profile.display_name %>"><%= link_to @profile.contact_action, @profile.contact_link, class: "button", rel: "noopener noreferrer" %></section>

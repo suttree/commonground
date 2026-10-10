@@ -54,7 +54,7 @@ class ChallengesTest < ActionDispatch::IntegrationTest
     assert entry.reload.completed_at
     assert_equal original_projects, @owner.reload.projects
     get profile_path(@owner.public_slug)
-    assert_select "h2", text: "Completed projects"
+    assert_select "#projects h2", text: "Projects"
     get challenge_path(entry)
     assert_select "h2", text: "Results & what changed"
     assert_select "a[href='#{profile_path(@other.public_slug)}']", text: @other.display_name

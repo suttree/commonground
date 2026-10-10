@@ -1,11 +1,14 @@
 <% content_for :title, "Your suggested priorities" %>
-<div class="quiz-page narrow">
+<div class="quiz-page quiz-results">
   <p class="eyebrow">Your suggested priorities</p>
+  <%= render "shared/ambient_mark" %>
   <h1><%= @matches.any? ? "A starting point for your next project." : "Still exploring? That's fine." %></h1>
   <% if @matches.any? %>
     <p>These problems connect to the choices you made. See which ones feel worth exploring.</p>
+    <div class="priority-suggestions">
     <% @matches.each do |id, reasons| %>
       <article class="quiz-answer">
+        <%= render "shared/section_icon", section: "priorities" %>
         <p class="eyebrow">SDG target <%= id %></p>
         <h3><%= SdgQuiz::LABELS.fetch(id) %></h3>
         <p class="small-note">Suggested because you chose:</p>
@@ -13,6 +16,7 @@
         <details><summary>Read the full target</summary><p><%= ProfileOptions::TARGETS.fetch(id).fetch("text") %></p><p><%= link_to "Target #{id} in the SDG directory", sdg_target_path(id) %></p></details>
       </article>
     <% end %>
+    </div>
     <p class="small-note">Each answer points to related SDG targets. We show up to three with the most connections; equal matches follow question order. This is a starting point, not an assessment of your values or skills.</p>
   <% else %>
     <p>You skipped every question, so we haven't suggested any priorities. You can try again whenever you're ready.</p>

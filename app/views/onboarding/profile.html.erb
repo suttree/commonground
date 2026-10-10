@@ -1,6 +1,7 @@
 <% content_for :title, "Your profile" %>
 <div class="form-page narrow onboarding-page">
   <p class="eyebrow">Your profile · Step 3 of 4</p>
+  <%= render "shared/ambient_mark" %>
   <h1>A little about you.</h1>
   <p>Give people a starting point for a conversation. You can add more later.</p>
   <%= render "shared/errors", record: @submission %>

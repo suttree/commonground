@@ -1,8 +1,7 @@
 <% content_for :title, "Projects" %>
 <div class="form-page">
   <%= render "shared/discovery_nav", current_section: "challenges" %>
-  <h1>Projects</h1>
-  <p>Find work you can help with, and see what people have achieved.</p>
+  <%= render "shared/discovery_intro", title: "Projects", description: "Find work you can help with, and see what people have achieved." %>
   <%= form_with url: challenges_path, method: :get, class: "directory-filters" do |form| %>
     <div class="field"><%= form.label :q, "Search" %><%= form.search_field :q, value: @filters[:q] %></div>
     <div class="field"><%= form.label :location, "Location" %><%= form.search_field :location, value: @filters[:location] %></div>
