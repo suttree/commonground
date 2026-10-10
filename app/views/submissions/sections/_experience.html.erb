@@ -1,0 +1,7 @@
+<fieldset>
+  <legend>Experience & direction</legend>
+  <%= render "submissions/text_field", form: form, attribute: :experience, label: "The underlying thread in my experiences", required: true, hint: "What connects the work and experiences that matter to you? A short answer is enough." %>
+  <%= render "submissions/sectors", form: form, attribute: :sectors_past, label: "Sectors I have worked in" %>
+  <%= render "submissions/sectors", form: form, attribute: :sectors_future, label: "Sectors I wish to move into" %>
+  <%= render "submissions/text_field", form: form, attribute: :sector_reason, label: "And why?", hint: "What draws you towards those sectors?" %>
+</fieldset>

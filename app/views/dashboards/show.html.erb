@@ -41,7 +41,7 @@
         <% else %>
           <p>You're still exploring which problems you want to work on.</p>
         <% end %>
-        <p class="dashboard-retake"><%= link_to "Explore challenges", challenges_path(goal: Array(@profile.target_ids).first.to_s.split(".").first.presence, status: "active") %> · <%= link_to "Review your priorities", edit_account_profile_path %></p>
+        <p class="dashboard-retake"><%= link_to "Explore challenges", challenges_path(goal: Array(@profile.target_ids).first.to_s.split(".").first.presence, status: "active") %> · <%= link_to "Review your priorities", edit_account_profile_path(section: "priorities", profile_id: @profile.id) %></p>
       <% else %>
         <h2 id="dashboard-quiz-title">Find the problems you want to work on</h2>
         <p>Discover your Sustainable Development Goal priorities through a short quiz.</p>

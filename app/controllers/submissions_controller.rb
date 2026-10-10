@@ -64,42 +64,58 @@ class SubmissionsController < ApplicationController
   def edit
     @submission = current_profile
     return redirect_to new_person_path unless @submission
-    render :new
+    prepare_edit_section
+    render :edit
   end
 
   def update
     @submission = current_profile
     return head :not_found unless @submission
+    prepare_edit_section if params[:section].present?
+    @unsaved_section = true if @section
+    attributes = submission_params.except(:email, :consent)
+    attributes = attributes.slice(*@sections.fetch(@section).last) if @section
     existing_projects = @submission.profile_entries("projects").deep_dup
-    @submission.assign_attributes(submission_params.except(:email, :consent))
+    @submission.assign_attributes(attributes)
     @submission.profile_entries("projects").each_with_index do |row, index|
       row["image_id"] = existing_projects.dig(index, "image_id") if existing_projects.dig(index, "image_id")
     end
-    prepare_project_images
+    @image_errors, @draft_images = [], {}
+    prepare_project_images if !@section || @section == "portfolio"
     if @image_errors.any?
       @image_errors.each { |message| @submission.errors.add(:projects, message) }
-      render :new, status: :unprocessable_entity
-    elsif allowed_repeaters.include?(params[:add_section])
+      render(@section ? :edit : :new, status: :unprocessable_entity)
+    elsif allowed_repeaters.include?(params[:add_section]) && (!@section || @sections.fetch(@section).last.include?(params[:add_section]))
       field = allowed_repeaters.find { |name| name == params[:add_section] }
       rows = @submission.profile_entries(field)
       @submission.profile[field] = rows + [ {} ] if rows.size < 10
       @expanded_section = field
-      render :new
+      render(@section ? :edit : :new)
     elsif @submission.valid?
       Submission.transaction do
         @submission.profile_entries("projects").each { |row| row.delete("image_token"); row.delete("remove_image") }
         @submission.save!
         @draft_images.each_value { |image| image.update!(submission: @submission) }
-        kept_images = @submission.profile_entries("projects").filter_map { |row| row["image_id"] }
-        @submission.portfolio_images.where.not(id: kept_images).destroy_all
+        if !@section || @section == "portfolio"
+          kept_images = @submission.profile_entries("projects").filter_map { |row| row["image_id"] }
+          @submission.portfolio_images.where.not(id: kept_images).destroy_all
+        end
       end
-      redirect_to dashboard_path, notice: "Your profile has been updated.", status: :see_other
+      destination = @section ? edit_account_profile_path(section: @section, profile_id: @submission.id) : dashboard_path
+      message = @section ? "#{@sections.fetch(@section).first} saved." : "Your profile has been updated."
+      redirect_to destination, notice: message, status: :see_other
     else
-      render :new, status: :unprocessable_entity
+      render(@section ? :edit : :new, status: :unprocessable_entity)
     end
   end
 
   private
+
+  def prepare_edit_section
+    @sections = ProfileSections.for(@submission)
+    @section = params[:section].presence || "basics"
+    raise ActiveRecord::RecordNotFound unless @sections.key?(@section)
+  end
 
   def redirect_existing_profile
     return unless submission_kind == "person" && current_account

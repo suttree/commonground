@@ -1,0 +1,30 @@
+<% content_for :title, "Edit #{@submission.display_name}" %>
+<%= javascript_include_tag "profile_editor", defer: true %>
+<div class="form-page profile-editor">
+  <p class="back-link"><%= link_to "Back to dashboard", dashboard_path %> · <%= link_to "View profile", profile_path(@submission.public_slug) %></p>
+  <header class="page-intro compact">
+    <p class="eyebrow"><%= @submission.organisation? ? "Company profile" : "Personal profile" %></p>
+    <h1>Edit your profile</h1>
+    <p><%= @submission.display_name %></p>
+  </header>
+  <nav class="profile-tabs" aria-label="Profile sections">
+    <% @sections.each do |key, (label, _fields)| %>
+      <%= link_to label, edit_account_profile_path(section: key, profile_id: @submission.id), aria: { current: key == @section ? "page" : nil } %>
+    <% end %>
+  </nav>
+  <div id="profile-unsaved" class="notice" role="alert" tabindex="-1" hidden>
+    <p>You have unsaved changes. Save this section before switching, or discard your changes to continue.</p>
+    <div class="actions"><button type="button" class="button secondary" id="profile-keep-editing">Keep editing</button><button type="button" class="button secondary" id="profile-discard">Discard changes</button></div>
+  </div>
+  <section class="profile-panel" aria-labelledby="profile-section-title">
+    <h2 id="profile-section-title"><%= @sections.fetch(@section).first %></h2>
+    <p class="hint">Save this section before switching tabs. Changes appear on your public profile.</p>
+    <%= render "shared/errors", record: @submission %>
+    <%= form_with model: @submission, url: account_profile_path, local: true, html: { multipart: true, data: { profile_editor: true, unsaved: @unsaved_section ? "true" : "false" } } do |form| %>
+      <%= hidden_field_tag :profile_id, @submission.id %>
+      <%= hidden_field_tag :section, @section %>
+      <%= render "submissions/sections/#{@section}", form: form %>
+      <div class="actions"><%= form.submit "Save #{@sections.fetch(@section).first.downcase}", class: "button" %></div>
+    <% end %>
+  </section>
+</div>

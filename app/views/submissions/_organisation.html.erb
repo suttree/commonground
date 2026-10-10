@@ -1,25 +1,5 @@
-<fieldset>
-  <legend>Purpose & impact</legend>
-  <%= render "text_field", form: form, attribute: :mission, label: "We exist to…", required: true %>
-  <%= render "text_field", form: form, attribute: :purpose, label: "We strive to positively impact the lives of…", required: true %>
-  <%= render "text_field", form: form, attribute: :offering, label: "We offer…", required: true %>
-  <%= render "text_field", form: form, attribute: :impact_metrics, label: "We measure our positive impact on the following metrics" %>
-  <%= render "text_field", form: form, attribute: :proud_of, label: "We’re especially proud of…" %>
-</fieldset>
-<%= render "repeated", form: form, field: "products", title: "Our products & services", singular: "Product or service" %>
-<fieldset>
-  <legend>What comes next</legend>
-  <div class="field">
-    <%= form.label :challenge_kind, "What would you like to share?" %>
-    <%= form.select :challenge_kind, [["Our currently biggest challenges", "Challenges"], ["Our current goals", "Goals"]], { prompt: "Choose challenges or goals" }, { required: true, **field_options(@submission, :challenge_kind) } %>
-    <%= render "shared/field_error", record: @submission, attribute: :challenge_kind %>
-  </div>
-  <%= render "text_field", form: form, attribute: :challenge, label: "Our currently biggest challenges / our current goals are…", required: true %>
-  <%= render "text_field", form: form, attribute: :help_needed, label: "We’re looking for people that can help us solve them or reach them", hint: "Tell us what help would make a difference." %>
-</fieldset>
-
-<fieldset><legend><%= @submission.persisted? ? "Location, sector & priorities" : "Location & sector" %></legend>
-  <%= render "text_field", form: form, attribute: :location, label: "Where we work", rows: 2 %>
-  <%= render "sectors", form: form, attribute: :sectors_past, label: "Our sectors" %>
-  <%= render "shared/priorities", form: form if @submission.persisted? %>
-</fieldset>
+<%= render "submissions/sections/offering", form: form %>
+<%= render "submissions/sections/products", form: form %>
+<%= render "submissions/sections/goals", form: form %>
+<%= render "submissions/sections/location", form: form %>
+<%= render "shared/priorities", form: form if @submission.persisted? %>

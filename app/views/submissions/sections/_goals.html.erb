@@ -1,0 +1,11 @@
+<fieldset>
+  <legend>What comes next</legend>
+  <div class="field">
+    <%= form.label :challenge_kind, "What would you like to share?" %>
+    <%= form.select :challenge_kind, [["Our currently biggest challenges", "Challenges"], ["Our current goals", "Goals"]], { prompt: "Choose challenges or goals" }, { required: true, **field_options(@submission, :challenge_kind) } %>
+    <%= render "shared/field_error", record: @submission, attribute: :challenge_kind %>
+  </div>
+  <%= render "submissions/text_field", form: form, attribute: :challenge, label: "Our currently biggest challenges / our current goals are…", required: true %>
+  <%= render "submissions/text_field", form: form, attribute: :help_needed, label: "We’re looking for people that can help us solve them or reach them", hint: "Tell us what help would make a difference." %>
+</fieldset>
+

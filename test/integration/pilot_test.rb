@@ -36,7 +36,7 @@ class PilotTest < ActionDispatch::IntegrationTest
       assert_select "h1", count: 1
       assert_select "script", count: 1
       assert_select "script[src='https://scripts.withcabin.com/hello.js'][async][defer]", count: 1
-      assert_includes response.headers["Content-Security-Policy"], "script-src https://scripts.withcabin.com"
+      assert_includes response.headers["Content-Security-Policy"], "script-src 'self' https://scripts.withcabin.com"
       assert_includes response.headers["Content-Security-Policy"], "connect-src 'self' https://ping.withcabin.com"
     end
   end

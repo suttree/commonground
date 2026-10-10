@@ -473,3 +473,16 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
   .challenge-card { padding: 22px; }
   .work-archive .status { margin-inline: 0; }
 }
+
+.profile-editor { max-width: 1000px; margin-inline: auto; }
+.profile-editor .page-intro { padding: 12px 0; }
+.profile-editor .page-intro > p:last-child { margin-bottom: 0; }
+.profile-editor .page-intro h1 { font-size: clamp(2.4rem, 6vw, 4rem); }
+.profile-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 24px 32px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.profile-tabs a { padding: 10px 16px; border: 1px solid var(--line); border-radius: 4px; text-decoration: none; font-size: 1rem; }
+.profile-tabs a[aria-current="page"] { background: var(--green); color: var(--paper); border-color: var(--green); }
+.profile-tabs a:hover { text-decoration: underline; }
+.profile-tabs a:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.profile-panel { max-width: 760px; }
+.profile-panel > h2 { font-size: 2rem; }
+@media (max-width: 600px) { .profile-tabs { gap: 6px; } .profile-tabs a { padding: 8px 12px; } }

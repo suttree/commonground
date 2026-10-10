@@ -1,0 +1,8 @@
+<fieldset>
+  <legend>Purpose & impact</legend>
+  <%= render "submissions/text_field", form: form, attribute: :mission, label: "We exist to…", required: true %>
+  <%= render "submissions/text_field", form: form, attribute: :purpose, label: "We strive to positively impact the lives of…", required: true %>
+  <%= render "submissions/text_field", form: form, attribute: :offering, label: "We offer…", required: true %>
+  <%= render "submissions/text_field", form: form, attribute: :impact_metrics, label: "We measure our positive impact on the following metrics" %>
+  <%= render "submissions/text_field", form: form, attribute: :proud_of, label: "We’re especially proud of…" %>
+</fieldset>
