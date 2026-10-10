@@ -660,3 +660,15 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
   .discovery-intro { padding: 24px 20px; border-top-right-radius: 32px; }
   .profile-targets { padding: 24px 20px; }
 }
+
+/* The abstract print retains its square composition at every size. */
+.ambient-mark.abstract-print { height: auto; border-radius: 4px; }
+.common-home-art { position: relative; overflow: hidden; padding: 0; }
+.common-home-art .abstract-print { width: 100%; max-width: none; margin: 0; border-radius: 0; }
+.common-home-art .path-caption { position: absolute; z-index: 1; padding: 4px 10px; background: #285543; border-radius: 4px; font-size: 1rem; }
+.common-home-art .path-caption:first-child { top: 20px; left: 20px; }
+.common-home-art .path-caption:last-child { bottom: 20px; right: 20px; }
+.discovery-intro .abstract-print { width: 140px; }
+@media (max-width: 760px) {
+  .common-home-art { display: block; max-width: 440px; width: 100%; margin-inline: auto; }
+}
