@@ -5,5 +5,5 @@
   <p class="challenge-location"><%= challenge.location.presence || "Location not added" %></p>
   <p><%= truncate(challenge.completed? ? challenge.results : challenge.description, length: 180, separator: " ") %></p>
   <% if challenge.status == "active" && challenge.help_options.any? %><p class="small-note">Looking for help with <%= challenge.help_options.map(&:downcase).to_sentence %>.</p><% end %>
-  <%= link_to challenge.completed? ? "Read the project" : "Explore the challenge", challenge_path(challenge), class: "challenge-read-more" %>
+  <%= link_to challenge.completed? ? "Read the project" : "Explore the project", challenge_path(challenge), class: "challenge-read-more" %>
 </article>

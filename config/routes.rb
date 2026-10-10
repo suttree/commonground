@@ -23,8 +23,8 @@ Rails.application.routes.draw do
   get "sdgs(/*path)", to: redirect { |_params, request| request.original_fullpath.sub(%r{\A/sdgs}, "/sustainable-development-goals") }, format: false
   get "quiz", to: "quiz#show", as: :quiz
   post "quiz", to: "quiz#create"
-  get "quiz/explore", to: "quiz#explore", as: :explore_quiz
-  post "quiz/explore", to: "quiz#select"
+  get "quiz/explore", to: redirect("/quiz"), as: :explore_quiz
+  post "quiz/explore", to: redirect("/quiz", status: 303)
   get "althomepage", to: "pages#althomepage"
   get "about", to: "pages#about"
   get "privacy", to: "pages#privacy"

@@ -1,19 +1,19 @@
-<% content_for :title, "Challenges & projects" %>
+<% content_for :title, "Projects" %>
 <div class="form-page">
   <%= render "shared/discovery_nav", current_section: "challenges" %>
-  <h1>Challenges & projects</h1>
+  <h1>Projects</h1>
   <p>Find work you can help with, and see what people have achieved.</p>
   <%= form_with url: challenges_path, method: :get, class: "directory-filters" do |form| %>
     <div class="field"><%= form.label :q, "Search" %><%= form.search_field :q, value: @filters[:q] %></div>
     <div class="field"><%= form.label :location, "Location" %><%= form.search_field :location, value: @filters[:location] %></div>
     <div class="field"><%= form.label :industry, "Industry" %><%= form.select :industry, options_for_select(ProfileOptions::SECTORS, @filters[:industry]), include_blank: "All industries" %></div>
     <div class="field"><%= form.label :goal, "SDG goal" %><%= form.select :goal, options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("id")] }, @filters[:goal]), include_blank: "All goals" %></div>
-    <div class="field"><%= form.label :status, "Show" %><%= form.select :status, options_for_select([["Active challenges", "active"], ["Completed projects", "completed"]], @filters[:status]), include_blank: "Challenges and projects" %></div>
+    <div class="field"><%= form.label :status, "Show" %><%= form.select :status, options_for_select([["Active projects", "active"], ["Completed projects", "completed"]], @filters[:status]), include_blank: "All projects" %></div>
     <%= form.submit "Search", class: "button" %><%= link_to "Clear filters", challenges_path %>
   <% end %>
   <p role="status"><%= pluralize(@count, "result") %> found.</p>
   <div class="challenge-grid"><%= render partial: "card", collection: @challenges, as: :challenge %></div>
   <% if @challenges.empty? %><p class="empty-state">No work matches yet. Try another location or remove a filter.</p><% end %>
-  <nav class="actions" aria-label="Challenge pages"><% if @page > 1 %><%= link_to "Previous", challenges_path(@filters.merge(page: @page - 1)) %><% end %><% if @page * 24 < @count %><%= link_to "Next", challenges_path(@filters.merge(page: @page + 1)) %><% end %></nav>
-  <div class="actions"><%= link_to "Add your challenge", new_challenge_path, class: "button secondary" %></div>
+  <nav class="actions" aria-label="Project pages"><% if @page > 1 %><%= link_to "Previous", challenges_path(@filters.merge(page: @page - 1)) %><% end %><% if @page * 24 < @count %><%= link_to "Next", challenges_path(@filters.merge(page: @page + 1)) %><% end %></nav>
+  <div class="actions"><%= link_to "Start a project", new_challenge_path, class: "button secondary" %></div>
 </div>

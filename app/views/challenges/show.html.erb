@@ -1,10 +1,10 @@
 <% content_for :title, @challenge.title %>
 <article class="challenge-detail narrow">
-  <p class="back-link"><%= link_to "All challenges & projects", challenges_path %> · <%= link_to @challenge.submission.display_name, profile_path(@challenge.submission.public_slug) %></p>
-  <% if owns_profile?(@challenge.submission) %><div class="actions"><%= link_to "Edit challenge", edit_challenge_path(@challenge), class: "button secondary" %><%= link_to "Invite collaborators", challenge_collaborator_invitations_path(@challenge), class: "button secondary" %><%= link_to "Dashboard", dashboard_path %></div><% end %>
+  <p class="back-link"><%= link_to "All projects", challenges_path %> · <%= link_to @challenge.submission.display_name, profile_path(@challenge.submission.public_slug) %></p>
+  <% if owns_profile?(@challenge.submission) %><div class="actions"><%= link_to "Edit project", edit_challenge_path(@challenge), class: "button secondary" %><%= link_to "Invite collaborators", challenge_collaborator_invitations_path(@challenge), class: "button secondary" %><%= link_to "Dashboard", dashboard_path %></div><% end %>
   <% unless @challenge.public? %><p class="notice">Only you can see this preview.</p><% end %>
   <header class="page-intro compact">
-    <p class="eyebrow"><%= @challenge.completed? ? "Completed project" : "#{@challenge.status.humanize} challenge" %></p>
+    <p class="eyebrow"><%= @challenge.completed? ? "Completed project" : "#{@challenge.status.humanize} project" %></p>
     <h1><%= @challenge.title %></h1>
     <% if @challenge.submission.organisation? %>
       <p>On behalf of <%= link_to @challenge.submission.display_name, profile_path(@challenge.submission.public_slug) %></p>
@@ -13,7 +13,7 @@
     <% if @challenge.completed_at %><p class="small-note">Completed <%= @challenge.completed_at.strftime("%B %Y") %></p><% end %>
   </header>
   <div class="prose">
-    <% { description: "The challenge", objectives: "Mission & objectives", target: "Target or KPI" }.each do |field, label| %>
+    <% { description: "The problem", objectives: "Mission & objectives", target: "Target or KPI" }.each do |field, label| %>
       <% if @challenge.public_send(field).present? %><section><h2><%= label %></h2><%= simple_format @challenge.public_send(field) %></section><% end %>
     <% end %>
     <% if @challenge.completed? %>

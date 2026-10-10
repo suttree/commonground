@@ -179,7 +179,7 @@ class ChallengesTest < ActionDispatch::IntegrationTest
     assert_nil entry.completed_at
     @owner.challenges.create!(@attributes.merge(title: "Secret draft", status: "draft"))
     get profile_path(@owner.public_slug)
-    assert_select "summary", text: "Previous challenges"
+    assert_select "summary", text: "Previous projects"
     assert_select "a[href='#{challenge_path(entry)}']"
     assert_no_match "Secret draft", response.body
     get challenges_path

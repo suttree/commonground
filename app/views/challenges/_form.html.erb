@@ -2,12 +2,12 @@
   <div class="error-summary" role="alert"><h2>Please check your answers.</h2><ul><% @challenge.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul></div>
 <% end %>
 <% if @active_challenge && @active_challenge != @challenge && !@challenge.completed? %>
-  <p class="notice">Your current challenge is <%= link_to @active_challenge.title, edit_challenge_path(@active_challenge) %>. You can save this one as a draft. Before making it active, update the previous challenge to completed, paused or abandoned.</p>
+  <p class="notice">Your current project is <%= link_to @active_challenge.title, edit_challenge_path(@active_challenge) %>. You can save this one as a draft. Before making it active, update the previous project to completed, paused or abandoned.</p>
 <% end %>
 <%= form_with model: @challenge do |form| %>
   <fieldset>
     <legend>What are you working on?</legend>
-    <div class="field"><%= form.label :title, "My current challenge" %><%= form.text_field :title, required: true, maxlength: 200 %></div>
+    <div class="field"><%= form.label :title, "My current project" %><%= form.text_field :title, required: true, maxlength: 200 %></div>
     <div class="field"><%= form.label :submission_id, "Who is this project for?" %><%= form.collection_select :submission_id, @owned_profiles, :id, :display_name %><p class="hint">Choose your personal profile or a company you manage. The project will appear on that profile.</p></div>
     <p class="hint">Need a company profile first? <%= link_to "Create a company profile", new_organisation_path %>.</p>
     <% if @challenge.organisation_name.present? %><div class="field"><%= form.label :organisation_name, "Organisation name (optional)" %><p class="hint">This is the name previously entered for this work.</p><%= form.text_field :organisation_name, maxlength: 200 %></div><% end %>
@@ -41,7 +41,7 @@
   </details>
   <details class="challenge-optional" <%= "open" if @challenge.collaborator_ids.any? %>>
     <summary>Link collaborators (optional)</summary>
-    <% if @challenge.persisted? %><p><%= link_to "Invite someone by email", challenge_collaborator_invitations_path(@challenge) %></p><% else %><p class="hint">Save your challenge to invite someone by email.</p><% end %>
+    <% if @challenge.persisted? %><p><%= link_to "Invite someone by email", challenge_collaborator_invitations_path(@challenge) %></p><% else %><p class="hint">Save your project to invite someone by email.</p><% end %>
     <p class="hint">Choose existing members who worked with you. Their public profiles will be linked from this work. Only add people who are happy to be credited.</p>
     <div class="field"><%= form.label :collaborator_ids, "Collaborators" %><%= form.collection_select :collaborator_ids, @members, :id, :display_name, {}, multiple: true, size: [@members.size, 6].min.clamp(2, 6) %><p class="hint">Hold Command on Mac or Control on Windows to select or clear several names.</p></div>
   </details>
@@ -59,6 +59,6 @@
     <div class="field"><%= form.label :status, "Status" %><%= form.select :status, [["Draft", "draft"], ["Active", "active"], ["Completed", "completed"], ["Paused", "paused"], ["Abandoned", "abandoned"]] %></div>
     <p class="hint">Drafts are only visible to you. Active work appears in discovery. Completed work also appears in your portfolio. Paused and abandoned work stays in your profile's archive. Your profile must be public for any of this work to be public.</p>
     <p class="hint">To publish, add a location, description and objectives. Completed projects also need your role, context, approach and results.</p>
-    <div class="actions"><%= form.submit "Save challenge", class: "button" %><%= link_to "Back to dashboard", dashboard_path %></div>
+    <div class="actions"><%= form.submit "Save project", class: "button" %><%= link_to "Back to dashboard", dashboard_path %></div>
   </fieldset>
 <% end %>

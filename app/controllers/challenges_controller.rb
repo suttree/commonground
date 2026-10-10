@@ -45,7 +45,7 @@ class ChallengesController < ApplicationController
   private
 
   def require_profile
-    redirect_to new_person_path, notice: "Create your profile before adding a challenge." unless current_profile
+    redirect_to new_person_path, notice: "Create your profile before starting a project." unless current_profile
   end
 
   def find_owned_challenge
@@ -60,13 +60,13 @@ class ChallengesController < ApplicationController
 
   def save_challenge
     if @challenge.save
-      redirect_to challenge_path(@challenge), notice: @challenge.completed? ? "Your completed project is now in your portfolio." : "Your challenge has been saved.", status: :see_other
+      redirect_to challenge_path(@challenge), notice: @challenge.completed? ? "Your completed project is now in your portfolio." : "Your project has been saved.", status: :see_other
     else
       prepare_form
       render :edit, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordNotUnique
-    @challenge.errors.add(:status, "cannot be active while another challenge is active. Update its status first.")
+    @challenge.errors.add(:status, "cannot be active while another project is active. Update its status first.")
     prepare_form
     render :edit, status: :unprocessable_entity
   end

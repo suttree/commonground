@@ -16,7 +16,7 @@
       <%= simple_format @profile.purpose %>
     </div>
   </header>
-  <% if @current_challenge %><section class="profile-section current-challenge"><h2>My current challenge</h2><%= render "challenges/card", challenge: @current_challenge %></section><% end %>
+  <% if @current_challenge %><section class="profile-section current-challenge"><h2>My current project</h2><%= render "challenges/card", challenge: @current_challenge %></section><% end %>
   <div class="profile-body">
     <div class="profile-main">
       <% fields = @profile.organisation? ? { mission: "Our purpose", offering: "What we offer", impact_metrics: "Our impact", proud_of: "What we're proud of" } : { experience: "The thread through my work", education_topics: "What shaped my thinking" } %>
@@ -88,7 +88,7 @@
     </section>
   <% end %>
   <% if @completed_challenges.any? %><section class="profile-section"><h2>Completed projects</h2><div class="challenge-grid"><%= render partial: "challenges/card", collection: @completed_challenges, as: :challenge %></div></section><% end %>
-  <% if @archived_challenges.any? %><details class="challenge-optional"><summary>Previous challenges</summary><ul class="work-archive"><% @archived_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span></li><% end %></ul></details><% end %>
+  <% if @archived_challenges.any? %><details class="challenge-optional"><summary>Previous projects</summary><ul class="work-archive"><% @archived_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span></li><% end %></ul></details><% end %>
   <% if @profile.contact_link.present? %>
     <section class="profile-contact profile-section" aria-label="Contact <%= @profile.display_name %>"><%= link_to @profile.contact_action, @profile.contact_link, class: "button", rel: "noopener noreferrer" %></section>
   <% end %>
