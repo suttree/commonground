@@ -3,6 +3,7 @@ class Challenge < ApplicationRecord
   HELP_OPTIONS = [ "Private funding", "Public subsidy", "Sales", "Media coverage", "Hiring" ].freeze
   belongs_to :submission
   has_many :contact_requests, dependent: :nullify
+  has_many :collaborator_invitations, dependent: :destroy
 
   normalizes :title, :organisation_name, :industry, :location, :project_role, :project_url, with: ->(value) { value.strip }
   validates :title, presence: true, length: { maximum: 200 }

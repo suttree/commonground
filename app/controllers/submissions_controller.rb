@@ -50,7 +50,7 @@ class SubmissionsController < ApplicationController
         @draft_images.each_value { |image| image.update!(submission: @submission) }
       end
       if current_account
-        redirect_to dashboard_path, status: :see_other
+        redirect_to session[:collaborator_invitation_token].present? ? invitation_path(token: session[:collaborator_invitation_token]) : dashboard_path, status: :see_other
       else
         session[:pending_submission_id] = @submission.id
         redirect_to create_account_path, status: :see_other

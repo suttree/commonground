@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   root "pages#home"
-  resources :challenges, only: [ :index, :show, :new, :create, :edit, :update ]
+  resources :challenges, only: [ :index, :show, :new, :create, :edit, :update ] do
+    resources :collaborator_invitations, only: [ :index, :create, :destroy ]
+  end
+  resource :invitation, only: [ :show, :update ]
   get "create-account", to: "sessions#create_account", as: :create_account
   get "login", to: "sessions#new", as: :login
   post "login", to: "sessions#create"

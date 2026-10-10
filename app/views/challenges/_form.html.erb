@@ -39,6 +39,7 @@
   </details>
   <details class="challenge-optional" <%= "open" if @challenge.collaborator_ids.any? %>>
     <summary>Link collaborators (optional)</summary>
+    <% if @challenge.persisted? %><p><%= link_to "Invite someone by email", challenge_collaborator_invitations_path(@challenge) %></p><% else %><p class="hint">Save your challenge to invite someone by email.</p><% end %>
     <p class="hint">Choose existing members who worked with you. Their public profiles will be linked from this work. Only add people who are happy to be credited.</p>
     <div class="field"><%= form.label :collaborator_ids, "Collaborators" %><%= form.collection_select :collaborator_ids, @members, :id, :display_name, {}, multiple: true, size: [@members.size, 6].min.clamp(2, 6) %><p class="hint">Hold Command on Mac or Control on Windows to select or clear several names.</p></div>
   </details>

@@ -66,10 +66,12 @@ class SessionsController < ApplicationController
         profile&.update!(account: account)
       end
     end
+    invitation_token = session[:collaborator_invitation_token]
     reset_session
+    session[:collaborator_invitation_token] = invitation_token if invitation_token
     session[:account_id] = account.id
     session[:authenticated_at] = Time.current.to_i
-    redirect_to dashboard_path, status: :see_other
+    redirect_to invitation_token.present? ? invitation_path(token: invitation_token) : dashboard_path, status: :see_other
   end
 
   def destroy

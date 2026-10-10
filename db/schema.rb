@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_10_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_10_010000) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -43,6 +43,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_000000) do
     t.index ["status", "published_at"], name: "index_challenges_on_status_and_published_at"
     t.index ["submission_id"], name: "index_challenges_on_submission_id"
     t.index ["submission_id"], name: "one_active_challenge_per_profile", unique: true, where: "status = 'active'"
+  end
+
+  create_table "collaborator_invitations", force: :cascade do |t|
+    t.datetime "accepted_at"
+    t.integer "challenge_id", null: false
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.datetime "sent_at"
+    t.datetime "updated_at", null: false
+    t.index ["challenge_id", "email"], name: "index_collaborator_invitations_on_challenge_id_and_email"
+    t.index ["challenge_id"], name: "index_collaborator_invitations_on_challenge_id"
   end
 
   create_table "contact_requests", force: :cascade do |t|
@@ -115,6 +128,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_000000) do
   end
 
   add_foreign_key "challenges", "submissions"
+  add_foreign_key "collaborator_invitations", "challenges"
   add_foreign_key "contact_requests", "challenges"
   add_foreign_key "contact_requests", "submissions"
   add_foreign_key "portfolio_images", "submissions"
