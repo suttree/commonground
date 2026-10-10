@@ -2,6 +2,10 @@ class ProfilesController < ApplicationController
   before_action :find_profile
 
   def show
+    @profile_challenges = @profile.challenges.publicly_visible.recent
+    @current_challenge = @profile_challenges.find_by(status: "active")
+    @completed_challenges = @profile_challenges.where(status: "completed")
+    @archived_challenges = @profile_challenges.where(status: %w[paused abandoned])
   end
 
   def skill

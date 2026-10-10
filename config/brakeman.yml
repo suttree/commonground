@@ -1,0 +1,5 @@
+# Challenge#validated_project_url parses the URL and permits only HTTP(S)
+# with a host and no embedded credentials. Unsafe stored values return nil.
+# Covered by ChallengesTest's project website link regression test.
+:url_safe_methods:
+  - :validated_project_url

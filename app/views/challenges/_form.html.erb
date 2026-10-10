@@ -1,0 +1,61 @@
+<% if @challenge.errors.any? %>
+  <div class="error-summary" role="alert"><h2>Please check your answers.</h2><ul><% @challenge.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul></div>
+<% end %>
+<% if @active_challenge && @active_challenge != @challenge && !@challenge.completed? %>
+  <p class="notice">Your current challenge is <%= link_to @active_challenge.title, edit_challenge_path(@active_challenge) %>. You can save this one as a draft. Before making it active, update the previous challenge to completed, paused or abandoned.</p>
+<% end %>
+<%= form_with model: @challenge do |form| %>
+  <fieldset>
+    <legend>What are you working on?</legend>
+    <div class="field"><%= form.label :title, "My current challenge" %><%= form.text_field :title, required: true, maxlength: 200 %></div>
+    <div class="field"><%= form.label :organisation_name, "On behalf of (optional)" %><p class="hint">The company, organisation or community behind this work.</p><%= form.text_field :organisation_name, maxlength: 200 %></div>
+    <div class="field"><%= form.label :industry, "Industry (optional)" %><%= form.select :industry, ProfileOptions::SECTORS, include_blank: "Choose an industry" %></div>
+    <div class="field"><%= form.label :location, "Location" %><p class="hint">A city, region or country, or Anywhere for work that can happen remotely.</p><%= form.text_field :location, maxlength: 200 %></div>
+    <div class="field"><%= form.label :description, "The problem or challenge" %><%= form.text_area :description, rows: 4, maxlength: 5000 %></div>
+    <div class="field"><%= form.label :objectives, "Mission & objectives" %><%= form.text_area :objectives, rows: 3, maxlength: 5000 %></div>
+    <div class="field"><%= form.label :target, "Target or KPI (optional)" %><p class="hint">What would progress look like? Add a measure or a deadline if you have one.</p><%= form.text_area :target, rows: 2, maxlength: 5000 %></div>
+  </fieldset>
+  <fieldset>
+    <legend>Ways to help (optional)</legend>
+    <%= hidden_field_tag "challenge[help_options][]", "" %>
+    <div class="challenge-choices"><% Challenge::HELP_OPTIONS.each_with_index do |option, index| %>
+      <div class="check-choice"><%= check_box_tag "challenge[help_options][]", option, Array(@challenge.help_options).include?(option), id: "challenge_help_#{index}" %><%= label_tag "challenge_help_#{index}", option %></div>
+    <% end %></div>
+    <p class="hint">Visitors can use Get involved to send a private request. The Commonbound team reviews it and helps arrange a reply.</p>
+  </fieldset>
+  <details class="challenge-optional" <%= "open" if @challenge.target_ids.any? %>>
+    <summary>Connect this work to SDG priorities (optional)</summary>
+    <p class="hint">Choose up to three targets to help people discover this work.</p>
+    <%= hidden_field_tag "challenge[target_ids][]", "" %>
+    <% ProfileOptions::GOALS.each do |goal| %>
+      <details class="sdg-goal" <%= "open" if goal.fetch("targets").any? { |target| @challenge.target_ids.include?(target.fetch("id")) } %>>
+        <summary><%= goal.fetch("name") %></summary>
+        <% goal.fetch("targets").each do |target| %><div class="check-choice">
+          <%= check_box_tag "challenge[target_ids][]", target.fetch("id"), @challenge.target_ids.include?(target.fetch("id")), id: "challenge_target_#{target.fetch('id').tr('.', '_')}" %>
+          <%= label_tag "challenge_target_#{target.fetch('id').tr('.', '_')}", "#{target.fetch('id')}: #{SdgDirectory::LABELS.fetch(target.fetch('id'))}" %>
+        </div><% end %>
+      </details>
+    <% end %>
+  </details>
+  <details class="challenge-optional" <%= "open" if @challenge.collaborator_ids.any? %>>
+    <summary>Link collaborators (optional)</summary>
+    <p class="hint">Choose existing members who worked with you. Their public profiles will be linked from this work. Only add people who are happy to be credited.</p>
+    <div class="field"><%= form.label :collaborator_ids, "Collaborators" %><%= form.collection_select :collaborator_ids, @members, :id, :display_name, {}, multiple: true, size: [@members.size, 6].min.clamp(2, 6) %><p class="hint">Hold Command on Mac or Control on Windows to select or clear several names.</p></div>
+  </details>
+  <details class="challenge-optional" <%= "open" if @challenge.completed? || @challenge.results.present? || @challenge.errors.any? %>>
+    <summary>Record the project outcome</summary>
+    <p class="hint">When this work is complete, fill in these fields and choose Completed below. It will appear in your profile's completed projects.</p>
+    <div class="field"><%= form.label :project_role, "Your role" %><%= form.text_field :project_role, maxlength: 200 %></div>
+    <div class="field"><%= form.label :context, "Context" %><%= form.text_area :context, rows: 3, maxlength: 5000 %></div>
+    <div class="field"><%= form.label :approach, "How you approached it" %><%= form.text_area :approach, rows: 3, maxlength: 5000 %></div>
+    <div class="field"><%= form.label :results, "Results & what changed" %><%= form.text_area :results, rows: 4, maxlength: 5000 %></div>
+    <div class="field"><%= form.label :project_url, "Project website (optional)" %><%= form.url_field :project_url, maxlength: 500, placeholder: "https://" %></div>
+  </details>
+  <fieldset>
+    <legend>Save or publish</legend>
+    <div class="field"><%= form.label :status, "Status" %><%= form.select :status, [["Draft", "draft"], ["Active", "active"], ["Completed", "completed"], ["Paused", "paused"], ["Abandoned", "abandoned"]] %></div>
+    <p class="hint">Drafts are only visible to you. Active work appears in discovery. Completed work also appears in your portfolio. Paused and abandoned work stays in your profile's archive. Your profile must be public for any of this work to be public.</p>
+    <p class="hint">To publish, add a location, description and objectives. Completed projects also need your role, context, approach and results.</p>
+    <div class="actions"><%= form.submit "Save challenge", class: "button" %><%= link_to "Back to dashboard", dashboard_path %></div>
+  </fieldset>
+<% end %>

@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   root "pages#home"
+  resources :challenges, only: [ :index, :show, :new, :create, :edit, :update ]
   get "create-account", to: "sessions#create_account", as: :create_account
   get "login", to: "sessions#new", as: :login
   post "login", to: "sessions#create"

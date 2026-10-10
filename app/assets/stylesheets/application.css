@@ -440,3 +440,36 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
   .site-header { flex-wrap: wrap; gap: 14px; padding-block: 20px; }
   .site-header nav { width: 100%; gap: 12px 22px; font-size: .95rem; }
 }
+
+/* Challenges, project outcomes and public discovery. */
+.challenge-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.challenge-card { display: flex; flex-direction: column; padding: 26px; border: 1px solid var(--line); background: var(--paper); overflow-wrap: anywhere; }
+.challenge-card .eyebrow { margin-bottom: 16px; font-size: .75rem; }
+.challenge-card h3 { font-family: Georgia, serif; font-size: 1.7rem; font-weight: 400; }
+.challenge-card p { font-size: 1rem; }
+.challenge-location { font-weight: 600; }
+.challenge-read-more { margin-top: auto; font-size: 1rem; }
+.recent-work { padding-block: 52px 64px; border-top: 1px solid var(--line); }
+.challenge-detail { padding-bottom: 64px; overflow-wrap: anywhere; }
+.challenge-detail h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); }
+.challenge-help { margin-block: 40px; padding: 24px; background: var(--wash); }
+.challenge-help .hint { margin: 16px 0 0; }
+.challenge-help h2 { margin-top: 0; }
+.challenge-optional { padding: 24px 0; border-top: 1px solid var(--line); }
+.challenge-optional > summary { font-size: 1.2rem; font-weight: 500; cursor: pointer; }
+.challenge-optional[open] > summary { margin-bottom: 24px; }
+.challenge-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.dashboard-work { margin-block: 24px 48px; padding: 32px; background: var(--wash); }
+.dashboard-work h2 { font-size: 2.4rem; }
+.dashboard-work .challenge-card { max-width: 720px; }
+.work-archive { padding-left: 24px; }
+.work-archive li { margin-bottom: 14px; }
+.work-archive .status { margin-inline: 8px; }
+.current-challenge { padding-top: 32px; }
+@media (max-width: 1000px) { .challenge-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .challenge-grid, .challenge-choices { grid-template-columns: minmax(0, 1fr); }
+  .dashboard-work { padding: 24px 20px; }
+  .challenge-card { padding: 22px; }
+  .work-archive .status { margin-inline: 0; }
+}

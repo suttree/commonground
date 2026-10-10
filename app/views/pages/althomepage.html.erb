@@ -69,12 +69,12 @@
   <nav class="bauhaus-choices" aria-label="Join Commonbound">
     <%= link_to new_person_path, class: "bauhaus-choice bauhaus-person" do %>
       <span class="bauhaus-choice-top"><span>For people</span><span aria-hidden="true">↗</span></span>
-      <span class="bauhaus-choice-title">I'm interested<br>in helping</span>
+      <span class="bauhaus-choice-title">Create<br>a profile</span>
       <span class="bauhaus-choice-note">Bring your skills to a problem you care about.</span>
     <% end %>
-    <%= link_to new_organisation_path, class: "bauhaus-choice bauhaus-company" do %>
-      <span class="bauhaus-choice-top"><span>For organisations</span><span aria-hidden="true">↗</span></span>
-      <span class="bauhaus-choice-title">I need<br>someone</span>
+    <%= link_to people_path, class: "bauhaus-choice bauhaus-company" do %>
+      <span class="bauhaus-choice-top"><span>Find your people</span><span aria-hidden="true">↗</span></span>
+      <span class="bauhaus-choice-title">Find a<br>collaborator</span>
       <span class="bauhaus-choice-note">Find people who share your purpose.</span>
     <% end %>
   </nav>
@@ -85,3 +85,5 @@
   <div><p class="bauhaus-kicker">Start with what matters to you</p><h2 id="explore-title">Find problems worth working on.</h2><p>Explore the Sustainable Development Goals and the people working towards them.</p>
   <nav aria-label="Explore Commonbound"><%= link_to sdgs_path do %>Explore the goals <span aria-hidden="true">↗</span><% end %><%= link_to "Meet the people", people_path %><%= link_to "Find companies", companies_path %></nav></div>
 </section>
+
+<%= render "challenges/recent", challenges: @recent_challenges %>

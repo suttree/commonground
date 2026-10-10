@@ -12,6 +12,7 @@ class Submission < ApplicationRecord
 
   store_accessor :profile, *PROFILE_FIELDS, :exploring, :contact_action, :contact_destination
   validate :valid_contact_action
+  has_many :challenges, dependent: :destroy
   has_many :contact_requests, dependent: :destroy
   has_many :portfolio_images, dependent: :destroy
   attr_accessor :consent, :website_confirmation

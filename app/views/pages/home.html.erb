@@ -20,3 +20,5 @@
 </section>
 
 <section class="directory-invitation"><h2>Find problems worth working on</h2><p>Explore the <%= link_to "Sustainable Development Goals directory", sdgs_path %>, browse <%= link_to "people", people_path %> or find <%= link_to "companies", companies_path %>.</p></section>
+
+<%= render "challenges/recent", challenges: @recent_challenges %>

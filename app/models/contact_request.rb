@@ -5,6 +5,12 @@ class ContactRequest < ApplicationRecord
     "services" => { label: "Request my services", description: "Share a brief for a project or piece of work.", prompt: "What help do you need? Include any timing or budget you have in mind." }
   }.freeze
   belongs_to :submission
+  belongs_to :challenge, optional: true
+  validate :challenge_recipient_matches
+
+  def challenge_recipient_matches
+    errors.add(:challenge, "must belong to the recipient") if challenge && challenge.submission_id != submission_id
+  end
   attr_accessor :consent, :include_priorities, :website_confirmation
   normalizes :name, :email, with: ->(value) { value.strip }
   validates :intent, inclusion: { in: OPTIONS.keys }

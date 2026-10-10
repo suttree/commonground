@@ -1,0 +1,29 @@
+<% content_for :title, @challenge.title %>
+<article class="challenge-detail narrow">
+  <p class="back-link"><%= link_to "All challenges & projects", challenges_path %> · <%= link_to @challenge.submission.display_name, profile_path(@challenge.submission.public_slug) %></p>
+  <% if @challenge.submission == current_profile %><div class="actions"><%= link_to "Edit challenge", edit_challenge_path(@challenge), class: "button secondary" %><%= link_to "Dashboard", dashboard_path %></div><% end %>
+  <% unless @challenge.public? %><p class="notice">Only you can see this preview.</p><% end %>
+  <header class="page-intro compact">
+    <p class="eyebrow"><%= @challenge.completed? ? "Completed project" : "#{@challenge.status.humanize} challenge" %></p>
+    <h1><%= @challenge.title %></h1>
+    <% if @challenge.organisation_name.present? %><p>On behalf of <%= @challenge.organisation_name %></p><% end %>
+    <p><%= @challenge.location %><% if @challenge.industry.present? %> · <%= link_to @challenge.industry, challenges_path(industry: @challenge.industry) %><% end %></p>
+    <% if @challenge.completed_at %><p class="small-note">Completed <%= @challenge.completed_at.strftime("%B %Y") %></p><% end %>
+  </header>
+  <div class="prose">
+    <% { description: "The challenge", objectives: "Mission & objectives", target: "Target or KPI" }.each do |field, label| %>
+      <% if @challenge.public_send(field).present? %><section><h2><%= label %></h2><%= simple_format @challenge.public_send(field) %></section><% end %>
+    <% end %>
+    <% if @challenge.completed? %>
+      <% { project_role: "My role", context: "Context", approach: "The approach", results: "Results & what changed" }.each do |field, label| %><section><h2><%= label %></h2><%= simple_format @challenge.public_send(field) %></section><% end %>
+      <% if @challenge.validated_project_url.present? %><p><%= link_to "Visit the project website", @challenge.validated_project_url, rel: "noopener noreferrer" %></p><% end %>
+    <% elsif @challenge.status == "active" %>
+      <section class="challenge-help"><h2>Ways to help</h2>
+        <% if @challenge.help_options.any? %><ul><% @challenge.help_options.each do |option| %><li><%= option %></li><% end %></ul><% else %><p>Start a conversation about how you could contribute.</p><% end %>
+        <% if @challenge.public? %><%= link_to "Get involved", new_profile_contact_path(@challenge.submission.public_slug, challenge_id: @challenge.id), class: "button" %><p class="hint">Send a private request to the Commonbound team for <%= @challenge.submission.display_name %>. The team will help arrange a reply.</p><% end %>
+      </section>
+    <% end %>
+    <% if @challenge.target_ids.any? %><section><h2>Problems this work addresses</h2><ul><% @challenge.target_ids.each do |id| %><li><%= link_to "#{id}: #{SdgDirectory::LABELS.fetch(id)}", sdg_target_path(id) %></li><% end %></ul></section><% end %>
+    <% if @challenge.collaborators.any? %><section><h2>Collaborators</h2><p class="small-note">Credited by <%= @challenge.submission.display_name %>.</p><ul><% @challenge.collaborators.each do |person| %><li><%= link_to person.display_name, profile_path(person.public_slug) %></li><% end %></ul></section><% end %>
+  </div>
+</article>

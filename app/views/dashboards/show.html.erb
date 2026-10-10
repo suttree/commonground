@@ -5,6 +5,17 @@
     <h1><%= @profile ? link_to(@profile.display_name, profile_path(@profile.public_slug)) : "Welcome to Commonbound" %></h1>
     <% if @profile %><%= link_to "Edit profile", edit_account_profile_path, class: "button secondary" %><% end %>
   </header>
+  <% if @profile %>
+    <section class="dashboard-work" aria-labelledby="current-work-title">
+      <h2 id="current-work-title">Your current challenge</h2>
+      <% if @active_challenge %>
+        <%= render "challenges/card", challenge: @active_challenge %>
+        <div class="actions"><%= link_to "Update status or record results", edit_challenge_path(@active_challenge), class: "button secondary" %></div>
+      <% else %><p>Share what you are working on and the help you need.</p><% end %>
+      <p><%= link_to "Working on something new?", new_challenge_path, class: "button" %></p>
+      <% if @past_challenges.any? %><details class="challenge-optional"><summary>Your drafts & previous work</summary><ul class="work-archive"><% @past_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span> <%= link_to "Edit", edit_challenge_path(challenge), aria: { label: "Edit #{challenge.title}" } %></li><% end %></ul></details><% end %>
+    </section>
+  <% end %>
   <div class="dashboard-columns">
     <section class="dashboard-quiz" aria-labelledby="dashboard-quiz-title">
       <p class="eyebrow">Sustainable Development Goals</p>
@@ -15,7 +26,7 @@
         <% else %>
           <p>You're still exploring which problems you want to work on.</p>
         <% end %>
-        <p class="dashboard-retake"><%= link_to "Explore people with shared priorities", people_path(goal: Array(@profile.target_ids).first.to_s.split(".").first.presence) %> · <%= link_to "Review your priorities", edit_account_profile_path %></p>
+        <p class="dashboard-retake"><%= link_to "Explore challenges", challenges_path(goal: Array(@profile.target_ids).first.to_s.split(".").first.presence, status: "active") %> · <%= link_to "Review your priorities", edit_account_profile_path %></p>
       <% else %>
         <h2 id="dashboard-quiz-title">Find the problems you want to work on</h2>
         <p>Discover your Sustainable Development Goal priorities through a short quiz.</p>
@@ -30,11 +41,13 @@
       <p class="eyebrow">Explore the community</p>
       <h2 id="dashboard-browse-title">Browse Commonbound</h2>
       <ul class="dashboard-directory-links">
+        <li><h3><%= link_to "Challenges & projects", challenges_path %></h3><p>Find work to contribute to and see completed projects.</p></li>
         <li><h3><%= link_to "People directory", people_path %></h3><p>Find people who share your interests.</p></li>
         <li><h3><%= link_to "Company directory", companies_path %></h3><p>Explore organisations and the work they do.</p></li>
         <li><h3><%= link_to "Sustainable Development Goals directory", sdgs_path %></h3><p>Read the goals and discover their targets.</p></li>
       </ul>
     </section>
   </div>
+  <% if @recommended_challenges&.any? %><section class="recent-work"><h2>Challenges to explore</h2><p>Work connected to your selected goals, when you have added them.</p><div class="challenge-grid"><%= render partial: "challenges/card", collection: @recommended_challenges, as: :challenge %></div></section><% end %>
   <div class="dashboard-footer"><%= button_to "Log out", logout_path, method: :delete, class: "button secondary" %></div>
 </div>

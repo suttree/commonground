@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_30_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_10_000000) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -18,7 +18,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_000000) do
     t.index ["email"], name: "index_accounts_on_email", unique: true
   end
 
+  create_table "challenges", force: :cascade do |t|
+    t.text "approach"
+    t.json "collaborator_ids", default: [], null: false
+    t.datetime "completed_at"
+    t.text "context"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.json "help_options", default: [], null: false
+    t.string "industry"
+    t.string "location"
+    t.text "objectives"
+    t.string "organisation_name"
+    t.string "project_role"
+    t.string "project_url"
+    t.datetime "published_at"
+    t.text "results"
+    t.string "status", default: "draft", null: false
+    t.integer "submission_id", null: false
+    t.text "target"
+    t.json "target_ids", default: [], null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status", "published_at"], name: "index_challenges_on_status_and_published_at"
+    t.index ["submission_id"], name: "index_challenges_on_submission_id"
+    t.index ["submission_id"], name: "one_active_challenge_per_profile", unique: true, where: "status = 'active'"
+  end
+
   create_table "contact_requests", force: :cascade do |t|
+    t.integer "challenge_id"
     t.datetime "consented_at", null: false
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -28,6 +56,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_000000) do
     t.integer "submission_id", null: false
     t.json "target_ids", default: [], null: false
     t.datetime "updated_at", null: false
+    t.index ["challenge_id"], name: "index_contact_requests_on_challenge_id"
     t.index ["submission_id"], name: "index_contact_requests_on_submission_id"
   end
 
@@ -85,6 +114,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_000000) do
     t.index ["status"], name: "index_submissions_on_status"
   end
 
+  add_foreign_key "challenges", "submissions"
+  add_foreign_key "contact_requests", "challenges"
   add_foreign_key "contact_requests", "submissions"
   add_foreign_key "portfolio_images", "submissions"
   add_foreign_key "submissions", "accounts"
