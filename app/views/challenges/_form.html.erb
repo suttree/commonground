@@ -23,7 +23,7 @@
     <div class="challenge-choices"><% Challenge::HELP_OPTIONS.each_with_index do |option, index| %>
       <div class="check-choice"><%= check_box_tag "challenge[help_options][]", option, Array(@challenge.help_options).include?(option), id: "challenge_help_#{index}" %><%= label_tag "challenge_help_#{index}", option %></div>
     <% end %></div>
-    <p class="hint">Visitors can use Get involved to send a private request. The Commonbound team reviews it and helps arrange a reply.</p>
+    <p class="hint">When your project is active and public, its page includes a “Get involved” button. This opens a form where visitors can leave their name, email and a message. Requests go to the Commonbound team for review, rather than directly to you.</p>
   </fieldset>
   <details class="challenge-optional" <%= "open" if @challenge.target_ids.any? %>>
     <summary>Connect this work to SDG priorities (optional)</summary>
