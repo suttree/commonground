@@ -1,3 +1,4 @@
+<% content_for :body_class, "discovery-page" %>
 <nav class="discovery-nav" aria-label="Discover">
   <% [["Companies", companies_path, "companies"], ["People", people_path, "people"], ["Projects", challenges_path, "challenges"]].each do |label, path, section| %>
     <%= link_to path, aria: { current: section == current_section ? "page" : nil } do %><%= render "shared/section_icon", section: section %><span><%= label %></span><% end %>
