@@ -12,8 +12,8 @@
   </head>
   <body<% if content_for?(:body_class) %> class="<%= yield(:body_class) %>"<% end %>>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header wrap<%= " home-header" if controller_name == "pages" && %w[home althomepage about].include?(action_name) %>">
-      <%= link_to(current_account ? dashboard_path : root_path, class: "wordmark", aria: { label: current_account ? "Commonbound dashboard" : "Commonbound home" }) do %><span class="brand-mark" aria-hidden="true">cb.</span> Commonbound<% end %>
+    <header class="site-header wrap<%= " home-header" if controller_name == "pages" && %w[home althomepage].include?(action_name) %>">
+      <%= link_to(current_account ? dashboard_path : root_path, class: "wordmark", aria: { label: current_account ? "Commonbound dashboard" : "Commonbound home" }) do %><%= image_tag "commonbound-logo.jpg", class: "brand-mark", alt: "", width: 44, height: 44 %> Commonbound<% end %>
       <nav aria-label="Main navigation">
         <%= main_navigation_link "About", about_path, section: :about %>
         <% if current_account&.admin? %><%= main_navigation_link "Admin", admin_root_path, section: :admin %><% end %>
