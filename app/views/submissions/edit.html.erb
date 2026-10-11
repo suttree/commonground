@@ -8,7 +8,7 @@
     <p><%= @submission.display_name %></p>
   </header>
   <nav class="profile-tabs" aria-label="Profile sections">
-    <% @sections.each do |key, (label, _fields)| %>
+    <% @sections.sort_by { |_key, (label, _fields)| label.downcase }.each do |key, (label, _fields)| %>
       <%= link_to label, edit_account_profile_path(section: key, profile_id: @submission.id), aria: { current: key == @section ? "page" : nil } %>
     <% end %>
   </nav>
