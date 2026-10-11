@@ -106,7 +106,7 @@ class SubmissionsController < ApplicationController
         @draft_images.each_value { |image| image.update!(submission: @submission) }
         if !@section || @section == "portfolio"
           kept_images = @submission.profile_entries("projects").filter_map { |row| row["image_id"] }
-          @submission.portfolio_images.where.not(id: kept_images).destroy_all
+          @submission.portfolio_images.where(side_project_id: nil).where.not(id: kept_images).destroy_all
         end
       end
       destination = @section ? edit_account_profile_path(section: @section, profile_id: @submission.id) : dashboard_path

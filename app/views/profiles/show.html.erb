@@ -90,6 +90,7 @@
     </section>
   <% end %>
   <%= render "projects", profile: @profile %>
+  <%= render "side_projects", profile: @profile unless @profile.organisation? %>
   <% if @archived_challenges.any? %><details class="challenge-optional"><summary>Previous projects</summary><ul class="work-archive"><% @archived_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span></li><% end %></ul></details><% end %>
   <% if @profile.contact_link.present? %>
     <section class="profile-contact profile-section" aria-label="Contact <%= @profile.display_name %>"><%= link_to @profile.contact_action, @profile.contact_link, class: "button", rel: "noopener noreferrer" %></section>

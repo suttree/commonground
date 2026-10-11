@@ -18,6 +18,9 @@
   </div>
   <section class="profile-panel" aria-labelledby="profile-section-title">
     <h2 id="profile-section-title"><%= @sections.fetch(@section).first %></h2>
+    <% if @section == "side_projects" %>
+      <%= render "submissions/sections/side_projects" %>
+    <% else %>
     <p class="hint">Save this section before switching tabs. Changes appear on your public profile.</p>
     <%= render "shared/errors", record: @submission %>
     <%= form_with model: @submission, url: account_profile_path, local: true, html: { multipart: true, data: { profile_editor: true, unsaved: @unsaved_section ? "true" : "false" } } do |form| %>
@@ -25,6 +28,7 @@
       <%= hidden_field_tag :section, @section %>
       <%= render "submissions/sections/#{@section}", form: form %>
       <div class="actions"><%= form.submit "Save #{@sections.fetch(@section).first.downcase}", class: "button" %></div>
+    <% end %>
     <% end %>
   </section>
 </div>

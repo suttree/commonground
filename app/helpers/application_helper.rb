@@ -5,7 +5,7 @@ module ApplicationHelper
       :discover
     when "sdgs", "quiz"
       :goals
-    when "dashboards"
+    when "dashboards", "side_projects"
       :dashboard
     when "submissions"
       current_account ? :dashboard : :login

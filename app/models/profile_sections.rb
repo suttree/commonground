@@ -6,6 +6,7 @@ class ProfileSections
     "skills" => [ "Skills", %w[skills skills_summary] ],
     "about" => [ "About you", %w[education_topics satisfaction_feeling satisfaction_notes] ],
     "portfolio" => [ "Portfolio", %w[projects] ],
+    "side_projects" => [ "Side projects", [] ],
     "priorities" => [ "Priorities", %w[target_ids exploring] ],
     "contact" => [ "Contact", %w[contact_action contact_destination] ]
   }.freeze

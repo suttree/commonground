@@ -4,6 +4,7 @@ class PortfolioImage < ApplicationRecord
   MAX_BYTES = 2.megabytes
   TYPES = %w[image/jpeg image/png image/webp].freeze
   belongs_to :submission, optional: true
+  belongs_to :side_project, optional: true
   validates :content_type, inclusion: { in: TYPES }
   validates :data, :upload_owner, presence: true
 

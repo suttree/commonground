@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   patch "dashboard/profile", to: "dashboards#switch_profile", as: :switch_profile
   get "account/profile/edit", to: "submissions#edit", as: :edit_account_profile
   patch "account/profile", to: "submissions#update", as: :account_profile
+  resources :side_projects, path: "account/side-projects", only: %i[new create edit update destroy]
   get "people", to: "directories#people"
   get "companies", to: "directories#companies", as: :companies
 

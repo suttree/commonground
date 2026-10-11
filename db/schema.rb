@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_11_010000) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -93,11 +93,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.string "content_type", null: false
     t.datetime "created_at", null: false
     t.binary "data", null: false
+    t.integer "side_project_id"
     t.integer "submission_id"
     t.datetime "updated_at", null: false
     t.string "upload_owner", null: false
+    t.index ["side_project_id"], name: "index_portfolio_images_on_side_project_id"
     t.index ["submission_id"], name: "index_portfolio_images_on_submission_id"
     t.index ["upload_owner", "created_at"], name: "index_portfolio_images_on_upload_owner_and_created_at"
+  end
+
+  create_table "side_projects", force: :cascade do |t|
+    t.integer "cover_image_id"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.text "joy"
+    t.string "name", null: false
+    t.text "purpose"
+    t.integer "submission_id", null: false
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.index ["submission_id"], name: "index_side_projects_on_submission_id"
   end
 
   create_table "submissions", force: :cascade do |t|
@@ -135,6 +150,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   add_foreign_key "collaborator_invitations", "challenges"
   add_foreign_key "contact_requests", "challenges"
   add_foreign_key "contact_requests", "submissions"
+  add_foreign_key "portfolio_images", "side_projects"
   add_foreign_key "portfolio_images", "submissions"
+  add_foreign_key "side_projects", "submissions"
   add_foreign_key "submissions", "accounts"
 end

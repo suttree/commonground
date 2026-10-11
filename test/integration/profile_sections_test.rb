@@ -13,7 +13,7 @@ class ProfileSectionsTest < ActionDispatch::IntegrationTest
 
   test "tabs show one section and successful saves stay on that section" do
     get edit_account_profile_path
-    assert_select ".profile-tabs a", count: 8
+    assert_select ".profile-tabs a", count: 9
     assert_select ".profile-tabs a[aria-current=page]", text: "Basics"
     assert_select "input[name='submission[name]']"
     assert_select "textarea[name='submission[purpose]']", count: 0
@@ -57,7 +57,11 @@ class ProfileSectionsTest < ActionDispatch::IntegrationTest
       get edit_account_profile_path(section: key)
       assert_response :success
       assert_select "h2#profile-section-title", text: label
-      assert_select "input[name=section][value='#{key}']"
+      if key == "side_projects"
+        assert_select "a[href='#{new_side_project_path(profile_id: @profile.id)}']", text: "Add a side project"
+      else
+        assert_select "input[name=section][value='#{key}']"
+      end
     end
     [ "offering", "../../admin", "unknown" ].each do |key|
       get edit_account_profile_path(section: key)
