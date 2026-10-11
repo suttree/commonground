@@ -60,6 +60,7 @@ class ContactRequestsTest < ActionDispatch::IntegrationTest
     get admin_contact_request_path(entry)
     assert_response :unauthorized
     auth = ActionController::HttpAuthentication::Basic.encode_credentials("test-admin", "test-password")
+    sign_in_account(Account.create!(email: "admin@example.test", admin: true))
     get admin_contact_requests_path, headers: { "HTTP_AUTHORIZATION" => auth }
     assert_response :success
     get admin_contact_request_path(entry), headers: { "HTTP_AUTHORIZATION" => auth }

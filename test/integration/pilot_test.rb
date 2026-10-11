@@ -24,6 +24,10 @@ class PilotTest < ActionDispatch::IntegrationTest
   end
 
   def admin_headers
+    unless @admin_signed_in
+      sign_in_account(Account.create!(email: "admin@example.test", admin: true))
+      @admin_signed_in = true
+    end
     { "HTTP_AUTHORIZATION" => ActionController::HttpAuthentication::Basic.encode_credentials("test-admin", "test-password-for-this-suite") }
   end
 

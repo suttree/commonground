@@ -16,7 +16,7 @@ Open http://localhost:3000. The public site needs no account. It contains the la
 
 ## Review applications
 
-Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the server environment to enable `/admin`. If either is absent, admin access is disabled. The admin area uses HTTP Basic credentials. Applicant accounts use the separate email-code login flow.
+Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the server environment to enable `/admin`. If either is absent, admin access is disabled. Every admin route requires both HTTP Basic credentials and a signed-in account with `admin: true`. Accounts use the email-code login flow and default to non-admin. Admin flags must be granted or revoked through the Rails console; public forms cannot change them.
 
 The admin area lists people and organisations, filters by type and status, and shows their full answers. Reviewers can update status and add private notes. All introductions and follow-up emails are handled manually. The app sends transactional login codes.
 

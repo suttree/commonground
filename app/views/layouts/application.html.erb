@@ -16,6 +16,7 @@
       <%= link_to(current_account ? dashboard_path : root_path, class: "wordmark", aria: { label: current_account ? "Commonbound dashboard" : "Commonbound home" }) do %><span class="brand-mark" aria-hidden="true">cb.</span> Commonbound<% end %>
       <nav aria-label="Main navigation">
         <%= main_navigation_link "About", about_path, section: :about %>
+        <% if current_account&.admin? %><%= main_navigation_link "Admin", admin_root_path, section: :admin %><% end %>
         <%= link_to "Blog", "https://commonbound.pika.page/" %>
         <% if current_account %><%= main_navigation_link "Dashboard", dashboard_path, section: :dashboard %><% end %>
         <%= main_navigation_link "Discover", challenges_path, section: :discover %>

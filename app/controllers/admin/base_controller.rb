@@ -1,9 +1,15 @@
 module Admin
   class BaseController < ApplicationController
-    before_action :authenticate_admin
     before_action :prevent_caching
+    before_action :authenticate_admin
+    before_action :require_account
+    before_action :require_admin_account
 
     private
+
+    def require_admin_account
+      head :forbidden unless current_account.admin?
+    end
 
     def authenticate_admin
       username = ENV["ADMIN_USERNAME"]

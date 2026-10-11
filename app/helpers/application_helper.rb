@@ -1,6 +1,8 @@
 module ApplicationHelper
   def main_navigation_link(label, path, section:)
     active_section = case controller_path
+    when %r{\Aadmin/}
+      :admin
     when "directories", "profiles", "challenges", "contact_requests", "collaborator_invitations"
       :discover
     when "sdgs", "quiz"
