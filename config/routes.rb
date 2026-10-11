@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
   root "pages#home"
-  resources :challenges, only: [ :index, :show, :new, :create, :edit, :update ] do
+  resources :challenges, path: "projects", only: [ :index, :show, :new, :create, :edit, :update ] do
     resources :collaborator_invitations, only: [ :index, :create, :destroy ]
   end
+  get "challenges(/*path)", to: redirect { |_params, request| request.original_fullpath.sub(%r{\A/challenges}, "/projects") }, format: false
   resource :invitation, only: [ :show, :update ]
   get "join", to: "onboarding#new", as: :join
   get "onboarding/profile", to: "onboarding#profile", as: :onboarding_profile

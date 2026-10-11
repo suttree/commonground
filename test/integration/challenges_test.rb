@@ -20,6 +20,36 @@ class ChallengesTest < ActionDispatch::IntegrationTest
     post verify_login_path, params: { code: code }
   end
 
+  test "project URLs are canonical for links forms and invitations" do
+    assert_equal "/projects", challenges_path
+    assert_equal "/projects/new", new_challenge_path
+    entry = @owner.challenges.create!(@attributes)
+    assert_equal "/projects/#{entry.id}", challenge_path(entry)
+    assert_equal "/projects/#{entry.id}/edit", edit_challenge_path(entry)
+    assert_equal "/projects/#{entry.id}/collaborator_invitations", challenge_collaborator_invitations_path(entry)
+
+    get "/projects"
+    assert_response :success
+    assert_select "a[href='/projects/#{entry.id}']"
+    assert_select "a[href='/projects/new']"
+    login
+    get "/projects/new"
+    assert_response :success
+    assert_select "form[action='/projects'][method='post']"
+    get "/projects/#{entry.id}/edit"
+    assert_response :success
+    assert_select "form[action='/projects/#{entry.id}']"
+  end
+
+  test "old challenge links redirect permanently preserving paths and search filters" do
+    [ "", "/new", "/123", "/123/edit", "/123/collaborator_invitations",
+      "?q=food%20waste&location=Bristol&page=2", "/new?submission_id=9" ].each do |suffix|
+      get "/challenges#{suffix}"
+      assert_response :moved_permanently
+      assert_redirected_to "/projects#{suffix}"
+    end
+  end
+
   test "owners draft publish complete and start another challenge without changing their portfolio" do
     @owner.update!(projects: [ { "title" => "Existing work", "role" => "Designer", "problem" => "Access", "context" => "Local", "approach" => "Research", "results" => "A guide" } ])
     original_projects = @owner.projects
