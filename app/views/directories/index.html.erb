@@ -17,9 +17,6 @@
     <%= form.submit "Search", class: "button" %>
     <%= link_to "Clear filters", @company ? companies_path : people_path %>
   <% end %>
-  <% else %>
-    <%= render "shared/discovery_signup" %>
-  <% end %>
   <p role="status"><%= pluralize(@count, "profile") %> found.</p>
   <div class="directory-grid">
     <% @profiles.each do |profile| %>
@@ -43,4 +40,7 @@
     <% if @page > 1 %><%= link_to "Previous", url_for(priorities: @use_priorities ? "1" : nil, q: @query, skill: @skill, location: @location, sector: @sector, goal: @goal, target: @target, page: @page - 1) %><% end %>
     <% if @page * 24 < @count %><%= link_to "Next", url_for(priorities: @use_priorities ? "1" : nil, q: @query, skill: @skill, location: @location, sector: @sector, goal: @goal, target: @target, page: @page + 1) %><% end %>
   </nav>
+  <% else %>
+    <%= render "shared/discovery_signup" %>
+  <% end %>
 </div>

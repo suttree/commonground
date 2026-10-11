@@ -5,6 +5,8 @@ class ChallengesController < ApplicationController
   before_action :find_owned_challenge, only: [ :edit, :update ]
 
   def index
+    return unless current_account
+
     @filters = %i[q location industry goal status].to_h { |key| [ key, params[key].to_s.strip.first(200) ] }
     @filters[:status] = "" unless %w[active completed].include?(@filters[:status])
     records = Challenge.discoverable.filtered(@filters)

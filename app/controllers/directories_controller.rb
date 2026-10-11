@@ -13,6 +13,7 @@ class DirectoriesController < ApplicationController
 
   def directory(kind)
     @company = kind == "organisation"
+    return render :index unless current_account
     @query = params[:q].to_s.strip.first(200)
     @location = params[:location].to_s.strip.first(200)
     @skill = params[:skill].to_s.strip.first(200)

@@ -9,16 +9,18 @@ class DiscoveryAccessTest < ActionDispatch::IntegrationTest
     @project = @person.challenges.create!(title: "Public project", description: "Useful work", objectives: "Help", location: "Bristol", status: "active")
   end
 
-  test "visitors can browse every directory and open public details but see signup instead of search" do
+  test "visitors see directory signup pages without listings counts or pagination" do
     [ [ people_path, @person.display_name ], [ companies_path, @company.display_name ], [ challenges_path, @project.title ] ].each do |path, name|
       get path
       assert_response :success
-      assert_includes response.body, name
+      assert_not_includes response.body, name
+      assert_select ".directory-card, .challenge-card, [role=status], nav[aria-label='Directory pages'], nav[aria-label='Project pages']", count: 0
       assert_select "form.directory-filters", count: 0
       assert_select ".discovery-signup a[href='#{join_path}']", text: "Sign up to search"
       assert_select ".discovery-signup a[href='#{login_path}']", text: "Log in"
       get path, params: { page: 2, q: "", location: "" }
       assert_response :success
+      assert_select ".directory-card, .challenge-card, [role=status]", count: 0
     end
     [ profile_path(@person.public_slug), profile_path(@company.public_slug), challenge_path(@project) ].each do |path|
       get path
@@ -47,6 +49,7 @@ class DiscoveryAccessTest < ActionDispatch::IntegrationTest
       get path, params: { q: "Public" }
       assert_response :success
       assert_select "form.directory-filters"
+      assert_select ".directory-card, .challenge-card", count: 1
       assert_select ".discovery-signup", count: 0
     end
     delete logout_path

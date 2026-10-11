@@ -21,6 +21,7 @@ class ChallengesTest < ActionDispatch::IntegrationTest
   end
 
   test "project URLs are canonical for links forms and invitations" do
+    login
     assert_equal "/projects", challenges_path
     assert_equal "/projects/new", new_challenge_path
     entry = @owner.challenges.create!(@attributes)
