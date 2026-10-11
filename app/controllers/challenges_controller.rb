@@ -1,4 +1,5 @@
 class ChallengesController < ApplicationController
+  before_action -> { require_account_for_search(%i[q location industry goal status]) }, only: :index
   before_action :require_account, except: [ :index, :show ]
   before_action :require_profile, except: [ :index, :show ]
   before_action :find_owned_challenge, only: [ :edit, :update ]

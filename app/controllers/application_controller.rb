@@ -31,4 +31,11 @@ class ApplicationController < ActionController::Base
     response.headers["Cache-Control"] = "no-store"
     redirect_to login_path unless current_account
   end
+
+  def require_account_for_search(keys)
+    response.headers["Cache-Control"] = "no-store"
+    if !current_account && keys.any? { |key| params[key].present? }
+      redirect_to join_path, notice: "Create an account or log in to search people, companies and projects."
+    end
+  end
 end

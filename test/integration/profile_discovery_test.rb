@@ -9,6 +9,7 @@ class ProfileDiscoveryTest < ActionDispatch::IntegrationTest
   end
 
   test "skill discovery combines filters and cards show a useful introduction" do
+    sign_in_account(Account.create!(email: "searcher@example.test"))
     owner = profile
     profile(email: "hidden@example.test", published: false)
     get people_path, params: { skill: "research", location: "bristol", sector: ProfileOptions::SECTORS.first, goal: "11", target: "11.2" }

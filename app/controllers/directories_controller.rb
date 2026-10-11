@@ -1,4 +1,6 @@
 class DirectoriesController < ApplicationController
+  before_action -> { require_account_for_search(%i[q location skill sector goal target priorities]) }
+
   def people
     directory("person")
   end

@@ -125,7 +125,8 @@ class ChallengesTest < ActionDispatch::IntegrationTest
     assert_select "a", text: "Get involved", count: 0
   end
 
-  test "discovery is public and combines location industry goal status and text" do
+  test "signed in discovery combines location industry goal status and text" do
+    login
     active = @owner.challenges.create!(@attributes)
     @other.challenges.create!(@attributes.merge(title: "Elsewhere", location: "London", status: "paused"))
     filters = { q: "food", location: "bristol", industry: @attributes[:industry], goal: "2", status: "active" }
@@ -142,6 +143,7 @@ class ChallengesTest < ActionDispatch::IntegrationTest
   end
 
   test "pagination preserves challenge filters" do
+    login
     25.times do |index|
       @owner.challenges.create!(@attributes.merge(title: "Food #{index}", status: "completed", project_role: "Organiser", context: "Food", approach: "Stalls", results: "Less waste"))
     end

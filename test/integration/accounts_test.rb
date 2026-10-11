@@ -96,6 +96,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
   end
 
   test "both directories filter only public profiles" do
+    login("searcher@example.test")
     person = profile(published: true, location: "Bristol", sectors_future: [ ProfileOptions::SECTORS.first ], target_ids: [ "12.3" ])
     profile(published: false, email: "private@example.test", name: "Secret", location: "Bristol")
     company = profile(kind: "organisation", published: true, location: "Bristol", sectors_past: [ ProfileOptions::SECTORS.first ], target_ids: [ "12.3" ])
@@ -112,6 +113,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
   end
 
   test "target searches match the exact selected target and keep other filters" do
+    login("searcher@example.test")
     matching = profile(published: true, target_ids: [ "11.2" ], location: "Bristol")
     profile(email: "different@example.test", published: true, target_ids: [ "11.7" ])
     profile(published: false, email: "private@example.test", target_ids: [ "11.2" ])

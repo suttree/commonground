@@ -3,6 +3,7 @@
   <%= render "shared/discovery_nav", current_section: @company ? "companies" : "people" %>
   <%= render "shared/discovery_intro", title: @company ? "Company directory" : "People directory", description: @company ? "Find companies by name, location, sector or shared goals." : "Find people by name, skill, location, sector or shared goals." %>
   <% if @use_priorities %><p class="notice"><%= @priority_goals.any? ? "Showing profiles connected to your selected goals." : "No priorities selected yet. Explore all profiles." %> <%= link_to "Show all", @company ? companies_path : people_path %></p><% end %>
+  <% if current_account %>
   <%= form_with url: @company ? companies_path : people_path, method: :get, class: "directory-filters" do |form| %>
     <%= hidden_field_tag :priorities, "1" if @use_priorities %>
     <div class="field"><%= form.label :q, "Name" %><%= form.search_field :q, value: @query %></div>
@@ -15,6 +16,9 @@
     <% end %>
     <%= form.submit "Search", class: "button" %>
     <%= link_to "Clear filters", @company ? companies_path : people_path %>
+  <% end %>
+  <% else %>
+    <%= render "shared/discovery_signup" %>
   <% end %>
   <p role="status"><%= pluralize(@count, "profile") %> found.</p>
   <div class="directory-grid">
