@@ -129,7 +129,15 @@ Before enabling public signup, verify the sender identity, configure the domain'
 
 References: [SES SMTP credentials](https://docs.aws.amazon.com/ses/latest/dg/smtp-credentials.html), [SES endpoints](https://docs.aws.amazon.com/general/latest/gr/ses.html), and [production access](https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html).
 
-The dedicated SMTP user is `commonbound-smtp`. Its sending policy is in `config/aws/commonbound-ses-smtp-policy.json` and permits only `ses:SendRawEmail` for `duncan@suttree.com` in London. The user and policy have been created, and its SMTP credentials are stored in Fly secrets. The policy file alone does not grant access.
+The dedicated SMTP user is `commonbound-smtp`. Its sending policy is in `config/aws/commonbound-ses-smtp-policy.json` and permits only `ses:SendRawEmail` for `duncan@suttree.com` and `noreply@commonbound.work` in London. The policy is applied in IAM, and its SMTP credentials are stored in Fly secrets. The policy file alone does not grant access.
+
+On 12 October 2026, the `commonbound.work` identity was awaiting SES verification after its three Easy DKIM CNAME records were saved in GoDaddy. The domain uses 2048-bit signing keys. Keep the existing sender until SES reports the domain as verified, then change `MAIL_FROM` in `fly.toml` to `Commonbound <noreply@commonbound.work>`, deploy, and verify delivery.
+
+| Name (relative to commonbound.work) | Target |
+| --- | --- |
+| `exzcym3fmomusrchab4rpl4ji4ffrbsv._domainkey` | `exzcym3fmomusrchab4rpl4ji4ffrbsv.dkim.amazonses.com` |
+| `fuebnd4lpvz6w5n6e5a5ez2dfjfcbxvc._domainkey` | `fuebnd4lpvz6w5n6e5a5ez2dfjfcbxvc.dkim.amazonses.com` |
+| `ydjkvws4djgzx5ieuxk3ltxvgydhv67w._domainkey` | `ydjkvws4djgzx5ieuxk3ltxvgydhv67w.dkim.amazonses.com` |
 
 The `suttree.com` domain identity uses Easy DKIM with 2048-bit signing keys. These CNAME records are configured in Joker's DNS settings:
 

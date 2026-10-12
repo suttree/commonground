@@ -11,6 +11,17 @@
           "ses:FromAddress": "duncan@suttree.com"
         }
       }
+    },
+    {
+      "Sid": "SendCommonboundDomainEmails",
+      "Effect": "Allow",
+      "Action": "ses:SendRawEmail",
+      "Resource": "arn:aws:ses:eu-west-2:438465129655:identity/commonbound.work",
+      "Condition": {
+        "StringEquals": {
+          "ses:FromAddress": "noreply@commonbound.work"
+        }
+      }
     }
   ]
 }
