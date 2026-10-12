@@ -123,7 +123,7 @@ Login-code rows retain request timestamps and IPs for throttling. Run `bin/rails
 
 The Fly configuration targets SES in London, `eu-west-2`, at `email-smtp.eu-west-2.amazonaws.com:587`. SMTP requires STARTTLS and verifies the server certificate. The sender identity and SMTP credentials must belong to the same SES region.
 
-The sender is `Commonbound <duncan@suttree.com>`, configured in `fly.toml`. Store `SMTP_USERNAME` and `SMTP_PASSWORD` as Fly secrets. Use SES SMTP credentials rather than the AWS console password or an unconverted AWS secret access key. Keep the SMTP user limited to sending email for the verified sender identity. Do not put credentials in `fly.toml` or Git.
+The sender is `Commonbound <noreply@commonbound.work>`, configured in `fly.toml`. Store `SMTP_USERNAME` and `SMTP_PASSWORD` as Fly secrets. Use SES SMTP credentials rather than the AWS console password or an unconverted AWS secret access key. Keep the SMTP user limited to sending email for the verified sender identity. Do not put credentials in `fly.toml` or Git.
 
 Before enabling public signup, verify the sender identity, configure the domain's DKIM records when using a domain identity, and confirm SES production access in London. Sandbox accounts can send only to verified recipients or the SES mailbox simulator. Verify a real login-code delivery after configuring the secrets and deploying.
 
@@ -131,7 +131,7 @@ References: [SES SMTP credentials](https://docs.aws.amazon.com/ses/latest/dg/smt
 
 The dedicated SMTP user is `commonbound-smtp`. Its sending policy is in `config/aws/commonbound-ses-smtp-policy.json` and permits only `ses:SendRawEmail` for `duncan@suttree.com` and `noreply@commonbound.work` in London. The policy is applied in IAM, and its SMTP credentials are stored in Fly secrets. The policy file alone does not grant access.
 
-On 12 October 2026, the `commonbound.work` identity was awaiting SES verification after its three Easy DKIM CNAME records were saved in GoDaddy. The domain uses 2048-bit signing keys. Keep the existing sender until SES reports the domain as verified, then change `MAIL_FROM` in `fly.toml` to `Commonbound <noreply@commonbound.work>`, deploy, and verify delivery.
+On 12 October 2026, SES verified `commonbound.work` and reported DKIM successful after its three Easy DKIM CNAME records were saved in GoDaddy. The domain uses 2048-bit signing keys. Both login codes and collaborator invitations use the `MAIL_FROM` sender.
 
 | Name (relative to commonbound.work) | Target |
 | --- | --- |
