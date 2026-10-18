@@ -74,7 +74,7 @@ class ProvocationsTest < ActionDispatch::IntegrationTest
     assert_select "#provocations", text: /You've answered all the questions/
     assert_select "#provocations > .provocation-form", count: 0
     get profile_provocation_answers_path(@profile.public_slug)
-    assert_select ".provocation-form", count: Provocation.count
+    assert_select ".provocation-form", count: [ Provocation.count, ProvocationAnswersController::PAGE_SIZE ].min
     assert_not @first.update(question: "A different question?")
     assert_not @first.update(goal_id: "1")
     assert_equal "Should products be repairable?", @first.reload.question
