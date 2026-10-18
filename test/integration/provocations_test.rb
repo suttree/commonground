@@ -12,11 +12,14 @@ class ProvocationsTest < ActionDispatch::IntegrationTest
   test "owner answers, advances, revisits and changes an answer without duplicates" do
     sign_in_account(@account)
     get profile_path(@profile.public_slug)
+    assert_select "#provocations", count: 0
+    get dashboard_path
     assert_select "#provocations legend", text: @first.question
     assert_select "#provocations a[href='#{sdg_goal_path('12')}']"
     assert_difference "ProvocationAnswer.count", 1 do
       post profile_provocation_answers_path(@profile.public_slug), params: { provocation_id: @first.id, choice: "strong_yes" }
     end
+    assert_redirected_to dashboard_path(anchor: "provocations")
     follow_redirect!
     assert_select "#provocations > .provocation-form legend", text: @second.question
     assert_select ".provocation-history-link a", text: "Your answers (1)"
@@ -52,7 +55,7 @@ class ProvocationsTest < ActionDispatch::IntegrationTest
   test "skip advances without an answer and invalid choices do not save" do
     sign_in_account(@account)
     assert_no_difference "ProvocationAnswer.count" do
-      get profile_path(@profile.public_slug, after_provocation: @first.id)
+      get dashboard_path(after_provocation: @first.id)
     end
     assert_select "#provocations legend", text: @second.question
     assert_no_difference "ProvocationAnswer.count" do
@@ -67,7 +70,7 @@ class ProvocationsTest < ActionDispatch::IntegrationTest
   test "all answered state retains editable history and original question" do
     sign_in_account(@account)
     Provocation.find_each { |question| @profile.provocation_answers.create!(provocation: question, choice: "yes") }
-    get profile_path(@profile.public_slug)
+    get dashboard_path
     assert_select "#provocations", text: /You've answered all the questions/
     assert_select "#provocations > .provocation-form", count: 0
     get profile_provocation_answers_path(@profile.public_slug)
@@ -110,5 +113,13 @@ class ProvocationsTest < ActionDispatch::IntegrationTest
     get profile_provocation_answers_path(@profile.public_slug)
     assert_select "p", text: "You haven't answered any questions yet."
     assert_select ".provocation-form", count: 0
+    assert_select "a[href='#{dashboard_path(anchor: 'provocations')}']", text: "Back to your dashboard"
+  end
+
+  test "dashboard without a personal profile does not show questions" do
+    sign_in_account(Account.create!(email: "no-profile@example.test"))
+    get dashboard_path
+    assert_response :success
+    assert_select "#provocations", count: 0
   end
 end

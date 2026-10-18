@@ -2,8 +2,8 @@
   <p class="eyebrow" id="provocations-title">A question to think about</p>
   <% if @provocation %>
     <p><%= link_to "Goal #{@provocation.goal_id} · #{@provocation.goal.fetch('name')}", sdg_goal_path(@provocation.goal_id) %></p>
-    <%= render "provocation_choices", provocation: @provocation, selected: nil %>
-    <p><%= link_to "Skip this question", profile_path(@profile.public_slug, after_provocation: @provocation.id, anchor: "provocations") %></p>
+    <%= render "provocation_answers/choices", provocation: @provocation, selected: nil %>
+    <p><%= link_to "Skip this question", dashboard_path(after_provocation: @provocation.id, anchor: "provocations") %></p>
   <% else %>
     <p>You've answered all the questions for now. You can revisit your answers at any time.</p>
   <% end %>

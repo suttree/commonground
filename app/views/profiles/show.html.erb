@@ -18,7 +18,6 @@
       <%= simple_format @profile.purpose %>
     </div>
   </header>
-  <%= render "provocations" if @provocation_answer_count %>
   <% if @current_challenge %><section class="profile-section current-challenge"><h2><%= @profile.organisation? ? "Our current project" : "My current project" %></h2><%= render "challenges/card", challenge: @current_challenge %></section><% end %>
   <div class="profile-body">
     <div class="profile-main">

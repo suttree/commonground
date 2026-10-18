@@ -32,7 +32,7 @@ class ProvocationAnswersController < ApplicationController
     if params[:history_page].present?
       profile_provocation_answers_path(@profile.public_slug, page: [ params[:history_page].to_i, 1 ].max)
     else
-      profile_path(@profile.public_slug, anchor: "provocations")
+      dashboard_path(anchor: "provocations")
     end
   end
 end

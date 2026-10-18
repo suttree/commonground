@@ -2,12 +2,6 @@ class ProfilesController < ApplicationController
   before_action :find_profile
 
   def show
-    if owns_profile?(@profile) && !@profile.organisation?
-      @provocation_answer_count = @profile.provocation_answers.count
-      unanswered = Provocation.where.not(id: @profile.provocation_answers.select(:provocation_id)).in_order.to_a
-      skipped_index = unanswered.index { |question| question.id.to_s == params[:after_provocation] }
-      @provocation = skipped_index ? unanswered[(skipped_index + 1) % unanswered.size] : unanswered.first
-    end
     @profile_challenges = @profile.challenges.publicly_visible.recent
     @current_challenge = @profile_challenges.find_by(status: "active")
     @completed_challenges = @profile_challenges.where(status: "completed")

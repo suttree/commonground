@@ -5,6 +5,7 @@
     <h1><%= @profile ? link_to(@profile.display_name, profile_path(@profile.public_slug)) : "Welcome to Commonbound" %></h1>
     <% if @profile %><%= link_to "Edit profile", edit_account_profile_path, class: "button secondary dashboard-edit-profile" %><% end %>
   </header>
+  <%= render "provocations" if @provocation_answer_count %>
   <% if current_account.onboarding.present? && !current_account.submissions.exists?(kind: "person") %>
     <section class="onboarding-reminder"><h2>Pick up where you left off</h2><p>Your personal profile isn't public yet. Finish your priorities and short introduction when you're ready.</p><%= link_to "Continue setting up your profile", new_person_path, class: "button" %></section>
   <% end %>
