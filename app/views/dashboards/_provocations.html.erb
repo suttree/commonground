@@ -1,4 +1,4 @@
-<section class="provocations profile-section" id="provocations" aria-labelledby="provocations-title">
+<section class="provocations profile-section" id="provocations" aria-labelledby="provocations-title" data-profile-id="<%= @profile.id %>" tabindex="-1">
   <div class="dashboard-question-heading">
     <p class="eyebrow" id="provocations-title">A question to think about</p>
     <span class="dashboard-question-count"><%= @provocation_answer_count %> / <%= @provocation_count %> answered</span>
@@ -10,7 +10,8 @@
     <p>You've answered all the questions for now. You can revisit your answers at any time.</p>
   <% end %>
   <div class="dashboard-question-footer">
-    <% if @provocation %><p><%= link_to "Skip this question", dashboard_path(after_provocation: @provocation.id, anchor: "provocations") %></p><% end %>
+    <% if @provocation %><p><%= link_to "Skip this question", dashboard_path(after_provocation: @provocation.id, anchor: "provocations"), data: { provocation_skip: true } %></p><% end %>
     <p class="provocation-history-link"><%= link_to "Your answers (#{@provocation_answer_count})", profile_provocation_answers_path(@profile.public_slug) %></p>
   </div>
+  <p class="provocation-feedback" role="status" aria-live="polite" aria-atomic="true"></p>
 </section>

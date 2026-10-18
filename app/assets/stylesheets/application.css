@@ -772,3 +772,7 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
   .dashboard-priority-links { display: grid; gap: 10px; }
   .dashboard-priority-links li { border: 0; padding: 0; }
 }
+
+.provocations .provocation-feedback { font-size: .8rem; color: var(--muted); margin: 12px 0 0; }
+.provocations .provocation-feedback:empty { display: none; }
+.provocations[aria-busy="true"] .provocation-choices button { opacity: .6; cursor: wait; }
