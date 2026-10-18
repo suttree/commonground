@@ -693,7 +693,7 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .provocation-choices button:hover, .provocation-choices button[aria-pressed="true"] { background: #203c30; color: #fffdf7; }
 .provocation-choices button:focus-visible { outline: 3px solid #203c30; outline-offset: 3px; }
 .provocation-choices button[aria-pressed="true"] { outline: 3px solid #203c30; outline-offset: 3px; }
-.provocation-history { margin-top: 24px; }
-.provocation-history summary { cursor: pointer; font-weight: 600; }
-.provocation-past-answer { border-top: 1px solid #d9d3c5; margin-top: 24px; padding-top: 16px; }
+.provocation-history-link { margin-top: 24px; }
+.answer-history { max-width: 900px; margin: 0 auto; }
+.answer-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 24px; margin: 32px 0; }
 @media (max-width: 520px) { .provocation-choices { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

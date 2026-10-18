@@ -151,6 +151,6 @@ As of 20 September 2026, the app is deployed, the sender and domain are verified
 
 ### Private profile provocations
 
-Personal profile owners see one unanswered question at a time, with four answer choices and a skip link. Each `ProvocationAnswer` belongs to a `Submission` and a `Provocation`; the provocation's `goal_id` resolves through the existing SDG directory. Other visitors cannot see or submit answers. Skipping rotates through unanswered questions without recording a belief. Previous answers remain editable in the private history.
+Personal profile owners see one unanswered question at a time, with four answer choices and a skip link. Each `ProvocationAnswer` belongs to a `Submission` and a `Provocation`; the provocation's `goal_id` resolves through the existing SDG directory. Other visitors cannot see or submit answers. Skipping rotates through unanswered questions without recording a belief. Previous answers remain editable on the private Your answers page, with 10 answers per page. Editing an answer returns to the same page. Answers are ordered by when they were first submitted, newest first.
 
 The migration adds three initial questions. `bin/rails db:seed` also installs them after a fresh schema load and can be rerun safely. Create a new versioned provocation record for changes to wording or goal; existing records reject those edits so answers keep their original meaning.

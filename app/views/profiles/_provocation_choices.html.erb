@@ -1,5 +1,6 @@
 <%= form_with url: profile_provocation_answers_path(@profile.public_slug), class: "provocation-form" do |form| %>
   <%= form.hidden_field :provocation_id, value: provocation.id %>
+  <%= form.hidden_field :history_page, value: history_page if local_assigns[:history_page] %>
   <fieldset>
     <legend><%= provocation.question %></legend>
     <div class="provocation-choices">

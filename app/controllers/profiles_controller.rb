@@ -3,7 +3,7 @@ class ProfilesController < ApplicationController
 
   def show
     if owns_profile?(@profile) && !@profile.organisation?
-      @provocation_answers = @profile.provocation_answers.includes(:provocation).order(created_at: :desc)
+      @provocation_answer_count = @profile.provocation_answers.count
       unanswered = Provocation.where.not(id: @profile.provocation_answers.select(:provocation_id)).in_order.to_a
       skipped_index = unanswered.index { |question| question.id.to_s == params[:after_provocation] }
       @provocation = skipped_index ? unanswered[(skipped_index + 1) % unanswered.size] : unanswered.first

@@ -7,18 +7,7 @@
     <%= render "provocation_choices", provocation: @provocation, selected: nil %>
     <p><%= link_to "Skip this question", profile_path(@profile.public_slug, after_provocation: @provocation.id, anchor: "provocations") %></p>
   <% else %>
-    <p>You've answered all the questions for now. You can revisit your answers below.</p>
+    <p>You've answered all the questions for now. You can revisit your answers at any time.</p>
   <% end %>
-  <% if @provocation_answers.any? %>
-    <details class="provocation-history">
-      <summary>Your answers (<%= @provocation_answers.size %>)</summary>
-      <% @provocation_answers.each do |answer| %>
-        <div class="provocation-past-answer">
-          <p><%= link_to "Goal #{answer.provocation.goal_id} · #{answer.provocation.goal.fetch('name')}", sdg_goal_path(answer.provocation.goal_id) %></p>
-          <p>Your answer: <strong><%= answer.label %></strong></p>
-          <%= render "provocation_choices", provocation: answer.provocation, selected: answer.choice %>
-        </div>
-      <% end %>
-    </details>
-  <% end %>
+  <p class="provocation-history-link"><%= link_to "Your answers (#{@provocation_answer_count})", profile_provocation_answers_path(@profile.public_slug) %></p>
 </section>
