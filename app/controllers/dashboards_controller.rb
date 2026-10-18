@@ -14,6 +14,7 @@ class DashboardsController < ApplicationController
   def show
     @profile = current_profile
     if @profile && !@profile.organisation?
+      @provocation_count = Provocation.count
       @provocation_answer_count = @profile.provocation_answers.count
       unanswered = Provocation.where.not(id: @profile.provocation_answers.select(:provocation_id)).in_order.to_a
       skipped_index = unanswered.index { |question| question.id.to_s == params[:after_provocation] }

@@ -1,11 +1,16 @@
 <section class="provocations profile-section" id="provocations" aria-labelledby="provocations-title">
-  <p class="eyebrow" id="provocations-title">A question to think about</p>
+  <div class="dashboard-question-heading">
+    <p class="eyebrow" id="provocations-title">A question to think about</p>
+    <span class="dashboard-question-count"><%= @provocation_answer_count %> / <%= @provocation_count %> answered</span>
+  </div>
   <% if @provocation %>
-    <p><%= link_to "Goal #{@provocation.goal_id} · #{@provocation.goal.fetch('name')}", sdg_goal_path(@provocation.goal_id) %></p>
+    <p class="dashboard-question-goal"><%= link_to sdg_goal_path(@provocation.goal_id) do %><span class="dashboard-goal-number" aria-label="Goal <%= @provocation.goal_id %>"><%= @provocation.goal_id %></span><%= @provocation.goal.fetch("name") %><% end %></p>
     <%= render "provocation_answers/choices", provocation: @provocation, selected: nil %>
-    <p><%= link_to "Skip this question", dashboard_path(after_provocation: @provocation.id, anchor: "provocations") %></p>
   <% else %>
     <p>You've answered all the questions for now. You can revisit your answers at any time.</p>
   <% end %>
-  <p class="provocation-history-link"><%= link_to "Your answers (#{@provocation_answer_count})", profile_provocation_answers_path(@profile.public_slug) %></p>
+  <div class="dashboard-question-footer">
+    <% if @provocation %><p><%= link_to "Skip this question", dashboard_path(after_provocation: @provocation.id, anchor: "provocations") %></p><% end %>
+    <p class="provocation-history-link"><%= link_to "Your answers (#{@provocation_answer_count})", profile_provocation_answers_path(@profile.public_slug) %></p>
+  </div>
 </section>
