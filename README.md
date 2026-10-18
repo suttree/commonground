@@ -148,3 +148,9 @@ The `suttree.com` domain identity uses Easy DKIM with 2048-bit signing keys. The
 | `n6r2u3hrib4mid5msinuumjecf74zvn6._domainkey` | `n6r2u3hrib4mid5msinuumjecf74zvn6.dkim.amazonses.com` |
 
 As of 20 September 2026, the app is deployed, the sender and domain are verified, and all three DKIM records resolve publicly. A live login code was delivered to `duncan@suttree.com` and used successfully to reach the dashboard. SES remains in the London sandbox until AWS approves production access; other recipients must be verified while that restriction applies.
+
+### Private profile provocations
+
+Personal profile owners see one unanswered question at a time, with four answer choices and a skip link. Each `ProvocationAnswer` belongs to a `Submission` and a `Provocation`; the provocation's `goal_id` resolves through the existing SDG directory. Other visitors cannot see or submit answers. Skipping rotates through unanswered questions without recording a belief. Previous answers remain editable in the private history.
+
+The migration adds three initial questions. `bin/rails db:seed` also installs them after a fresh schema load and can be rerun safely. Create a new versioned provocation record for changes to wording or goal; existing records reject those edits so answers keep their original meaning.

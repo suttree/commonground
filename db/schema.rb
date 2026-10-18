@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_11_020000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_18_000000) do
   create_table "accounts", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
@@ -103,6 +103,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_020000) do
     t.index ["upload_owner", "created_at"], name: "index_portfolio_images_on_upload_owner_and_created_at"
   end
 
+  create_table "provocation_answers", force: :cascade do |t|
+    t.string "choice", null: false
+    t.datetime "created_at", null: false
+    t.integer "provocation_id", null: false
+    t.integer "submission_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provocation_id"], name: "index_provocation_answers_on_provocation_id"
+    t.index ["submission_id", "provocation_id"], name: "index_provocation_answers_on_submission_id_and_provocation_id", unique: true
+    t.index ["submission_id"], name: "index_provocation_answers_on_submission_id"
+    t.check_constraint "choice IN ('strong_no', 'no', 'yes', 'strong_yes')", name: "provocation_answer_choice"
+  end
+
+  create_table "provocations", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "goal_id", null: false
+    t.string "key", null: false
+    t.integer "position", null: false
+    t.text "question", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_provocations_on_key", unique: true
+  end
+
   create_table "side_projects", force: :cascade do |t|
     t.integer "cover_image_id"
     t.datetime "created_at", null: false
@@ -153,6 +175,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_020000) do
   add_foreign_key "contact_requests", "submissions"
   add_foreign_key "portfolio_images", "side_projects"
   add_foreign_key "portfolio_images", "submissions"
+  add_foreign_key "provocation_answers", "provocations"
+  add_foreign_key "provocation_answers", "submissions"
   add_foreign_key "side_projects", "submissions"
   add_foreign_key "submissions", "accounts"
 end

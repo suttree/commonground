@@ -1,0 +1,24 @@
+<section class="provocations profile-section" id="provocations" aria-labelledby="provocations-title">
+  <p class="eyebrow">A question to think about</p>
+  <h2 id="provocations-title">What do you think?</h2>
+  <p class="small-note">Your answers are private. You can change them at any time. These questions are inspired by the goals, not official UN questions.</p>
+  <% if @provocation %>
+    <p><%= link_to "Goal #{@provocation.goal_id} · #{@provocation.goal.fetch('name')}", sdg_goal_path(@provocation.goal_id) %></p>
+    <%= render "provocation_choices", provocation: @provocation, selected: nil %>
+    <p><%= link_to "Skip this question", profile_path(@profile.public_slug, after_provocation: @provocation.id, anchor: "provocations") %></p>
+  <% else %>
+    <p>You've answered all the questions for now. You can revisit your answers below.</p>
+  <% end %>
+  <% if @provocation_answers.any? %>
+    <details class="provocation-history">
+      <summary>Your answers (<%= @provocation_answers.size %>)</summary>
+      <% @provocation_answers.each do |answer| %>
+        <div class="provocation-past-answer">
+          <p><%= link_to "Goal #{answer.provocation.goal_id} · #{answer.provocation.goal.fetch('name')}", sdg_goal_path(answer.provocation.goal_id) %></p>
+          <p>Your answer: <strong><%= answer.label %></strong></p>
+          <%= render "provocation_choices", provocation: answer.provocation, selected: answer.choice %>
+        </div>
+      <% end %>
+    </details>
+  <% end %>
+</section>

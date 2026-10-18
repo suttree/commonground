@@ -684,3 +684,16 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .side-photo-editor label { display: block; font-size: 1rem; }
 .side-project-summary { padding: 24px 0; border-bottom: 1px solid var(--line); }
 @media (max-width: 600px) { #side-projects { margin-top: 40px; } .side-project-grid { grid-template-columns: 1fr; } .side-photo-editor { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.provocations { background: #f6f2e8; border: 1px solid #d9d3c5; border-radius: 16px; padding: clamp(20px, 4vw, 36px); margin: 24px 0 40px; }
+.provocation-form fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.provocation-form legend { font-size: clamp(1.2rem, 2vw, 1.55rem); line-height: 1.4; font-weight: 600; margin-bottom: 20px; }
+.provocation-choices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.provocation-choices button { width: 100%; min-height: 48px; padding: 12px 8px; border: 1px solid #294638; border-radius: 6px; background: #fffdf7; color: #203c30; font: inherit; font-weight: 600; cursor: pointer; }
+.provocation-choices button:hover, .provocation-choices button[aria-pressed="true"] { background: #203c30; color: #fffdf7; }
+.provocation-choices button:focus-visible { outline: 3px solid #203c30; outline-offset: 3px; }
+.provocation-choices button[aria-pressed="true"] { outline: 3px solid #203c30; outline-offset: 3px; }
+.provocation-history { margin-top: 24px; }
+.provocation-history summary { cursor: pointer; font-weight: 600; }
+.provocation-past-answer { border-top: 1px solid #d9d3c5; margin-top: 24px; padding-top: 16px; }
+@media (max-width: 520px) { .provocation-choices { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

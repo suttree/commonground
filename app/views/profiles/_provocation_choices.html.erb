@@ -1,0 +1,11 @@
+<%= form_with url: profile_provocation_answers_path(@profile.public_slug), class: "provocation-form" do |form| %>
+  <%= form.hidden_field :provocation_id, value: provocation.id %>
+  <fieldset>
+    <legend><%= provocation.question %></legend>
+    <div class="provocation-choices">
+      <% ProvocationAnswer::CHOICES.each do |value, label| %>
+        <%= button_tag label, name: "choice", value: value, type: "submit", aria: { pressed: selected == value } %>
+      <% end %>
+    </div>
+  </fieldset>
+<% end %>
