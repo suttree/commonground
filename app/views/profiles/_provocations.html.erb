@@ -1,7 +1,5 @@
 <section class="provocations profile-section" id="provocations" aria-labelledby="provocations-title">
-  <p class="eyebrow">A question to think about</p>
-  <h2 id="provocations-title">What do you think?</h2>
-  <p class="small-note">Your answers are private. You can change them at any time. These questions are inspired by the goals, not official UN questions.</p>
+  <p class="eyebrow" id="provocations-title">A question to think about</p>
   <% if @provocation %>
     <p><%= link_to "Goal #{@provocation.goal_id} · #{@provocation.goal.fetch('name')}", sdg_goal_path(@provocation.goal_id) %></p>
     <%= render "provocation_choices", provocation: @provocation, selected: nil %>
