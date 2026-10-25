@@ -163,7 +163,7 @@ input[type=radio] { width: 22px; height: 22px; accent-color: var(--green); }
 .feeling-choice label { margin: 0; }
 .optional-sections { margin: 40px 0; }
 
-.public-profile { padding: 60px 0 72px; overflow-wrap: anywhere; }
+.public-profile { padding: 24px 0 72px; overflow-wrap: anywhere; }
 .profile-opening { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; padding-bottom: 52px; border-bottom: 2px solid var(--ink); }
 .profile-opening h1 { font-size: clamp(3rem, 5.5vw, 4.7rem); }
 .profile-location { color: var(--muted); font-size: 1rem; margin-bottom: 12px; }
@@ -189,7 +189,7 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .profile-goals { max-width: 820px; }
 .profile-goals li { margin: 0 0 18px; font-size: 1rem; }
 @media (max-width: 760px) {
-  .public-profile { padding-top: 32px; }
+  .public-profile { padding-top: 20px; }
   .profile-opening, .profile-body { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .profile-opening { padding-bottom: 32px; }
   .profile-purpose { padding: 24px; }
@@ -607,7 +607,9 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 }
 
 /* Public profiles and projects use the same visual language as discovery. */
-.public-profile > .back-link { margin-bottom: 28px; }
+.profile-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 24px; font-size: 1rem; }
+.profile-owner-actions { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.profile-toolbar a { display: inline-flex; align-items: center; min-height: 44px; }
 .profile-opening { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; border-bottom: 1px solid var(--line); }
 .profile-opening h1, .project-opening h1 { font-family: inherit; font-weight: 600; letter-spacing: -.045em; line-height: 1.1; font-size: clamp(2.3rem, 4.5vw, 3.8rem); }
 .profile-kind { display: flex; align-items: center; gap: 10px; }

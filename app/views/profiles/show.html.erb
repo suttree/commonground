@@ -1,8 +1,12 @@
 <% content_for :title, @profile.display_name %>
 <article class="public-profile">
-  <p class="back-link"><%= link_to @profile.organisation? ? "All companies" : "All people", @profile.organisation? ? companies_path : people_path %></p>
+  <nav class="profile-toolbar" aria-label="Profile navigation">
+    <%= link_to @profile.organisation? ? "All companies" : "All people", @profile.organisation? ? companies_path : people_path %>
+    <% if current_profile == @profile %>
+      <div class="profile-owner-actions"><%= link_to "Back to dashboard", dashboard_path %><%= link_to "Edit profile", edit_account_profile_path %></div>
+    <% end %>
+  </nav>
   <% if current_profile == @profile %>
-    <p><%= link_to "Back to dashboard", dashboard_path %> · <%= link_to "Edit profile", edit_account_profile_path %></p>
     <% unless @profile.published? %><p class="small-note">Only you can see this preview. Contact the team to restore your public profile.</p><% end %>
   <% end %>
   <header class="profile-opening">
