@@ -34,8 +34,10 @@ class OnboardingController < ApplicationController
       session.delete(:onboarding_person)
       session.delete(:quiz_answers)
       session[:active_profile_id] = @submission.id
-      destination = session[:collaborator_invitation_token].present? ? invitation_path(token: session[:collaborator_invitation_token]) : companies_path(priorities: "1")
-      redirect_to destination, notice: "Your profile is ready. Find companies working on what matters to you.", status: :see_other
+      invited = session[:collaborator_invitation_token].present?
+      destination = invited ? invitation_path(token: session[:collaborator_invitation_token]) : companies_path(priorities: "1")
+      message = invited ? "Your profile is ready. Accept the invitation below to join the project." : "Your profile is ready. Find companies working on what matters to you."
+      redirect_to destination, notice: message, status: :see_other
     else
       render :profile, status: :unprocessable_entity
     end

@@ -39,12 +39,24 @@
       </details>
     <% end %>
   </details>
-  <details class="challenge-optional" <%= "open" if @challenge.collaborator_ids.any? %>>
-    <summary>Link collaborators (optional)</summary>
-    <% if @challenge.persisted? %><p><%= link_to "Invite someone by email", challenge_collaborator_invitations_path(@challenge) %></p><% else %><p class="hint">Save your project to invite someone by email.</p><% end %>
-    <p class="hint">Choose existing members who worked with you. Their public profiles will be linked from this work. Only add people who are happy to be credited.</p>
-    <div class="field"><%= form.label :collaborator_ids, "Collaborators" %><%= form.collection_select :collaborator_ids, @members, :id, :display_name, {}, multiple: true, size: [@members.size, 6].min.clamp(2, 6) %><p class="hint">Hold Command on Mac or Control on Windows to select or clear several names.</p></div>
-  </details>
+  <fieldset id="collaborator-selection">
+    <legend>Collaborators (optional)</legend>
+    <p class="hint">Tick to add people, or untick to remove them. Changes take effect when you save the project. You can credit up to 20 profiles. Only add people who are happy to be credited.</p>
+    <%= hidden_field_tag "challenge[collaborator_ids][]", "" %>
+    <div class="collaborator-choices">
+      <% @members.each do |member| %>
+        <div class="check-choice">
+          <%= check_box_tag "challenge[collaborator_ids][]", member.id, @challenge.collaborator_ids.map(&:to_s).include?(member.id.to_s), id: "challenge_collaborator_#{member.id}" %>
+          <%= label_tag "challenge_collaborator_#{member.id}" do %>
+            <%= member.display_name %><% if member.location.present? %><span class="small-note"> · <%= member.location %></span><% end %>
+            <% unless member.published? %><span class="small-note"> · Profile no longer public</span><% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <% if @members.empty? %><p>No other member profiles yet.</p><% end %>
+    <% if @challenge.persisted? %><p><%= link_to "Invite someone by email", "#email-invitations" %></p><% else %><p class="hint">Save and publish your project to invite someone by email. They can sign up before joining.</p><% end %>
+  </fieldset>
   <details class="challenge-optional" <%= "open" if @challenge.completed? || @challenge.results.present? || @challenge.errors.any? %>>
     <summary>Record the project outcome</summary>
     <p class="hint">When this work is complete, fill in these fields and choose Completed below. It will appear in your profile's completed projects.</p>
@@ -61,4 +73,13 @@
     <p class="hint">To publish, add a location, description and objectives. Completed projects also need your role, context, approach and results.</p>
     <div class="actions"><%= form.submit "Save project", class: "button" %><%= link_to "Back to dashboard", dashboard_path %></div>
   </fieldset>
+<% end %>
+<% if @challenge.persisted? %>
+  <section class="project-invites" id="email-invitations" aria-labelledby="email-invitations-title">
+    <h2 id="email-invitations-title">Invite someone by email</h2>
+    <p>They do not need a Commonbound account. The email will guide them through signing up and accepting the invitation.</p>
+    <p class="hint">Save any project changes above before sending an invitation.</p>
+    <%= render "collaborator_invitations/email_form", invitation: @challenge.collaborator_invitations.new, return_to: "edit" %>
+    <p><%= link_to "View invitations", challenge_collaborator_invitations_path(@challenge) %></p>
+  </section>
 <% end %>

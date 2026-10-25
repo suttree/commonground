@@ -57,7 +57,8 @@ class ChallengesController < ApplicationController
 
   def prepare_form
     @owned_profiles = current_account.submissions.order(:kind, :organisation_name, :name)
-    @members = Submission.published.where.not(id: @challenge.submission_id).order(:name)
+    existing_ids = Array(@challenge.collaborator_ids_in_database)
+    @members = Submission.published.or(Submission.where(id: existing_ids)).where.not(id: @challenge.submission_id).order(:name)
     @active_challenge = @challenge.submission.challenges.find_by(status: "active")
   end
 

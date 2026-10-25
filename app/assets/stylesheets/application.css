@@ -457,6 +457,12 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .challenge-optional > summary { font-size: 1.2rem; font-weight: 500; cursor: pointer; }
 .challenge-optional[open] > summary { margin-bottom: 24px; }
 .challenge-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.collaborator-choices { max-height: 320px; overflow-y: auto; border-block: 1px solid var(--line); padding-inline: 4px; }
+.project-collaborators { margin-block: 32px; }
+.collaborator-list { list-style: none; padding: 0; }
+.collaborator-list li { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-block: 12px; border-bottom: 1px solid var(--line); }
+.collaborator-list li > span { overflow-wrap: anywhere; min-width: 0; }
+.project-invites { border-top: 1px solid var(--line); margin-top: 32px; padding-top: 24px; }
 .dashboard-work { margin-block: 24px 48px; padding: 32px; background: var(--wash); }
 .dashboard-work h2 { font-size: 2.4rem; }
 .dashboard-work .challenge-card { max-width: 720px; }

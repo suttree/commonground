@@ -239,4 +239,63 @@ class ChallengesTest < ActionDispatch::IntegrationTest
     draft = @owner.challenges.create!(@attributes.merge(status: "draft"))
     assert_raises(ActiveRecord::RecordNotUnique) { draft.update_column(:status, "active") }
   end
+
+  test "collaborator checkboxes can remove one member or clear everyone" do
+    third = profile("third@example.test")
+    entry = @owner.challenges.create!(@attributes.merge(collaborator_ids: [ @other.id, third.id ]))
+    login
+    get edit_challenge_path(entry)
+    assert_select "select[multiple][name='challenge[collaborator_ids][]']", count: 0
+    assert_select "input[type=hidden][name='challenge[collaborator_ids][]'][value='']"
+    assert_select "#challenge_collaborator_#{@other.id}[checked]"
+    assert_select "#challenge_collaborator_#{third.id}[checked]"
+    assert_select "form form", count: 0
+    assert_select "#email-invitations form[action='#{challenge_collaborator_invitations_path(entry)}'] input[type=email]"
+    patch challenge_path(entry), params: { challenge: { collaborator_ids: [ "", third.id.to_s ] } }
+    assert_response :see_other
+    assert_equal [ third.id.to_s ], entry.reload.collaborator_ids
+    patch challenge_path(entry), params: { challenge: { collaborator_ids: [ "" ] } }
+    assert_response :see_other
+    assert_empty entry.reload.collaborator_ids
+  end
+
+  test "owner can remove a collaborator directly but other accounts cannot" do
+    entry = @owner.challenges.create!(@attributes.merge(collaborator_ids: [ @other.id ]))
+    login(@other)
+    get challenge_path(entry)
+    assert_select "#collaborators a[href='#{profile_path(@other.public_slug)}']"
+    assert_select "#collaborators form", count: 0
+    delete challenge_collaborator_path(entry, @other.id)
+    assert_response :not_found
+    assert_equal [ @other.id ], entry.reload.collaborator_ids
+    delete logout_path
+    delete challenge_collaborator_path(entry, @other.id)
+    assert_redirected_to login_path
+    login
+    get challenge_path(entry)
+    assert_select "#collaborators button[aria-label='Remove #{@other.display_name} from this project']"
+    assert_select "#collaborators input[type=email]"
+    delete challenge_collaborator_path(entry, @other.id)
+    assert_redirected_to challenge_path(entry, anchor: "collaborators")
+    assert_empty entry.reload.collaborator_ids
+    delete challenge_collaborator_path(entry, @other.id)
+    assert_response :not_found
+  end
+
+  test "unpublished existing collaborators can be removed without exposing unrelated private profiles" do
+    entry = @owner.challenges.create!(@attributes.merge(collaborator_ids: [ @other.id ]))
+    @other.update!(published: false)
+    secret = profile("secret@example.test", published: false)
+    login
+    get edit_challenge_path(entry)
+    assert_select "#challenge_collaborator_#{@other.id}[checked]"
+    assert_select "#challenge_collaborator_#{secret.id}", count: 0
+    patch challenge_path(entry), params: { challenge: { collaborator_ids: [ secret.id.to_s ] } }
+    assert_response :unprocessable_entity
+    assert_select "#challenge_collaborator_#{secret.id}", count: 0
+    assert_equal [ @other.id ], entry.reload.collaborator_ids
+    delete challenge_collaborator_path(entry, @other.id)
+    assert_response :see_other
+    assert_empty entry.reload.collaborator_ids
+  end
 end

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root "pages#home"
   resources :challenges, path: "projects", only: [ :index, :show, :new, :create, :edit, :update ] do
     resources :collaborator_invitations, only: [ :index, :create, :destroy ]
+    resources :collaborators, only: :destroy, controller: "challenge_collaborators"
   end
   get "challenges(/*path)", to: redirect { |_params, request| request.original_fullpath.sub(%r{\A/challenges}, "/projects") }, format: false
   resource :invitation, only: [ :show, :update ]

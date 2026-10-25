@@ -5,8 +5,8 @@
     <p><%= @invitation.challenge.submission.display_name %> invited you to collaborate on <%= link_to @invitation.challenge.title, challenge_path(@invitation.challenge) %>.</p>
     <p>Accepting will link your public profile from this work. It does not give you editing access.</p>
     <% if !current_account %>
-      <p>Sign in with the email address that received the invitation. If you are new, you can create your profile after signing in.</p>
-      <%= link_to "Sign in to continue", login_path, class: "button" %>
+      <p>Use the email address that received this invitation. If you are new, create an account and profile, then accept the invitation to join the project.</p>
+      <div class="actions"><%= link_to "Create an account", join_path, class: "button" %><%= link_to "Sign in to continue", login_path, class: "button secondary" %></div>
     <% elsif current_account.email != @invitation.email %>
       <p>This invitation was sent to a different email address. Sign out, reopen the invitation and sign in with that address.</p>
       <%= button_to "Sign out", logout_path, method: :delete, class: "button secondary" %>

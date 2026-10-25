@@ -27,6 +27,6 @@
       </section>
     <% end %>
     <% if @challenge.target_ids.any? %><section><h2>Problems this work addresses</h2><ul><% @challenge.target_ids.each do |id| %><li><%= link_to "#{id}: #{SdgDirectory::LABELS.fetch(id)}", sdg_target_path(id) %></li><% end %></ul></section><% end %>
-    <% if @challenge.collaborators.any? %><section><h2>Collaborators</h2><p class="small-note">Credited by <%= @challenge.submission.display_name %>.</p><ul><% @challenge.collaborators.each do |person| %><li><%= link_to person.display_name, profile_path(person.public_slug) %></li><% end %></ul></section><% end %>
   </div>
+  <%= render "collaborators" %>
 </article>
