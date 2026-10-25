@@ -50,6 +50,8 @@ Rails.application.routes.draw do
   get "profiles/:slug/projects/:position", to: "profiles#project", as: :profile_project, constraints: { position: /[1-9][0-9]*/ }
   get "portfolio/images/:id", to: "portfolio_images#show", as: :portfolio_image
   get "portfolio/draft", to: "portfolio_images#draft", as: :draft_portfolio_image
+  get "profile-photos/draft", to: "profile_photos#draft", as: :draft_profile_photo
+  get "profile-photos/:id", to: "profile_photos#show", as: :profile_photo
 
   namespace :admin do
     root "submissions#index"

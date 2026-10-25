@@ -1,4 +1,5 @@
 class OnboardingController < ApplicationController
+  include ProfilePhotoUpload
   before_action :require_account, except: :new
   before_action :prepare_onboarding, except: :new
   before_action { response.headers["Cache-Control"] = "no-store" }
@@ -19,7 +20,16 @@ class OnboardingController < ApplicationController
   def create_profile
     @submission = build_profile
     @submission.assign_attributes(params.require(:submission).permit(:name, :location, :purpose, :experience, :skills_summary, :consent))
-    if @submission.save
+    prepare_profile_photo
+    if @profile_photo_error
+      @submission.errors.add(:profile_photo, @profile_photo_error)
+      return render :profile, status: :unprocessable_entity
+    end
+    if @submission.valid?
+      Submission.transaction do
+        @submission.save!
+        persist_profile_photo
+      end
       current_account.update!(onboarding: {})
       session.delete(:onboarding_person)
       session.delete(:quiz_answers)

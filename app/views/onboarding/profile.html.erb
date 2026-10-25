@@ -5,7 +5,8 @@
   <h1>A little about you.</h1>
   <p>Give people a starting point for a conversation. You can add more later.</p>
   <%= render "shared/errors", record: @submission %>
-  <%= form_with model: @submission, url: onboarding_profile_path do |form| %>
+  <%= form_with model: @submission, url: onboarding_profile_path, html: { multipart: true } do |form| %>
+    <%= render "submissions/profile_photo" %>
     <div class="field"><%= form.label :name, "Your name" %><%= form.text_field :name, required: true, maxlength: 200, autocomplete: "name" %></div>
     <div class="field"><%= form.label :location, "Location (optional)" %><%= form.text_field :location, maxlength: 5000, placeholder: "e.g. Bristol, UK" %><p class="hint">Town or city and country. No street address needed.</p></div>
     <%= render "submissions/text_field", form: form, attribute: :purpose, label: "Who or what would you like your work to help?", required: true, rows: 2 %>

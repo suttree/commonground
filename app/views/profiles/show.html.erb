@@ -7,6 +7,7 @@
   <% end %>
   <header class="profile-opening">
     <div>
+      <%= render "shared/profile_avatar", profile: @profile, photo: @profile.profile_photo unless @profile.organisation? %>
       <p class="eyebrow profile-kind"><%= render "shared/section_icon", section: @profile.organisation? ? "companies" : "people" %><%= @profile.organisation? ? "Organisation" : "Personal profile" %></p>
       <h1><%= @profile.display_name %></h1>
       <% if @profile.location.present? %><p class="profile-location"><%= @profile.location %><% if @profile.radius_km.present? %> · Within <%= @profile.radius_km %> km<% end %></p><% end %>

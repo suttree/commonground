@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_25_000000) do
   create_table "accounts", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
@@ -103,6 +103,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
     t.index ["upload_owner", "created_at"], name: "index_portfolio_images_on_upload_owner_and_created_at"
   end
 
+  create_table "profile_photos", force: :cascade do |t|
+    t.string "content_type", null: false
+    t.datetime "created_at", null: false
+    t.binary "data", null: false
+    t.integer "submission_id"
+    t.datetime "updated_at", null: false
+    t.string "upload_owner", null: false
+    t.index ["submission_id"], name: "index_profile_photos_on_submission_id", unique: true
+    t.index ["upload_owner", "created_at"], name: "index_profile_photos_on_upload_owner_and_created_at"
+  end
+
   create_table "provocation_answers", force: :cascade do |t|
     t.string "choice", null: false
     t.datetime "created_at", null: false
@@ -175,6 +186,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
   add_foreign_key "contact_requests", "submissions"
   add_foreign_key "portfolio_images", "side_projects"
   add_foreign_key "portfolio_images", "submissions"
+  add_foreign_key "profile_photos", "submissions"
   add_foreign_key "provocation_answers", "provocations"
   add_foreign_key "provocation_answers", "submissions"
   add_foreign_key "side_projects", "submissions"

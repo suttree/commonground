@@ -1,0 +1,16 @@
+<%= javascript_include_tag "profile_photo", defer: true %>
+<% retained_photo = @draft_profile_photo || @submission.profile_photo %>
+<% photo = @remove_profile_photo ? nil : retained_photo %>
+<div class="field profile-photo-field" data-profile-photo data-default-src="<%= image_path("default-profile.svg") %>" data-retained-src="<%= profile_photo_source(retained_photo) %>">
+  <%= render "shared/profile_avatar", profile: @submission, photo: photo %>
+  <div class="profile-photo-controls">
+    <%= label_tag :profile_photo, "Profile photo (optional)" %>
+    <p id="profile_photo-hint" class="hint">JPEG, PNG or WebP, up to 2 MB. Your photo will be public when you save your profile.</p>
+    <%= file_field_tag :profile_photo, accept: "image/jpeg,image/png,image/webp", **field_options(@submission, :profile_photo, hint: true) %>
+    <%= hidden_field_tag :profile_photo_token, @draft_profile_photo.draft_token if @draft_profile_photo %>
+    <% if photo || @remove_profile_photo %>
+      <div class="profile-photo-remove"><%= check_box_tag :remove_profile_photo, "1", @remove_profile_photo %><%= label_tag :remove_profile_photo, "Remove photo and use the default picture" %></div>
+    <% end %>
+    <%= render "shared/field_error", record: @submission, attribute: :profile_photo %>
+  </div>
+</div>

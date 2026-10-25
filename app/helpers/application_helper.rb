@@ -1,4 +1,9 @@
 module ApplicationHelper
+  def profile_photo_source(photo)
+    return image_path("default-profile.svg") unless photo
+    photo.submission_id ? profile_photo_path(photo) : draft_profile_photo_path(token: photo.draft_token)
+  end
+
   def main_navigation_link(label, path, section:)
     active_section = case controller_path
     when %r{\Aadmin/}
