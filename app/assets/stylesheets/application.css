@@ -606,7 +606,6 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .profile-opening h1, .project-opening h1 { font-family: inherit; font-weight: 600; letter-spacing: -.045em; line-height: 1.1; font-size: clamp(2.3rem, 4.5vw, 3.8rem); }
 .profile-kind { display: flex; align-items: center; gap: 10px; }
 .profile-avatar { display: block; width: 128px; height: 128px; border-radius: 50%; object-fit: cover; background: var(--wash); }
-.profile-opening .profile-avatar { margin-bottom: 24px; }
 .profile-photo-field { display: flex; align-items: flex-start; gap: 24px; }
 .profile-photo-field .profile-avatar { width: 88px; height: 88px; flex-shrink: 0; }
 .profile-photo-controls { min-width: 0; flex: 1; }
@@ -614,7 +613,9 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .profile-photo-remove label { font-weight: 400; margin: 0; }
 @media (max-width: 480px) { .profile-photo-field { flex-direction: column; gap: 16px; } }
 .profile-purpose { border-radius: 4px 48px 4px 4px; border-top: 4px solid #bc6348; }
-.profile-purpose .ambient-mark { width: 100px; height: auto; margin: 0 0 20px; }
+.profile-purpose-images { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+.profile-purpose .ambient-mark { width: 100px; height: auto; margin: 0; }
+.profile-purpose .profile-avatar { width: 100px; height: 100px; }
 .profile-purpose p { font-family: inherit; font-size: clamp(1.25rem, 2vw, 1.6rem); line-height: 1.5; }
 .profile-main > .profile-section + .profile-section, .profile-interests > .profile-section + .profile-section { border-top: 1px solid var(--line); padding-top: 28px; }
 .project-opening { border-bottom: 1px solid var(--line); padding-bottom: 28px; }
@@ -631,7 +632,9 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .challenge-card h3, .project-card h3 { font-family: inherit; font-size: 1.4rem; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
 @media (max-width: 760px) {
   .profile-opening { grid-template-columns: minmax(0, 1fr); gap: 24px; }
-  .profile-purpose .ambient-mark { width: 80px; margin-bottom: 16px; }
+  .profile-purpose-images { margin-bottom: 16px; }
+  .profile-purpose .ambient-mark { width: 80px; }
+  .profile-purpose .profile-avatar { width: 80px; height: 80px; }
   .project-opening > .ambient-mark { width: 90px; margin-bottom: 20px; }
 }
 

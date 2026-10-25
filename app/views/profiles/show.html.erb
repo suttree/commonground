@@ -7,14 +7,16 @@
   <% end %>
   <header class="profile-opening">
     <div>
-      <%= render "shared/profile_avatar", profile: @profile, photo: @profile.profile_photo unless @profile.organisation? %>
       <p class="eyebrow profile-kind"><%= render "shared/section_icon", section: @profile.organisation? ? "companies" : "people" %><%= @profile.organisation? ? "Organisation" : "Personal profile" %></p>
       <h1><%= @profile.display_name %></h1>
       <% if @profile.location.present? %><p class="profile-location"><%= @profile.location %><% if @profile.radius_km.present? %> · Within <%= @profile.radius_km %> km<% end %></p><% end %>
       <% if @profile.website.to_s.match?(%r{\Ahttps?://}i) %><%= link_to "Website & work ↗", @profile.website, rel: "noopener noreferrer", class: "profile-website" %><% end %>
     </div>
     <div class="profile-purpose">
-      <%= render "shared/ambient_mark" %>
+      <div class="profile-purpose-images">
+        <%= render "shared/ambient_mark" %>
+        <%= render "shared/profile_avatar", profile: @profile, photo: @profile.profile_photo unless @profile.organisation? %>
+      </div>
       <h2><%= @profile.organisation? ? "Who we serve" : "Who I want to serve" %></h2>
       <%= simple_format @profile.purpose %>
     </div>
