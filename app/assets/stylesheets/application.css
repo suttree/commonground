@@ -799,3 +799,9 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .provocations .provocation-feedback { font-size: .8rem; color: var(--muted); margin: 12px 0 0; }
 .provocations .provocation-feedback:empty { display: none; }
 .provocations[aria-busy="true"] .provocation-choices button { opacity: .6; cursor: wait; }
+
+.collaborator-search-result, [data-selected-collaborators] .check-choice { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 10px; }
+.collaborator-search-result > span, [data-selected-collaborators] label { flex: 1; min-width: 0; margin: 0; }
+.collaborator-search-result .button, [data-selected-collaborators] .button { padding: 8px 14px; min-height: 44px; flex-shrink: 0; }
+.collaborator-search .button { margin-top: 12px; }
+[data-collaborator-status] { margin-top: 12px; }

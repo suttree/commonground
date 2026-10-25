@@ -54,23 +54,39 @@
       </details>
     <% end %>
   </details>
-  <fieldset id="collaborator-selection">
+  <fieldset id="collaborator-selection" data-collaborator-picker data-search-url="<%= collaborator_search_challenges_path %>">
     <legend>Collaborators (optional)</legend>
-    <p class="hint">Tick to add people, or untick to remove them. Changes take effect when you save the project. You can credit up to 20 profiles. Only add people who are happy to be credited.</p>
+    <p class="hint">Search for someone to add, or invite someone new by email. Changes to selected collaborators take effect when you save. Only add people who are happy to be credited.</p>
     <%= hidden_field_tag "challenge[collaborator_ids][]", "" %>
-    <div class="collaborator-choices">
+    <div data-selected-collaborators>
       <% @members.each do |member| %>
-        <div class="check-choice">
-          <%= check_box_tag "challenge[collaborator_ids][]", member.id, @challenge.collaborator_ids.map(&:to_s).include?(member.id.to_s), id: "challenge_collaborator_#{member.id}" %>
-          <%= label_tag "challenge_collaborator_#{member.id}" do %>
-            <%= member.display_name %><% if member.location.present? %><span class="small-note"> · <%= member.location %></span><% end %>
-            <% unless member.published? %><span class="small-note"> · Profile no longer public</span><% end %>
-          <% end %>
+        <div class="check-choice" data-collaborator-id="<%= member.id %>">
+          <%= check_box_tag "challenge[collaborator_ids][]", member.id, true, id: "challenge_collaborator_#{member.id}" %>
+          <%= label_tag "challenge_collaborator_#{member.id}" do %><%= member.display_name %><% unless member.published? %> · Profile no longer public<% end %><% end %>
+          <button type="button" data-remove-collaborator hidden>Remove</button>
         </div>
       <% end %>
     </div>
-    <% if @members.empty? %><p>No other member profiles yet.</p><% end %>
-    <% if @challenge.persisted? %><p><%= link_to "Invite someone by email", "#email-invitations" %></p><% else %><p class="hint">Save and publish your project to invite someone by email. They can sign up before joining.</p><% end %>
+    <p class="hint" data-selected-hint><%= @members.any? ? "Untick a name to remove it. You can add up to 20 collaborators." : "No collaborators selected yet." %></p>
+    <div class="collaborator-search">
+      <%= label_tag :collaborator_query, "Search collaborators" %>
+      <%= search_field_tag :collaborator_query, @collaborator_query, maxlength: 100, placeholder: "Type at least two letters of a name", autocomplete: "off", aria: { controls: "collaborator-results" } %>
+      <button type="submit" name="search_collaborators" value="1" formnovalidate data-search-collaborators class="button secondary">Search</button>
+    </div>
+    <p class="hint" role="status" data-collaborator-status><% if @collaborator_query.length >= 2 %><%= @collaborator_matches.any? ? "Choose a match below. Showing up to 10 results." : "No matches. Try another name or invite someone by email." %><% end %></p>
+    <div id="collaborator-results">
+      <% @collaborator_matches.each do |member| %>
+        <div class="check-choice" data-collaborator-id="<%= member.id %>">
+          <%= check_box_tag "challenge[collaborator_ids][]", member.id, false, id: "challenge_collaborator_#{member.id}" %>
+          <%= label_tag "challenge_collaborator_#{member.id}", [member.display_name, member.location.presence].compact.join(" · ") %>
+        </div>
+      <% end %>
+    </div>
+    <% if @challenge.persisted? %>
+      <p><%= link_to "Add new: invite by email", "#email-invitations" %></p>
+    <% else %>
+      <details><summary>Add new: invite by email</summary><p class="hint">Save and publish this project first, then enter their email on the project page. They can sign up and accept your invitation to join.</p></details>
+    <% end %>
   </fieldset>
   <details class="challenge-optional" <%= "open" if @challenge.completed? || @challenge.results.present? || @challenge.errors.any? %>>
     <summary>Record the project outcome</summary>
@@ -99,3 +115,5 @@
     <p><%= link_to "View invitations", challenge_collaborator_invitations_path(@challenge) %></p>
   </section>
 <% end %>
+
+<%= javascript_include_tag "collaborator_picker", defer: true %>

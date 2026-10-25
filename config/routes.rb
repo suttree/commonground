@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   root "pages#home"
   resources :challenges, path: "projects", only: [ :index, :show, :new, :create, :edit, :update ] do
+    get :collaborator_search, on: :collection
     resources :collaborator_invitations, only: [ :index, :create, :destroy ]
     resources :collaborators, only: :destroy, controller: "challenge_collaborators"
   end

@@ -302,6 +302,48 @@ class ChallengesTest < ActionDispatch::IntegrationTest
     assert_raises(ActiveRecord::RecordNotUnique) { draft.update_column(:status, "active") }
   end
 
+  test "collaborator search is authenticated bounded and only returns matching public profiles" do
+    get collaborator_search_challenges_path, params: { submission_id: @owner.id, collaborator_query: "Other" }
+    assert_redirected_to login_path
+    login
+    profile("secret-search@example.test", name: "Other private", published: false)
+    11.times { |i| profile("search-#{i}@example.test", name: "Matching member #{i}") }
+    get new_challenge_path
+    assert_select "#collaborator-selection input[type=checkbox]", count: 0
+    assert_select "#collaborator-selection", text: /No collaborators selected yet/
+    [ "", "O" ].each do |query|
+      get collaborator_search_challenges_path, params: { submission_id: @owner.id, collaborator_query: query }
+      assert_equal [], response.parsed_body
+    end
+    get collaborator_search_challenges_path, params: { submission_id: @owner.id, collaborator_query: "Other" }
+    assert_equal [ { "id" => @other.id, "name" => @other.display_name, "location" => @other.location } ], response.parsed_body
+    assert_equal "no-store", response.headers["Cache-Control"]
+    get collaborator_search_challenges_path, params: { submission_id: @owner.id, collaborator_query: "Matching" }
+    assert_equal 10, response.parsed_body.size
+    get collaborator_search_challenges_path, params: { submission_id: @owner.id, collaborator_query: "%_" }
+    assert_empty response.parsed_body
+    get collaborator_search_challenges_path, params: { submission_id: @other.id, collaborator_query: "Matching" }
+    assert_response :not_found
+  end
+
+  test "search without JavaScript preserves project edits and selections without saving" do
+    login
+    entry = @owner.challenges.create!(@attributes)
+    patch challenge_path(entry), params: { search_collaborators: "1", collaborator_query: "Other", challenge: { title: "Unsaved title", collaborator_ids: [ "" ] } }
+    assert_response :success
+    assert_equal @attributes[:title], entry.reload.title
+    assert_select "input[name='challenge[title]'][value='Unsaved title']"
+    assert_select "#collaborator-results #challenge_collaborator_#{@other.id}"
+    patch challenge_path(entry), params: { search_collaborators: "1", collaborator_query: "Nobody", challenge: { title: "Unsaved title", collaborator_ids: [ "", @other.id.to_s ] } }
+    assert_select "[data-selected-collaborators] #challenge_collaborator_#{@other.id}[checked]"
+    assert_empty entry.reload.collaborator_ids
+    assert_no_difference "Challenge.count" do
+      post challenges_path, params: { search_collaborators: "1", collaborator_query: "Other", challenge: { title: "Unfinished draft", status: "draft" } }
+    end
+    assert_response :success
+    assert_select "input[name='challenge[title]'][value='Unfinished draft']"
+  end
+
   test "collaborator checkboxes can remove one member or clear everyone" do
     third = profile("third@example.test")
     entry = @owner.challenges.create!(@attributes.merge(collaborator_ids: [ @other.id, third.id ]))

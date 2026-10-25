@@ -38,6 +38,11 @@ class ChallengesController < ApplicationController
     prepare_form
   end
 
+  def collaborator_search
+    profile = current_account.submissions.find(params[:submission_id])
+    render json: collaborator_matches(profile.id).map { |member| { id: member.id, name: member.display_name, location: member.location } }
+  end
+
   def update
     profile_id = params.dig(:challenge, :submission_id)
     @challenge.submission = current_account.submissions.find(profile_id) if profile_id.present?
@@ -59,11 +64,18 @@ class ChallengesController < ApplicationController
     @organisations = Submission.published.where(kind: "organisation").order(:organisation_name)
     @owned_profiles = current_account.submissions.order(:kind, :organisation_name, :name)
     existing_ids = Array(@challenge.collaborator_ids_in_database)
-    @members = Submission.published.or(Submission.where(id: existing_ids)).where.not(id: @challenge.submission_id).order(:name)
+    selected_ids = @challenge.collaborator_ids.is_a?(Array) ? @challenge.collaborator_ids : []
+    selected_ids = selected_ids.select { |id| id.to_s.match?(/\A[1-9][0-9]*\z/) }.map(&:to_i)
+    @members = Submission.published.or(Submission.where(id: existing_ids)).where(id: selected_ids).where.not(id: @challenge.submission_id).order(:name)
+    @collaborator_matches = collaborator_matches(@challenge.submission_id).where.not(id: selected_ids)
     @active_challenge = @challenge.submission.challenges.find_by(status: "active")
   end
 
   def save_challenge
+    if params[:search_collaborators].present?
+      prepare_form
+      return render :edit
+    end
     if @challenge.save
       redirect_to challenge_path(@challenge), notice: @challenge.completed? ? "Your completed project is now in your portfolio." : "Your project has been saved.", status: :see_other
     else
@@ -74,6 +86,14 @@ class ChallengesController < ApplicationController
     @challenge.errors.add(:status, "cannot be active while another project is active. Update its status first.")
     prepare_form
     render :edit, status: :unprocessable_entity
+  end
+
+  def collaborator_matches(owner_id)
+    @collaborator_query = params[:collaborator_query].to_s.strip.first(100)
+    return Submission.none if @collaborator_query.length < 2
+    term = "%#{Submission.sanitize_sql_like(@collaborator_query)}%"
+    Submission.published.where.not(id: owner_id)
+      .where("name LIKE ? OR organisation_name LIKE ?", term, term).order(:name, :id).limit(10)
   end
 
   def challenge_params
