@@ -671,6 +671,7 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 
 /* The selected artwork retains its square composition at every size. */
 .ambient-mark.brand-artwork { height: auto; border-radius: 4px; }
+.profile-purpose-images .ambient-mark { border-radius: 50%; }
 .common-home-art { position: relative; overflow: hidden; padding: 0; }
 .common-home-art .brand-artwork { width: 100%; max-width: none; margin: 0; border-radius: 0; }
 .common-home-art .path-caption { position: absolute; z-index: 1; padding: 4px 10px; background: #285543; border-radius: 4px; font-size: 1rem; }
