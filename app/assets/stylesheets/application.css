@@ -609,6 +609,8 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 /* Public profiles and projects use the same visual language as discovery. */
 .profile-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 24px; font-size: 1rem; }
 .profile-owner-actions { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+[data-company-search] { margin-bottom: 12px; }
+[data-new-company] { margin-top: 16px; }
 .profile-toolbar a { display: inline-flex; align-items: center; min-height: 44px; }
 .profile-opening { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; border-bottom: 1px solid var(--line); }
 .profile-opening h1, .project-opening h1 { font-family: inherit; font-weight: 600; letter-spacing: -.045em; line-height: 1.1; font-size: clamp(2.3rem, 4.5vw, 3.8rem); }

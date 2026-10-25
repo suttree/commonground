@@ -2,6 +2,7 @@ class Challenge < ApplicationRecord
   STATUSES = %w[draft active completed paused abandoned].freeze
   HELP_OPTIONS = [ "Private funding", "Public subsidy", "Sales", "Media coverage", "Hiring" ].freeze
   belongs_to :submission
+  belongs_to :organisation, class_name: "Submission", optional: true
   has_many :contact_requests, dependent: :nullify
   has_many :collaborator_invitations, dependent: :destroy
 
@@ -17,6 +18,8 @@ class Challenge < ApplicationRecord
   validate :single_active_challenge
   validate :valid_project_url
   validate :valid_collections
+  validate :valid_organisation
+  before_validation :retain_organisation_name
   before_validation :clean_collections
   before_save :record_dates
 
@@ -43,6 +46,15 @@ class Challenge < ApplicationRecord
     Submission.published.where(id: collaborator_ids).order(:name)
   end
 
+  def public_organisation
+    return organisation if organisation&.organisation? && organisation.published?
+    submission if organisation_id.nil? && organisation_name.blank? && submission.organisation? && submission.published?
+  end
+
+  def on_behalf_of_name
+    public_organisation&.display_name || organisation_name.presence
+  end
+
   def self.filtered(filters)
     records = all
     if filters[:q].present?
@@ -59,6 +71,17 @@ class Challenge < ApplicationRecord
   end
 
   private
+
+  def valid_organisation
+    return if organisation_id.nil? || (persisted? && !organisation_id_changed?)
+    unless organisation&.organisation? && organisation.published?
+      errors.add(:organisation, "must be a public company profile")
+    end
+  end
+
+  def retain_organisation_name
+    self.organisation_name = organisation.display_name if organisation&.organisation? && organisation.published?
+  end
 
   def single_active_challenge
     if status == "active" && submission && submission.challenges.where(status: "active").where.not(id: id).exists?

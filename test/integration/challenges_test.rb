@@ -20,6 +20,68 @@ class ChallengesTest < ActionDispatch::IntegrationTest
     post verify_login_path, params: { code: code }
   end
 
+  test "project owner can select another public company without transferring ownership" do
+    company = profile("company@example.test", kind: "organisation", organisation_name: "Community Kitchen", mission: "Food", offering: "Meals", challenge: "Access", challenge_kind: "Challenges")
+    hidden = profile("hidden@example.test", kind: "organisation", organisation_name: "Private Kitchen", mission: "Food", offering: "Meals", challenge: "Access", challenge_kind: "Challenges", published: false)
+    login
+    get new_challenge_path
+    assert_select "select[name='challenge[organisation_id]'] option[value='#{company.id}']", text: "Community Kitchen · Bristol"
+    assert_select "select[name='challenge[organisation_id]'] option[value='#{hidden.id}']", count: 0
+    assert_select "input[name='challenge[organisation_name]']"
+    post challenges_path, params: { challenge: @attributes.merge(organisation_id: company.id) }
+    entry = @owner.challenges.last
+    assert_redirected_to challenge_path(entry)
+    assert_equal @owner.id, entry.submission_id
+    assert_equal company.id, entry.organisation_id
+    assert_equal "Community Kitchen", entry.organisation_name
+    get challenge_path(entry)
+    assert_select ".project-organisation a[href='#{profile_path(company.public_slug)}']", text: "Community Kitchen"
+    get profile_path(@owner.public_slug)
+    assert_select ".challenge-card .project-organisation", text: /On behalf of Community Kitchen/
+    company.update!(published: false)
+    get challenge_path(entry)
+    assert_select ".project-organisation", text: /Community Kitchen/
+    assert_select ".project-organisation a", count: 0
+    patch challenge_path(entry), params: { challenge: { title: "Updated project" } }
+    assert_response :see_other
+    company.destroy!
+    assert_nil entry.reload.organisation_id
+    assert_equal "Community Kitchen", entry.organisation_name
+  end
+
+  test "owners can add a company name change it or clear it without creating a profile" do
+    login
+    assert_no_difference "Submission.count" do
+      post challenges_path, params: { challenge: @attributes.merge(organisation_name: "  New co-operative  ") }
+    end
+    entry = @owner.challenges.last
+    assert_equal "New co-operative", entry.organisation_name
+    assert_nil entry.organisation_id
+    get challenge_path(entry)
+    assert_select ".project-organisation", text: /On behalf of New co-operative/
+    assert_select ".project-organisation a", count: 0
+    patch challenge_path(entry), params: { challenge: { organisation_id: "", organisation_name: "Different company" } }
+    assert_equal "Different company", entry.reload.organisation_name
+    patch challenge_path(entry), params: { challenge: { organisation_id: "", organisation_name: "" } }
+    assert_response :see_other
+    get challenge_path(entry)
+    assert_select ".project-organisation", count: 0
+  end
+
+  test "company selection rejects private profiles people and missing records" do
+    hidden = profile("hidden@example.test", kind: "organisation", organisation_name: "Private Kitchen", mission: "Food", offering: "Meals", challenge: "Access", challenge_kind: "Challenges", published: false)
+    login
+    [ hidden.id, @other.id, 999999 ].each do |id|
+      assert_no_difference "Challenge.count" do
+        post challenges_path, params: { challenge: @attributes.merge(organisation_id: id) }
+      end
+      assert_response :unprocessable_entity
+      assert_select ".error-summary", text: /must be a public company profile/
+      assert_select "select[name='challenge[organisation_id]'] option[value='#{hidden.id}']", count: 0
+      assert_no_match "Private Kitchen", response.body
+    end
+  end
+
   test "project URLs are canonical for links forms and invitations" do
     login
     assert_equal "/projects", challenges_path

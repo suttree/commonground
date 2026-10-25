@@ -12,11 +12,11 @@ class ChallengesController < ApplicationController
     records = Challenge.discoverable.filtered(@filters)
     @count = records.count
     @page = [ params[:page].to_i, 1 ].max
-    @challenges = records.includes(:submission).recent.limit(24).offset((@page - 1) * 24)
+    @challenges = records.includes(:submission, :organisation).recent.limit(24).offset((@page - 1) * 24)
   end
 
   def show
-    @challenge = Challenge.includes(:submission).find(params[:id])
+    @challenge = Challenge.includes(:submission, :organisation).find(params[:id])
     raise ActiveRecord::RecordNotFound unless @challenge.public? || owns_profile?(@challenge.submission)
     response.headers["Cache-Control"] = "no-store"
   end
@@ -56,6 +56,7 @@ class ChallengesController < ApplicationController
   end
 
   def prepare_form
+    @organisations = Submission.published.where(kind: "organisation").order(:organisation_name)
     @owned_profiles = current_account.submissions.order(:kind, :organisation_name, :name)
     existing_ids = Array(@challenge.collaborator_ids_in_database)
     @members = Submission.published.or(Submission.where(id: existing_ids)).where.not(id: @challenge.submission_id).order(:name)
@@ -76,7 +77,7 @@ class ChallengesController < ApplicationController
   end
 
   def challenge_params
-    params.require(:challenge).permit(:title, :organisation_name, :industry, :location, :description, :objectives,
+    params.require(:challenge).permit(:title, :organisation_id, :organisation_name, :industry, :location, :description, :objectives,
       :target, :status, :project_role, :context, :approach, :results, :project_url, help_options: [], target_ids: [], collaborator_ids: [])
   end
 end

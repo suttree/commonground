@@ -8,9 +8,24 @@
   <fieldset>
     <legend>What are you working on?</legend>
     <div class="field"><%= form.label :title, "My current project" %><%= form.text_field :title, required: true, maxlength: 200 %></div>
-    <div class="field"><%= form.label :submission_id, "Who is this project for?" %><%= form.collection_select :submission_id, @owned_profiles, :id, :display_name %><p class="hint">Choose your personal profile or a company you manage. The project will appear on that profile.</p></div>
+    <div class="field"><%= form.label :submission_id, "Project owner" %><%= form.collection_select :submission_id, @owned_profiles, :id, :display_name %><p class="hint">Choose your personal profile or a company you manage. The project will appear on that profile.</p></div>
     <p class="hint">Need a company profile first? <%= link_to "Create a company profile", new_organisation_path %>.</p>
-    <% if @challenge.organisation_name.present? %><div class="field"><%= form.label :organisation_name, "Organisation name (optional)" %><p class="hint">This is the name previously entered for this work.</p><%= form.text_field :organisation_name, maxlength: 200 %></div><% end %>
+    <div class="field" data-project-organisation>
+      <%= form.label :organisation_id, "On behalf of (optional)" %>
+      <p class="hint" id="organisation-hint">Which company or organisation is this work for? Choosing one does not give it editing access to your project.</p>
+      <div data-company-search hidden>
+        <%= label_tag :company_search, "Search companies" %>
+        <%= search_field_tag :company_search, nil, id: "company_search", placeholder: "Type a company name", autocomplete: "off" %>
+      </div>
+      <%= form.select :organisation_id, @organisations.map { |company| [ [company.display_name, company.location.presence].compact.join(" · "), company.id ] }, { include_blank: "No company selected" }, aria: { describedby: "organisation-hint" } %>
+      <% if @challenge.organisation_id.present? && !@organisations.exists?(id: @challenge.organisation_id) %><p class="hint">The previously selected company is no longer public. Its saved name is shown below.</p><% end %>
+      <p class="hint" data-company-results role="status"></p>
+      <div data-new-company>
+        <%= form.label :organisation_name, "Company not listed? Add its name" %>
+        <%= form.text_field :organisation_name, value: @challenge.organisation_id.present? && @organisations.exists?(id: @challenge.organisation_id) ? "" : @challenge.organisation_name, maxlength: 200 %>
+        <p class="hint">Leave the list unselected to use this name. This adds it to your project without creating a company profile. Leave both blank for independent work.</p>
+      </div>
+    </div>
     <div class="field"><%= form.label :industry, "Industry (optional)" %><%= form.select :industry, ProfileOptions::SECTORS, include_blank: "Choose an industry" %></div>
     <div class="field"><%= form.label :location, "Location" %><p class="hint">A city, region or country, or Anywhere for work that can happen remotely.</p><%= form.text_field :location, maxlength: 200 %></div>
     <div class="field"><%= form.label :description, "The problem or challenge" %><%= form.text_area :description, rows: 4, maxlength: 5000 %></div>
@@ -74,6 +89,7 @@
     <div class="actions"><%= form.submit "Save project", class: "button" %><%= link_to "Back to dashboard", dashboard_path %></div>
   </fieldset>
 <% end %>
+<%= javascript_include_tag "project_organisation", defer: true %>
 <% if @challenge.persisted? %>
   <section class="project-invites" id="email-invitations" aria-labelledby="email-invitations-title">
     <h2 id="email-invitations-title">Invite someone by email</h2>

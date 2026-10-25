@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_25_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_25_010000) do
   create_table "accounts", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
@@ -31,6 +31,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_000000) do
     t.string "industry"
     t.string "location"
     t.text "objectives"
+    t.integer "organisation_id"
     t.string "organisation_name"
     t.string "project_role"
     t.string "project_url"
@@ -42,6 +43,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_000000) do
     t.json "target_ids", default: [], null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
+    t.index ["organisation_id"], name: "index_challenges_on_organisation_id"
     t.index ["status", "published_at"], name: "index_challenges_on_status_and_published_at"
     t.index ["submission_id"], name: "index_challenges_on_submission_id"
     t.index ["submission_id"], name: "one_active_challenge_per_profile", unique: true, where: "status = 'active'"
@@ -181,6 +183,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_000000) do
   end
 
   add_foreign_key "challenges", "submissions"
+  add_foreign_key "challenges", "submissions", column: "organisation_id", on_delete: :nullify
   add_foreign_key "collaborator_invitations", "challenges"
   add_foreign_key "contact_requests", "challenges"
   add_foreign_key "contact_requests", "submissions"
