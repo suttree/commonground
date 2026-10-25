@@ -14,8 +14,11 @@
     </div>
     <div class="profile-purpose">
       <div class="profile-purpose-images">
-        <%= render "shared/ambient_mark" %>
-        <%= render "shared/profile_avatar", profile: @profile, photo: @profile.profile_photo unless @profile.organisation? %>
+        <% if !@profile.organisation? && (photo = @profile.profile_photo) %>
+          <%= render "shared/profile_avatar", profile: @profile, photo: photo %>
+        <% else %>
+          <%= render "shared/ambient_mark" %>
+        <% end %>
       </div>
       <h2><%= @profile.organisation? ? "Who we serve" : "Who I want to serve" %></h2>
       <%= simple_format @profile.purpose %>

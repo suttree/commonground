@@ -25,17 +25,18 @@ class ProfilePhotosTest < ActionDispatch::IntegrationTest
     css_select("input[name=profile_photo_token]").sole["value"]
   end
 
-  test "personal profiles have a default and photo fields are optional" do
+  test "personal profiles use the Commonbound logo when no optional photo is saved" do
     profile = create_owned_profile
     get edit_account_profile_path
     assert_select "form[enctype='multipart/form-data']"
     assert_select "input[type=file][name=profile_photo]:not([required])"
-    assert_select ".profile-avatar[src*='default-profile']"
+    assert_select ".profile-avatar[src*='commonbound-woven-fabric']"
     patch account_profile_path, params: { section: "basics", submission: { name: "Alex Taylor" } }
     assert_response :see_other
     assert_nil profile.reload.profile_photo
     get profile_path(profile.public_slug)
-    assert_select ".profile-opening .profile-avatar[src*='default-profile']"
+    assert_select ".profile-purpose-images .ambient-mark", count: 1
+    assert_select ".profile-opening .profile-avatar", count: 0
   end
 
   test "signup preserves a private photo across validation and attaches it on save" do
@@ -64,6 +65,7 @@ class ProfilePhotosTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     get profile_path(profile.public_slug)
     assert_select "img.profile-avatar[src='#{profile_photo_path(photo)}']"
+    assert_select ".profile-purpose-images .ambient-mark", count: 0
     stranger.get profile_photo_path(photo)
     assert_equal 200, stranger.response.status
     assert_equal "no-store", stranger.response.headers["Cache-Control"]
@@ -96,7 +98,7 @@ class ProfilePhotosTest < ActionDispatch::IntegrationTest
     patch account_profile_path, params: { section: "basics", submission: { name: "" }, remove_profile_photo: "1" }
     assert_response :unprocessable_entity
     assert_select "input[name=remove_profile_photo][checked]"
-    assert_select ".profile-avatar[src*='default-profile']"
+    assert_select ".profile-avatar[src*='commonbound-woven-fabric']"
     assert_select "[data-profile-photo][data-retained-src='#{profile_photo_path(replacement)}']"
     assert_equal replacement, profile.reload.profile_photo
     patch account_profile_path, params: { section: "basics", submission: { name: "Alex" }, remove_profile_photo: "1" }
@@ -104,6 +106,9 @@ class ProfilePhotosTest < ActionDispatch::IntegrationTest
     assert_nil profile.reload.profile_photo
     get profile_photo_path(replacement)
     assert_response :not_found
+    get profile_path(profile.public_slug)
+    assert_select ".profile-purpose-images .ambient-mark", count: 1
+    assert_select ".profile-opening .profile-avatar", count: 0
   end
 
   test "photo survives portfolio saves and cannot change from another section or profile" do

@@ -29,7 +29,7 @@
       releasePreview();
       input.value = "";
       preview.src = remove.checked ? field.dataset.defaultSrc : savedSource;
-      preview.alt = remove.checked ? "Default profile picture" : savedAlt;
+      preview.alt = remove.checked ? "Commonbound logo" : savedAlt;
     });
     window.addEventListener("pagehide", releasePreview);
   });

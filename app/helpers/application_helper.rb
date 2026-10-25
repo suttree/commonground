@@ -1,6 +1,6 @@
 module ApplicationHelper
   def profile_photo_source(photo)
-    return image_path("default-profile.svg") unless photo
+    return image_path("commonbound-woven-fabric.png") unless photo
     photo.submission_id ? profile_photo_path(photo) : draft_profile_photo_path(token: photo.draft_token)
   end
 
