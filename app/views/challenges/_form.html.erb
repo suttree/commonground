@@ -13,13 +13,8 @@
     <div class="field" data-project-organisation>
       <%= form.label :organisation_id, "On behalf of (optional)" %>
       <p class="hint" id="organisation-hint">Which company or organisation is this work for? Choosing one does not give it editing access to your project.</p>
-      <div data-company-search hidden>
-        <%= label_tag :company_search, "Search companies" %>
-        <%= search_field_tag :company_search, nil, id: "company_search", placeholder: "Type a company name", autocomplete: "off" %>
-      </div>
       <%= form.select :organisation_id, @organisations.map { |company| [ [company.display_name, company.location.presence].compact.join(" · "), company.id ] }, { include_blank: "No company selected" }, aria: { describedby: "organisation-hint" } %>
       <% if @challenge.organisation_id.present? && !@organisations.exists?(id: @challenge.organisation_id) %><p class="hint">The previously selected company is no longer public. Its saved name is shown below.</p><% end %>
-      <p class="hint" data-company-results role="status"></p>
       <div data-new-company>
         <%= form.label :organisation_name, "Company not listed? Add its name" %>
         <%= form.text_field :organisation_name, value: @challenge.organisation_id.present? && @organisations.exists?(id: @challenge.organisation_id) ? "" : @challenge.organisation_name, maxlength: 200 %>
