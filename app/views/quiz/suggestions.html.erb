@@ -21,24 +21,35 @@
     <p>You skipped every question, so we haven't suggested any priorities. <%= link_to "Go back to the questions", quiz_path(question: 0, profile_id: current_profile&.id) %> whenever you're ready.</p>
   <% end %>
   <% if @error %><p class="error-summary" role="alert"><%= @error %></p><% end %>
-  <%= form_with url: confirm_quiz_path do |form| %>
-    <%= hidden_field_tag :profile_id, current_profile.id if current_profile %>
-    <p class="priority-summary"><%= @matches.any? ? "We'll save these as your priorities, but you can change them." : "You can also choose priorities yourself." %> Priorities show on your public profile; your answers stay private.</p>
-    <details class="priority-edit"<%= " open" if @error %>>
-      <summary><%= @matches.any? ? "Change priorities" : "Choose priorities" %></summary>
-      <fieldset>
-        <legend class="sr-only">Choose your priorities</legend>
-        <p class="hint">Choose up to three, or set them to "Still exploring".</p>
-        <%= hidden_field_tag "target_ids[]", "" %>
-        <% 3.times do |index| %>
-          <div class="field"><%= label_tag "priority_#{index}", "Priority #{index + 1} (optional)" %><%= select_tag "target_ids[]", grouped_options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("targets").map { |target| ["#{target.fetch('id')}: #{SdgQuiz::LABELS.fetch(target.fetch('id'))}", target.fetch("id")] }] }, @selected_targets[index]), include_blank: "Still exploring", id: "priority_#{index}" %></div>
-        <% end %>
-      </fieldset>
-    </details>
-    <div class="actions"><%= form.submit(onboarding_person? ? "Continue to your profile" : "Find companies with these priorities", class: "button") %></div>
+  <% if current_account %>
+    <%= form_with url: confirm_quiz_path do |form| %>
+      <%= hidden_field_tag :profile_id, current_profile.id if current_profile %>
+      <p class="priority-summary"><%= @matches.any? ? "We'll save these as your priorities, but you can change them." : "You can also choose priorities yourself." %> Priorities show on your public profile; your answers stay private.</p>
+      <details class="priority-edit"<%= " open" if @error %>>
+        <summary><%= @matches.any? ? "Change priorities" : "Choose priorities" %></summary>
+        <fieldset>
+          <legend class="sr-only">Choose your priorities</legend>
+          <p class="hint">Choose up to three, or set them to "Still exploring".</p>
+          <%= hidden_field_tag "target_ids[]", "" %>
+          <% 3.times do |index| %>
+            <div class="field"><%= label_tag "priority_#{index}", "Priority #{index + 1} (optional)" %><%= select_tag "target_ids[]", grouped_options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("targets").map { |target| ["#{target.fetch('id')}: #{SdgQuiz::LABELS.fetch(target.fetch('id'))}", target.fetch("id")] }] }, @selected_targets[index]), include_blank: "Still exploring", id: "priority_#{index}" %></div>
+          <% end %>
+        </fieldset>
+      </details>
+      <div class="actions"><%= form.submit(onboarding_person? ? "Continue to your profile" : "Find companies with these priorities", class: "button") %></div>
+    <% end %>
+  <% else %>
+    <%= form_with url: confirm_quiz_path, class: "quiz-signup" do |form| %>
+      <%= hidden_field_tag "target_ids[]", "" %>
+      <% @selected_targets.compact_blank.each do |id| %><%= hidden_field_tag "target_ids[]", id %><% end %>
+      <%= hidden_field_tag :signup, "1" %>
+      <h2>Keep these priorities</h2>
+      <p>Create an account and they become part of your profile. Then you can see the companies, people and projects working on the same problems.</p>
+      <div class="actions"><%= form.submit "Create your account", class: "button" %></div>
+    <% end %>
   <% end %>
 
-  <section class="quiz-next-steps" aria-labelledby="next-steps-heading">
+  <section class="quiz-next-steps<%= " quiet" unless current_account %>" aria-labelledby="next-steps-heading">
     <h2 id="next-steps-heading" class="heading-serif">Prefer a conversation? <span>Start a conversation with Nika.</span></h2>
     <%= form_with url: new_profile_contact_path("nika-van-olst-3e4265d5c4bf"), method: :get do %>
       <fieldset class="wizard-options">
@@ -52,10 +63,9 @@
         <% end %>
         </div>
       </fieldset>
-      <button class="button">Continue</button>
+      <button class="button">Write to Nika</button>
     <% end %>
   </section>
-  <% unless current_account %><p class="small-note quiz-footnote"><%= link_to "Create your account", new_person_path %> to build a profile.</p><% end %>
   <% if current_profile %>
     <div class="actions"><%= link_to "Review profile", profile_path(current_profile.public_slug), class: "button" %></div>
   <% end %>

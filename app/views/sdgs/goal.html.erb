@@ -2,12 +2,13 @@
 <div class="sdg-directory">
   <nav class="back-link" aria-label="Breadcrumb"><%= link_to "SDG directory", sdgs_path %> / Goal <%= @goal.fetch("id") %></nav>
   <header class="sdg-intro sdg-goal-opening sdg-color-<%= @goal.fetch('id') %>">
-    <p class="eyebrow">Goal <%= @goal.fetch("id") %> · <%= @goal.fetch("targets").size %> targets</p>
     <h1><%= @goal.fetch("name") %></h1>
-    <p class="intro"><%= @guide.fetch("summary") %></p>
-    <p><%= link_to "Find people who selected this goal", people_path(goal: @goal.fetch("id")), class: "button" %></p>
+    <div class="sdg-goal-summary">
+      <p class="intro"><%= @guide.fetch("summary") %></p>
+      <%= link_to "Find people who selected this goal", people_path(goal: @goal.fetch("id")), class: "button" %>
+    </div>
   </header>
-  <h2 class="sdg-section-title">The targets</h2>
+  <h2 class="sdg-section-title"><%= @goal.fetch("targets").size %> targets for <%= @goal.fetch("name") %></h2>
   <p class="small-note">Short titles are a reading guide. Each target page includes the full source wording and a direct link you can share.</p>
   <div class="sdg-target-grid">
     <% @goal.fetch("targets").each do |target| %>

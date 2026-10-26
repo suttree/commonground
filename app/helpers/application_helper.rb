@@ -10,7 +10,7 @@ module ApplicationHelper
       :admin
     when "directories", "profiles", "challenges", "contact_requests", "collaborator_invitations"
       :discover
-    when "sdgs", "quiz"
+    when "sdgs"
       :goals
     when "dashboards", "side_projects"
       :dashboard

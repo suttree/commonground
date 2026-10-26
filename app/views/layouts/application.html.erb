@@ -13,16 +13,28 @@
   <body<% if content_for?(:body_class) %> class="<%= yield(:body_class) %>"<% end %>>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header wrap<%= " home-header" if controller_name == "pages" && %w[home althomepage].include?(action_name) %>">
-      <%= link_to(current_account ? dashboard_path : root_path, class: "wordmark", aria: { label: current_account ? "Commonbound dashboard" : "Commonbound home" }) do %><%= image_tag "commonbound-logo.jpg", class: "brand-mark", alt: "", width: 44, height: 44 %> Commonbound<% end %>
-      <nav aria-label="Main navigation">
-        <%= main_navigation_link "About", about_path, section: :about %>
-        <% if current_account&.admin? %><%= main_navigation_link "Admin", admin_root_path, section: :admin %><% end %>
-        <%= link_to "Blog", "https://commonbound.pika.page/" %>
-        <% if current_account %><%= main_navigation_link "Dashboard", dashboard_path, section: :dashboard %><% end %>
-        <%= main_navigation_link "Discover", challenges_path, section: :discover %>
-        <%= main_navigation_link "Goals", sdgs_path, section: :goals %>
-        <% if current_account %><%= button_to "Log out", logout_path, method: :delete, class: "nav-logout" %><% else %><%= main_navigation_link "Log in", login_path, section: :login %><% end %>
-      </nav>
+      <% blog = link_to("Blog", "https://commonbound.pika.page/", target: "_blank", rel: "noopener") %>
+      <% if current_account %>
+        <div class="header-start">
+          <%= link_to(dashboard_path, class: "wordmark", aria: { label: "Commonbound dashboard" }) do %><%= image_tag "commonbound-logo.jpg", class: "brand-mark", alt: "", width: 44, height: 44 %> Commonbound<% end %>
+          <nav class="nav-group" aria-label="Main navigation">
+            <%= main_navigation_link "Discover", challenges_path, section: :discover %>
+            <%= main_navigation_link "Goals", sdgs_path, section: :goals %>
+            <%= blog %>
+          </nav>
+        </div>
+        <nav class="nav-group" aria-label="Account">
+          <% if current_account.admin? %><%= main_navigation_link "Admin", admin_root_path, section: :admin %><% end %>
+          <%= link_to (current_profile&.display_name.presence || "Your profile"), edit_account_profile_path, class: "button small ghost nav-account" %>
+        </nav>
+      <% else %>
+        <%= link_to(root_path, class: "wordmark", aria: { label: "Commonbound home" }) do %><%= image_tag "commonbound-logo.jpg", class: "brand-mark", alt: "", width: 44, height: 44 %> Commonbound<% end %>
+        <nav aria-label="Main navigation">
+          <span class="nav-group"><%= main_navigation_link "About", about_path, section: :about %><%= blog %></span>
+          <span class="nav-group"><%= main_navigation_link "Discover", challenges_path, section: :discover %><%= main_navigation_link "Goals", sdgs_path, section: :goals %></span>
+          <%= link_to "Log in", login_path, class: "button small ghost nav-login" %>
+        </nav>
+      <% end %>
     </header>
     <main id="main" class="wrap" tabindex="-1">
       <% if notice %><p class="notice" role="status"><%= notice %></p><% end %>
@@ -31,7 +43,11 @@
     </main>
     <footer class="site-footer wrap">
       <p>Good work starts with a conversation.</p>
-      <%= link_to "Privacy & your details", privacy_path %>
+      <nav class="footer-links" aria-label="Footer">
+        <%= link_to "About", about_path %>
+        <%= link_to "Blog", "https://commonbound.pika.page/", target: "_blank", rel: "noopener" %>
+        <%= link_to "Privacy & your details", privacy_path %>
+      </nav>
     </footer>
   </body>
 </html>
