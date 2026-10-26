@@ -59,7 +59,7 @@ bin/rubocop
 
 The integration suite covers both forms, validation, consent, session cookies and CSRF, honeypot filtering, admin authentication, filtering, review updates and unsafe input. Production has no JavaScript and a content security policy that disallows scripts.
 
-JSON is pinned below version 3 because Rails 8.1.3.1's session decoder passes a positional options argument that JSON 3 rejects. The browser-session test covers this failure.
+JSON 3 requires Rails 8.1.4 or later, which fixes the decoder's handling of keyword options. Keep the Rails minimum version when updating these dependencies. The integration suite covers session cookies and JSON-backed profiles.
 
 ## Deployment verification
 
