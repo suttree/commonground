@@ -818,3 +818,9 @@ input[type=file] { max-width: 100%; font-size: var(--text-base); }
 .priority-edit { margin-bottom: var(--space-6); }
 .priority-edit summary { color: var(--green); text-decoration: underline; cursor: pointer; font-size: var(--text-base); }
 .priority-edit fieldset { margin-top: var(--space-4); }
+.quiz-intro-lead { font-size: var(--text-lead); line-height: 1.5; }
+.quiz-intro-points { margin: var(--space-8) 0; border-top: 1px solid var(--line); }
+.quiz-intro-points dt { font-weight: 600; margin-top: var(--space-5); }
+.quiz-intro-points dd { margin: var(--space-1) 0 var(--space-5); color: var(--muted); padding-bottom: var(--space-5); border-bottom: 1px solid var(--line); }
+.quiz-intro .actions { align-items: center; }
+.quiz-intro-skip { display: inline; }

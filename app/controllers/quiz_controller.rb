@@ -7,7 +7,9 @@ class QuizController < ApplicationController
     completed = (0...SdgQuiz::QUESTIONS.size).find { |index| !@answers.key?(index.to_s) } || SdgQuiz::QUESTIONS.size
     requested = params[:question].to_s.match?(/\A[0-7]\z/) ? params[:question].to_i : completed
     @index = [ requested, completed ].min
-    if @index == SdgQuiz::QUESTIONS.size
+    if params[:question].blank? && @answers.empty?
+      render :intro
+    elsif @index == SdgQuiz::QUESTIONS.size
       prepare_suggestions
       render :suggestions
     else
