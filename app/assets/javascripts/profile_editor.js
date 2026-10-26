@@ -1,4 +1,6 @@
 (() => {
+  // On narrow screens the tab row scrolls; keep the current tab in view.
+  document.querySelector(".profile-tabs [aria-current]")?.scrollIntoView({ block: "nearest", inline: "nearest" });
   const form = document.querySelector("form[data-profile-editor]");
   if (!form) return;
   let dirty = form.dataset.unsaved === "true";
