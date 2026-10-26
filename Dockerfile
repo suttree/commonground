@@ -16,8 +16,18 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl gosu libjemalloc2 sqlite3 && \
+    apt-get install --no-install-recommends -y curl gosu libjemalloc2 sqlite3 supervisor && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Pin and verify the scheduler binary for the target image architecture.
+RUN case "$(dpkg --print-architecture)" in \
+      amd64) checksum=1692066e350a88ff4d7d6474fe3c7a6c41ec5e89 ;; \
+      arm64) checksum=9d4c2000493215a1898502b2fc2dada3e8ea8c7a ;; \
+      *) exit 1 ;; \
+    esac && \
+    curl -fsSL "https://github.com/aptible/supercronic/releases/download/v0.2.51/supercronic-linux-$(dpkg --print-architecture)" -o /usr/local/bin/supercronic && \
+    echo "$checksum  /usr/local/bin/supercronic" | sha1sum -c - && \
+    chmod +x /usr/local/bin/supercronic
 
 # Set production environment
 ENV RAILS_ENV="production" \
@@ -58,6 +68,8 @@ FROM base
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
 
+RUN supercronic -test /rails/config/crontab
+
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
@@ -70,4 +82,4 @@ ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD ["./bin/rails", "server"]
+CMD ["supervisord", "-c", "/rails/config/supervisord.conf"]

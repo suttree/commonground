@@ -1,5 +1,7 @@
 app = 'commonground-pilot'
 primary_region = 'lhr'
+kill_signal = 'SIGTERM'
+kill_timeout = '65s'
 
 [build]
   dockerfile = 'Dockerfile'
