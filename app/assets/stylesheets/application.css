@@ -315,8 +315,6 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .next-step-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
 .next-step-tiles .wizard-option { flex-direction: column; align-items: flex-start; margin: 0; height: 100%; }
 .next-step-tiles .wizard-option > span { display: flex; flex-direction: column; gap: 6px; }
-.quiz-change-answers { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin-top: 16px; }
-.quiz-change-answers form { display: inline; }
 @media (max-width: 640px) { .next-step-tiles { grid-template-columns: 1fr; } }
 .next-step-options { display: grid; gap: 12px; }
 .next-step-option { display: flex; border: 1px solid var(--green); padding: 20px; text-decoration: none; }

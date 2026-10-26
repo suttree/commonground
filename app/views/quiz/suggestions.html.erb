@@ -4,7 +4,7 @@
   <%= render "shared/ambient_mark" %>
   <h1><%= @matches.any? ? "A starting point for your next project." : "Still exploring? That's fine." %></h1>
   <% if @matches.any? %>
-    <p>These problems connect to the choices you made. See which ones feel worth exploring.</p>
+    <p>These problems connect to the choices you made. See which ones feel worth exploring, or <%= link_to "change your answers", quiz_path(question: 0, profile_id: current_profile&.id) %>.</p>
     <div class="priority-suggestions">
     <% @matches.each do |id, reasons| %>
       <article class="quiz-answer">
@@ -18,7 +18,7 @@
     </div>
     <p class="small-note">Each answer points to related SDG targets. We show up to three with the most connections; equal matches follow question order. This is a starting point, not an assessment of your values or skills.</p>
   <% else %>
-    <p>You skipped every question, so we haven't suggested any priorities. You can try again whenever you're ready.</p>
+    <p>You skipped every question, so we haven't suggested any priorities. <%= link_to "Go back to the questions", quiz_path(question: 0, profile_id: current_profile&.id) %> whenever you're ready.</p>
   <% end %>
   <% if @error %><p class="error-summary" role="alert"><%= @error %></p><% end %>
   <%= form_with url: confirm_quiz_path do |form| %>
@@ -31,13 +31,8 @@
         <div class="field"><%= label_tag "priority_#{index}", "Priority #{index + 1} (optional)" %><%= select_tag "target_ids[]", grouped_options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("targets").map { |target| ["#{target.fetch('id')}: #{SdgQuiz::LABELS.fetch(target.fetch('id'))}", target.fetch("id")] }] }, @selected_targets[index]), include_blank: "Still exploring", id: "priority_#{index}" %></div>
       <% end %>
     </fieldset>
-    <div class="actions"><%= form.submit(onboarding_person? ? "Continue to your profile" : "Find companies with these priorities", class: "button") %><%= link_to "Explore projects", challenges_path %></div>
+    <div class="actions"><%= form.submit(onboarding_person? ? "Continue to your profile" : "Find companies with these priorities", class: "button") %></div>
   <% end %>
-  <div class="quiz-change-answers small-note">
-    <span>Want different suggestions?</span>
-    <%= link_to "Change my answers", quiz_path(question: 0, profile_id: current_profile&.id) %>
-    <%= form_with url: quiz_path do %><%= hidden_field_tag :profile_id, current_profile.id if current_profile %><button class="quiz-restart" name="restart" value="1">Clear answers and start again</button><% end %>
-  </div>
 
   <section class="quiz-next-steps" aria-labelledby="next-steps-heading">
     <h2 id="next-steps-heading">Prefer a conversation? <span>Start a conversation with Nika.</span></h2>
