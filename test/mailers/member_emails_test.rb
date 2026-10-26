@@ -9,11 +9,13 @@ class MemberEmailsTest < ActionDispatch::IntegrationTest
   end
 
   test "a contact request emails the member with a reply-to for the sender" do
-    assert_emails 1 do
+    assert_emails 2 do
       post profile_contact_path(@member.public_slug), params: { contact_request: { intent: "coffee", name: "Visitor",
         email: "visitor@example.test", message: "Shall we talk?", consent: "1" } }
     end
-    mail = ActionMailer::Base.deliveries.last
+    mail, receipt = ActionMailer::Base.deliveries.last(2)
+    assert_equal [ "visitor@example.test" ], receipt.to
+    assert_match "Shall we talk?", receipt.body.to_s
     assert_equal [ "nika@example.test" ], mail.to
     assert_equal [ "visitor@example.test" ], mail.reply_to
     assert_equal "Someone’s commonbounding you!", mail.subject

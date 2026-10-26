@@ -13,6 +13,12 @@ class MemberMailer < ApplicationMailer
       subject: "Someone’s commonbounding you!")
   end
 
+  def request_received(contact_request)
+    @request = contact_request
+    @member = contact_request.submission.display_name
+    mail(to: contact_request.email, subject: "Your message is on its way to #{@member}!")
+  end
+
   def added_to_project(challenge, member)
     @challenge = challenge
     @owner = challenge.submission.display_name

@@ -12,6 +12,7 @@ class ContactRequestsController < ApplicationController
     @contact_request.target_ids = SdgQuiz.matches(session.fetch(:quiz_answers, {})).keys if @contact_request.include_priorities == "1"
     if @contact_request.save
       notify { MemberMailer.contacted(@contact_request) }
+      notify { MemberMailer.request_received(@contact_request) }
       redirect_to profile_contact_thanks_path(@recipient.public_slug), status: :see_other
     else
       render :new, status: :unprocessable_entity
