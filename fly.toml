@@ -1,8 +1,13 @@
 app = 'commonground-pilot'
 primary_region = 'lhr'
+kill_signal = 'SIGTERM'
+kill_timeout = '65s'
 
 [build]
   dockerfile = 'Dockerfile'
+
+[processes]
+  app = 'supervisord -c /rails/config/supervisord.conf'
 
 [env]
   PORT = '3000'
@@ -20,6 +25,7 @@ primary_region = 'lhr'
   destination = '/data'
 
 [http_service]
+  processes = ['app']
   internal_port = 3000
   force_https = true
   auto_stop_machines = 'stop'

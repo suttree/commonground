@@ -1,0 +1,9 @@
+Yes, you have mail! Is this about a new project? Someone curious about what you do or want to do? Let’s find out!
+
+From: <%= @request.name %>
+Request: <%= @intent %><% if @project %>
+Project: <%= @project.title %><% end %>
+
+<%= @request.message %>
+
+Reply to this email to answer <%= @request.name %> directly.

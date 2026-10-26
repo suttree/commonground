@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   root "pages#home"
   resources :challenges, path: "projects", only: [ :index, :show, :new, :create, :edit, :update ] do
+    get :collaborator_search, on: :collection
     resources :collaborator_invitations, only: [ :index, :create, :destroy ]
+    resources :collaborators, only: :destroy, controller: "challenge_collaborators"
   end
   get "challenges(/*path)", to: redirect { |_params, request| request.original_fullpath.sub(%r{\A/challenges}, "/projects") }, format: false
   resource :invitation, only: [ :show, :update ]
@@ -50,6 +52,8 @@ Rails.application.routes.draw do
   get "profiles/:slug/projects/:position", to: "profiles#project", as: :profile_project, constraints: { position: /[1-9][0-9]*/ }
   get "portfolio/images/:id", to: "portfolio_images#show", as: :portfolio_image
   get "portfolio/draft", to: "portfolio_images#draft", as: :draft_portfolio_image
+  get "profile-photos/draft", to: "profile_photos#draft", as: :draft_profile_photo
+  get "profile-photos/:id", to: "profile_photos#show", as: :profile_photo
 
   namespace :admin do
     root "submissions#index"

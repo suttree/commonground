@@ -1,6 +1,7 @@
 <% organisation = @submission.organisation? %>
     <fieldset>
       <legend><%= organisation ? "You & your organisation" : "A little about you" %></legend>
+      <%= render "submissions/profile_photo" unless organisation %>
       <% if organisation %>
         <div class="field"><%= form.label :organisation_name, "Organisation name" %><%= form.text_field :organisation_name, required: true, maxlength: 200, autocomplete: "organization", **field_options(@submission, :organisation_name) %><%= render "shared/field_error", record: @submission, attribute: :organisation_name %></div>
       <% end %>

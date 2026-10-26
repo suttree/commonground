@@ -1,4 +1,5 @@
 class SubmissionsController < ApplicationController
+  include ProfilePhotoUpload
   rate_limit to: 10, within: 10.minutes, name: "submissions", only: :create, if: -> { !allowed_repeaters.include?(params[:add_section]) },
     with: -> { render plain: "We've received several submissions from this connection. Please try again in ten minutes.", status: :too_many_requests }
   rate_limit to: 40, within: 10.minutes, name: "drafts", only: :create,
@@ -34,8 +35,10 @@ class SubmissionsController < ApplicationController
       return
     end
     prepare_project_images
-    if @image_errors.any?
+    prepare_profile_photo
+    if @image_errors.any? || @profile_photo_error
       @image_errors.each { |message| @submission.errors.add(:projects, message) }
+      @submission.errors.add(:profile_photo, @profile_photo_error) if @profile_photo_error
       render :new, status: :unprocessable_entity
     elsif allowed_repeaters.include?(params[:add_section])
       field = allowed_repeaters.find { |name| name == params[:add_section] }
@@ -56,6 +59,7 @@ class SubmissionsController < ApplicationController
         @submission.profile_entries("projects").each { |row| row.delete("image_token"); row.delete("remove_image") }
         @submission.save!
         @draft_images.each_value { |image| image.update!(submission: @submission) }
+        persist_profile_photo
       end
       if current_account
         session[:active_profile_id] = @submission.id
@@ -90,8 +94,10 @@ class SubmissionsController < ApplicationController
     end
     @image_errors, @draft_images = [], {}
     prepare_project_images if !@section || @section == "portfolio"
-    if @image_errors.any?
+    prepare_profile_photo if !@section || @section == "basics"
+    if @image_errors.any? || @profile_photo_error
       @image_errors.each { |message| @submission.errors.add(:projects, message) }
+      @submission.errors.add(:profile_photo, @profile_photo_error) if @profile_photo_error
       render(@section ? :edit : :new, status: :unprocessable_entity)
     elsif allowed_repeaters.include?(params[:add_section]) && (!@section || @sections.fetch(@section).last.include?(params[:add_section]))
       field = allowed_repeaters.find { |name| name == params[:add_section] }
@@ -104,6 +110,7 @@ class SubmissionsController < ApplicationController
         @submission.profile_entries("projects").each { |row| row.delete("image_token"); row.delete("remove_image") }
         @submission.save!
         @draft_images.each_value { |image| image.update!(submission: @submission) }
+        persist_profile_photo
         if !@section || @section == "portfolio"
           kept_images = @submission.profile_entries("projects").filter_map { |row| row["image_id"] }
           @submission.portfolio_images.where(side_project_id: nil).where.not(id: kept_images).destroy_all

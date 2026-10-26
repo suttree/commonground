@@ -1,8 +1,12 @@
 <% content_for :title, @profile.display_name %>
 <article class="public-profile">
-  <p class="back-link"><%= link_to @profile.organisation? ? "All companies" : "All people", @profile.organisation? ? companies_path : people_path %></p>
+  <nav class="profile-toolbar" aria-label="Profile navigation">
+    <%= link_to @profile.organisation? ? "← All companies" : "← All people", @profile.organisation? ? companies_path : people_path, class: "button ghost small back" %>
+    <% if current_profile == @profile %>
+      <%= link_to "Edit profile", edit_account_profile_path, class: "button secondary small" %>
+    <% end %>
+  </nav>
   <% if current_profile == @profile %>
-    <p><%= link_to "Back to dashboard", dashboard_path %> · <%= link_to "Edit profile", edit_account_profile_path %></p>
     <% unless @profile.published? %><p class="small-note">Only you can see this preview. Contact the team to restore your public profile.</p><% end %>
   <% end %>
   <header class="profile-opening">
@@ -10,10 +14,16 @@
       <p class="eyebrow profile-kind"><%= render "shared/section_icon", section: @profile.organisation? ? "companies" : "people" %><%= @profile.organisation? ? "Organisation" : "Personal profile" %></p>
       <h1><%= @profile.display_name %></h1>
       <% if @profile.location.present? %><p class="profile-location"><%= @profile.location %><% if @profile.radius_km.present? %> · Within <%= @profile.radius_km %> km<% end %></p><% end %>
-      <% if @profile.website.to_s.match?(%r{\Ahttps?://}i) %><%= link_to "Website & work ↗", @profile.website, rel: "noopener noreferrer", class: "profile-website" %><% end %>
+      <% if @profile.website.to_s.match?(%r{\Ahttps?://}i) %><%= link_to "Website & work ↗", @profile.website, target: "_blank", rel: "noopener noreferrer", class: "profile-website" %><% end %>
     </div>
     <div class="profile-purpose">
-      <%= render "shared/ambient_mark" %>
+      <div class="profile-purpose-images">
+        <% if !@profile.organisation? && (photo = @profile.profile_photo) %>
+          <%= render "shared/profile_avatar", profile: @profile, photo: photo %>
+        <% else %>
+          <%= render "shared/ambient_mark" %>
+        <% end %>
+      </div>
       <h2><%= @profile.organisation? ? "Who we serve" : "Who I want to serve" %></h2>
       <%= simple_format @profile.purpose %>
     </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_26_203627) do
   create_table "accounts", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
@@ -31,6 +31,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
     t.string "industry"
     t.string "location"
     t.text "objectives"
+    t.integer "organisation_id"
     t.string "organisation_name"
     t.string "project_role"
     t.string "project_url"
@@ -42,6 +43,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
     t.json "target_ids", default: [], null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
+    t.index ["organisation_id"], name: "index_challenges_on_organisation_id"
     t.index ["status", "published_at"], name: "index_challenges_on_status_and_published_at"
     t.index ["submission_id"], name: "index_challenges_on_submission_id"
     t.index ["submission_id"], name: "one_active_challenge_per_profile", unique: true, where: "status = 'active'"
@@ -53,6 +55,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
     t.datetime "created_at", null: false
     t.string "email", null: false
     t.datetime "expires_at", null: false
+    t.datetime "reminded_at"
     t.datetime "revoked_at"
     t.datetime "sent_at"
     t.string "short_token"
@@ -101,6 +104,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
     t.index ["side_project_id"], name: "index_portfolio_images_on_side_project_id"
     t.index ["submission_id"], name: "index_portfolio_images_on_submission_id"
     t.index ["upload_owner", "created_at"], name: "index_portfolio_images_on_upload_owner_and_created_at"
+  end
+
+  create_table "profile_photos", force: :cascade do |t|
+    t.string "content_type", null: false
+    t.datetime "created_at", null: false
+    t.binary "data", null: false
+    t.integer "submission_id"
+    t.datetime "updated_at", null: false
+    t.string "upload_owner", null: false
+    t.index ["submission_id"], name: "index_profile_photos_on_submission_id", unique: true
+    t.index ["upload_owner", "created_at"], name: "index_profile_photos_on_upload_owner_and_created_at"
   end
 
   create_table "provocation_answers", force: :cascade do |t|
@@ -170,11 +184,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
   end
 
   add_foreign_key "challenges", "submissions"
+  add_foreign_key "challenges", "submissions", column: "organisation_id", on_delete: :nullify
   add_foreign_key "collaborator_invitations", "challenges"
   add_foreign_key "contact_requests", "challenges"
   add_foreign_key "contact_requests", "submissions"
   add_foreign_key "portfolio_images", "side_projects"
   add_foreign_key "portfolio_images", "submissions"
+  add_foreign_key "profile_photos", "submissions"
   add_foreign_key "provocation_answers", "provocations"
   add_foreign_key "provocation_answers", "submissions"
   add_foreign_key "side_projects", "submissions"

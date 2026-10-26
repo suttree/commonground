@@ -65,6 +65,7 @@ class SessionsController < ApplicationController
       return render :verify, status: :unprocessable_entity
     end
     account = Account.find_or_create_by!(email: challenge.email)
+    notify { MemberMailer.welcome(account.email) } if account.previously_new_record?
     account.with_lock do
       unless account.submission
         candidates = Submission.where(account_id: nil, email: account.email)

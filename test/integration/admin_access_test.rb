@@ -77,7 +77,7 @@ class AdminAccessTest < ActionDispatch::IntegrationTest
 
   test "login parameters cannot grant admin privileges" do
     post login_path, params: { email: @account.email, admin: true, account: { admin: true } }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code, admin: true, account: { admin: true } }
     assert_not @account.reload.admin?
     get admin_root_path, headers: @headers

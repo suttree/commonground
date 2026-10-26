@@ -7,9 +7,7 @@
     <%= render "shared/ambient_mark" %>
     <p class="eyebrow"><%= @challenge.completed? ? "Completed project" : "#{@challenge.status.humanize} project" %></p>
     <h1><%= @challenge.title %></h1>
-    <% if @challenge.submission.organisation? %>
-      <p>On behalf of <%= link_to @challenge.submission.display_name, profile_path(@challenge.submission.public_slug) %></p>
-    <% elsif @challenge.organisation_name.present? %><p>On behalf of <%= @challenge.organisation_name %></p><% end %>
+    <%= render "challenges/organisation", challenge: @challenge %>
     <p><%= @challenge.location %><% if @challenge.industry.present? %> · <%= link_to @challenge.industry, challenges_path(industry: @challenge.industry) %><% end %></p>
     <% if @challenge.completed_at %><p class="small-note">Completed <%= @challenge.completed_at.strftime("%B %Y") %></p><% end %>
   </header>
@@ -27,6 +25,6 @@
       </section>
     <% end %>
     <% if @challenge.target_ids.any? %><section><h2>Problems this work addresses</h2><ul><% @challenge.target_ids.each do |id| %><li><%= link_to "#{id}: #{SdgDirectory::LABELS.fetch(id)}", sdg_target_path(id) %></li><% end %></ul></section><% end %>
-    <% if @challenge.collaborators.any? %><section><h2>Collaborators</h2><p class="small-note">Credited by <%= @challenge.submission.display_name %>.</p><ul><% @challenge.collaborators.each do |person| %><li><%= link_to person.display_name, profile_path(person.public_slug) %></li><% end %></ul></section><% end %>
   </div>
+  <%= render "collaborators" %>
 </article>

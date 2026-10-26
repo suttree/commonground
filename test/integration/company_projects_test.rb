@@ -8,7 +8,7 @@ class CompanyProjectsTest < ActionDispatch::IntegrationTest
     @other = make_profile("organisation", Account.create!(email: "other@example.test"))
     @attributes = { title: "Company project", description: "Grow food", objectives: "Open a garden", location: "Bristol", status: "active" }
     post login_path, params: { email: @account.email }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
   end
 
@@ -105,7 +105,7 @@ class CompanyProjectsTest < ActionDispatch::IntegrationTest
     get challenge_path(entry)
     assert_response :not_found
     post login_path, params: { email: @other.email }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
     get edit_challenge_path(entry)
     assert_response :not_found

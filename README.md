@@ -1,6 +1,6 @@
 # Common Ground
 
-A small Rails pilot for introductions around what needs doing and why it matters. See [PLAN.md](PLAN.md) and [TECHNOLOGY.md](TECHNOLOGY.md).
+A small Rails pilot for introductions around what needs doing and why it matters. See [PLAN.md](PLAN.md), [TECHNOLOGY.md](TECHNOLOGY.md) and [DESIGN.md](DESIGN.md).
 
 ## Run locally
 
@@ -26,7 +26,7 @@ Production credentials are kept in Fly secrets. The initial deployment also has 
 
 The app is `commonground-pilot`, in the London region. `fly.toml` configures one shared CPU, 512 MB RAM and the `data` volume mounted at `/data`. SQLite uses `/data/production.sqlite3`.
 
-The first deployment provisioned a 1 GB encrypted volume with scheduled snapshots and seven-day retention. Keep exactly one application machine: independent SQLite volumes do not replicate. Idle machines stop and start again on a request, so the first visit after idle time can take longer.
+The first deployment provisioned a 1 GB encrypted volume with scheduled snapshots and seven-day retention. Keep exactly one application machine: independent SQLite volumes do not replicate. `min_machines_running = 1` keeps this machine running so the daily scheduler can run without incoming requests.
 
 For subsequent deployments:
 
@@ -34,7 +34,15 @@ For subsequent deployments:
 fly deploy --remote-only --ha=false
 ```
 
-The container prepares the database on startup, where it can access the mounted volume. Do not move SQLite migrations into a Fly release command, which runs without that volume. The entrypoint fixes the volume directory's ownership and drops to the unprivileged Rails user before running migrations and the server.
+The container prepares the database on startup, where it can access the mounted volume. Do not move SQLite migrations into a Fly release command, which runs without that volume. The entrypoint fixes the volume directory's ownership and runs migrations as the unprivileged Rails user. Supervisor runs as root to open Fly's log descriptors, then starts both Rails and Supercronic as the Rails user.
+
+### Daily invitation reminders
+
+Supervisor runs Rails and Supercronic together on the existing machine. Both use the same SQLite volume and Fly environment, including the existing SMTP credentials. No additional machine is needed. Supervisor restarts either process if it exits.
+
+`config/crontab` runs `bin/rails emails:invitation_reminders` every day at 09:00 UTC, which is 09:00 UK time in winter and 10:00 in summer. The task sends reminders for sent, unaccepted, uncancelled invitations that expire within the next 24 hours and still belong to public projects. It records `reminded_at` after delivery to exclude them from later runs.
+
+Use `fly logs --app commonground-pilot` to inspect scheduler starts, job completion and delivery errors. Validate the schedule without sending email with `supercronic -test /rails/config/crontab` inside the container. Manual runs of the Rails task send real reminders. A stopped machine misses its scheduled run, so keep the single machine running. Deployments restart both processes after database migrations finish.
 
 Use `fly volumes list` and `fly volumes snapshots list VOLUME_ID` to inspect storage and snapshots. Before destructive data or schema changes, take and verify a backup. This pilot has one machine and one volume, so it is not highly available. A database restore drill has not yet been performed.
 
