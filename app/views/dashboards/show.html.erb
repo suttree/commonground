@@ -4,7 +4,7 @@
   <header class="dashboard-heading">
     <p class="eyebrow"><%= @profile&.organisation? ? "Company dashboard" : "Your dashboard" %></p>
     <h1><%= @profile ? link_to(@profile.display_name, profile_path(@profile.public_slug)) : "Welcome to Commonbound" %></h1>
-    <% if @profile %><%= link_to "Edit profile", edit_account_profile_path, class: "button secondary dashboard-edit-profile" %><% end %>
+    <% if @profile %><%= link_to "Edit profile", edit_account_profile_path, class: "button secondary small dashboard-edit-profile" %><% end %>
   </header>
   <% if current_account.submissions.none? %>
     <%= render "journey" %>

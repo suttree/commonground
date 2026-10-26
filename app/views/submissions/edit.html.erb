@@ -1,11 +1,10 @@
 <% content_for :title, "Edit #{@submission.display_name}" %>
 <%= javascript_include_tag "profile_editor", defer: true %>
 <div class="form-page profile-editor">
-  <p class="back-link"><%= link_to "Back to dashboard", dashboard_path %> · <%= link_to "View profile", profile_path(@submission.public_slug) %></p>
-  <header class="page-intro compact">
-    <p class="eyebrow"><%= @submission.organisation? ? "Company profile" : "Personal profile" %></p>
-    <h1>Edit your profile</h1>
-    <p><%= @submission.display_name %></p>
+  <p class="back-link"><%= link_to "← Back to dashboard", dashboard_path, class: "button ghost small back" %></p>
+  <header class="page-intro">
+    <h1><%= profile_heading(@submission) %></h1>
+    <%= link_to "View profile", profile_path(@submission.public_slug), class: "button secondary small", target: "_blank", rel: "noopener" %>
   </header>
   <nav class="profile-tabs" aria-label="Profile sections">
     <% @sections.sort_by { |_key, (label, _fields)| label.downcase }.each do |key, (label, _fields)| %>

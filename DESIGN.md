@@ -121,7 +121,20 @@ Four styles. The leaf, one large rounded corner at the top right, is Commonbound
 
 Use `0` only where an image must stay square.
 
+## Buttons
+
+| Class | Look | Use |
+|---|---|---|
+| `.button` | Solid green | The one primary action on a page |
+| `.button.secondary` | Green outline | Other actions in a form |
+| `.button.secondary.small` | Thin `--line` outline, small text | Header actions such as "Edit profile" and "View profile". Use this, not a text link |
+| `.button.ghost.small.back` | No border; `--line` border on hover | Back links such as "← Back to dashboard" and "← All people". Starts with a ←, and `.back` pulls it left so the label lines up with the page edge |
+
+Links that leave the current task open in a new tab: "View profile" from the editor, and a member's own website.
+
 ## Patterns
+
+- **Tabs** (`.profile-tabs`): profile editor sections. Plain text on one divider line; the current tab is bold `--ink` with a 3px `--green` underline.
 
 - **Journey checklist** (`.journey`): the new-member dashboard. Done steps show a check, the current step is a green row with the only button, and later steps are muted.
 - **Step bar** (`shared/_journey_bar`): "Step N of 4" on the quiz and profile pages during sign-up.
