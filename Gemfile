@@ -4,7 +4,7 @@ source "https://rubygems.org"
 gem "rails", "~> 8.1.4"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
-# Rails 8.1 passes positional options when decoding session cookies.
+# JSON 3 requires the decoder fix included in Rails 8.1.4.
 gem "json", "< 4"
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", ">= 2.1"
