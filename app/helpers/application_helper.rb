@@ -25,6 +25,13 @@ module ApplicationHelper
     link_to label, path, aria: { current: current }
   end
 
+  # "Sarper's profile" for people (first name), "Acme's profile" for companies.
+  def profile_heading(submission)
+    name = submission.organisation? ? submission.display_name.to_s.strip : submission.display_name.to_s.split.first
+    return "Your profile" if name.blank?
+    "#{name}#{name.end_with?("s") ? "'" : "'s"} profile"
+  end
+
   def field_options(record, attribute, hint: false)
     ids = []
     ids << "#{attribute}-hint" if hint

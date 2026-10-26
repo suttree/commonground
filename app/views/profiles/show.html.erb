@@ -1,9 +1,9 @@
 <% content_for :title, @profile.display_name %>
 <article class="public-profile">
   <nav class="profile-toolbar" aria-label="Profile navigation">
-    <%= link_to @profile.organisation? ? "All companies" : "All people", @profile.organisation? ? companies_path : people_path %>
+    <%= link_to @profile.organisation? ? "← All companies" : "← All people", @profile.organisation? ? companies_path : people_path, class: "button ghost small back" %>
     <% if current_profile == @profile %>
-      <div class="profile-owner-actions"><%= link_to "Back to dashboard", dashboard_path %><%= link_to "Edit profile", edit_account_profile_path %></div>
+      <%= link_to "Edit profile", edit_account_profile_path, class: "button secondary small" %>
     <% end %>
   </nav>
   <% if current_profile == @profile %>
@@ -14,7 +14,7 @@
       <p class="eyebrow profile-kind"><%= render "shared/section_icon", section: @profile.organisation? ? "companies" : "people" %><%= @profile.organisation? ? "Organisation" : "Personal profile" %></p>
       <h1><%= @profile.display_name %></h1>
       <% if @profile.location.present? %><p class="profile-location"><%= @profile.location %><% if @profile.radius_km.present? %> · Within <%= @profile.radius_km %> km<% end %></p><% end %>
-      <% if @profile.website.to_s.match?(%r{\Ahttps?://}i) %><%= link_to "Website & work ↗", @profile.website, rel: "noopener noreferrer", class: "profile-website" %><% end %>
+      <% if @profile.website.to_s.match?(%r{\Ahttps?://}i) %><%= link_to "Website & work ↗", @profile.website, target: "_blank", rel: "noopener noreferrer", class: "profile-website" %><% end %>
     </div>
     <div class="profile-purpose">
       <div class="profile-purpose-images">
