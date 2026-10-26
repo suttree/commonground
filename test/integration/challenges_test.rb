@@ -16,8 +16,70 @@ class ChallengesTest < ActionDispatch::IntegrationTest
 
   def login(owner = @owner)
     post login_path, params: { email: owner.email }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
+  end
+
+  test "project owner can select another public company without transferring ownership" do
+    company = profile("company@example.test", kind: "organisation", organisation_name: "Community Kitchen", mission: "Food", offering: "Meals", challenge: "Access", challenge_kind: "Challenges")
+    hidden = profile("hidden@example.test", kind: "organisation", organisation_name: "Private Kitchen", mission: "Food", offering: "Meals", challenge: "Access", challenge_kind: "Challenges", published: false)
+    login
+    get new_challenge_path
+    assert_select "select[name='challenge[organisation_id]'] option[value='#{company.id}']", text: "Community Kitchen · Bristol"
+    assert_select "select[name='challenge[organisation_id]'] option[value='#{hidden.id}']", count: 0
+    assert_select "input[name='challenge[organisation_name]']"
+    post challenges_path, params: { challenge: @attributes.merge(organisation_id: company.id) }
+    entry = @owner.challenges.last
+    assert_redirected_to challenge_path(entry)
+    assert_equal @owner.id, entry.submission_id
+    assert_equal company.id, entry.organisation_id
+    assert_equal "Community Kitchen", entry.organisation_name
+    get challenge_path(entry)
+    assert_select ".project-organisation a[href='#{profile_path(company.public_slug)}']", text: "Community Kitchen"
+    get profile_path(@owner.public_slug)
+    assert_select ".challenge-card .project-organisation", text: /On behalf of Community Kitchen/
+    company.update!(published: false)
+    get challenge_path(entry)
+    assert_select ".project-organisation", text: /Community Kitchen/
+    assert_select ".project-organisation a", count: 0
+    patch challenge_path(entry), params: { challenge: { title: "Updated project" } }
+    assert_response :see_other
+    company.destroy!
+    assert_nil entry.reload.organisation_id
+    assert_equal "Community Kitchen", entry.organisation_name
+  end
+
+  test "owners can add a company name change it or clear it without creating a profile" do
+    login
+    assert_no_difference "Submission.count" do
+      post challenges_path, params: { challenge: @attributes.merge(organisation_name: "  New co-operative  ") }
+    end
+    entry = @owner.challenges.last
+    assert_equal "New co-operative", entry.organisation_name
+    assert_nil entry.organisation_id
+    get challenge_path(entry)
+    assert_select ".project-organisation", text: /On behalf of New co-operative/
+    assert_select ".project-organisation a", count: 0
+    patch challenge_path(entry), params: { challenge: { organisation_id: "", organisation_name: "Different company" } }
+    assert_equal "Different company", entry.reload.organisation_name
+    patch challenge_path(entry), params: { challenge: { organisation_id: "", organisation_name: "" } }
+    assert_response :see_other
+    get challenge_path(entry)
+    assert_select ".project-organisation", count: 0
+  end
+
+  test "company selection rejects private profiles people and missing records" do
+    hidden = profile("hidden@example.test", kind: "organisation", organisation_name: "Private Kitchen", mission: "Food", offering: "Meals", challenge: "Access", challenge_kind: "Challenges", published: false)
+    login
+    [ hidden.id, @other.id, 999999 ].each do |id|
+      assert_no_difference "Challenge.count" do
+        post challenges_path, params: { challenge: @attributes.merge(organisation_id: id) }
+      end
+      assert_response :unprocessable_entity
+      assert_select ".error-summary", text: /must be a public company profile/
+      assert_select "select[name='challenge[organisation_id]'] option[value='#{hidden.id}']", count: 0
+      assert_no_match "Private Kitchen", response.body
+    end
   end
 
   test "project URLs are canonical for links forms and invitations" do
@@ -238,5 +300,106 @@ class ChallengesTest < ActionDispatch::IntegrationTest
     @owner.challenges.create!(@attributes)
     draft = @owner.challenges.create!(@attributes.merge(status: "draft"))
     assert_raises(ActiveRecord::RecordNotUnique) { draft.update_column(:status, "active") }
+  end
+
+  test "collaborator search is authenticated bounded and only returns matching public profiles" do
+    get collaborator_search_challenges_path, params: { submission_id: @owner.id, collaborator_query: "Other" }
+    assert_redirected_to login_path
+    login
+    profile("secret-search@example.test", name: "Other private", published: false)
+    11.times { |i| profile("search-#{i}@example.test", name: "Matching member #{i}") }
+    get new_challenge_path
+    assert_select "#collaborator-selection input[type=checkbox]", count: 0
+    assert_select "#collaborator-selection", text: /No collaborators selected yet/
+    [ "", "O" ].each do |query|
+      get collaborator_search_challenges_path, params: { submission_id: @owner.id, collaborator_query: query }
+      assert_equal [], response.parsed_body
+    end
+    get collaborator_search_challenges_path, params: { submission_id: @owner.id, collaborator_query: "Other" }
+    assert_equal [ { "id" => @other.id, "name" => @other.display_name, "location" => @other.location } ], response.parsed_body
+    assert_equal "no-store", response.headers["Cache-Control"]
+    get collaborator_search_challenges_path, params: { submission_id: @owner.id, collaborator_query: "Matching" }
+    assert_equal 10, response.parsed_body.size
+    get collaborator_search_challenges_path, params: { submission_id: @owner.id, collaborator_query: "%_" }
+    assert_empty response.parsed_body
+    get collaborator_search_challenges_path, params: { submission_id: @other.id, collaborator_query: "Matching" }
+    assert_response :not_found
+  end
+
+  test "search without JavaScript preserves project edits and selections without saving" do
+    login
+    entry = @owner.challenges.create!(@attributes)
+    patch challenge_path(entry), params: { search_collaborators: "1", collaborator_query: "Other", challenge: { title: "Unsaved title", collaborator_ids: [ "" ] } }
+    assert_response :success
+    assert_equal @attributes[:title], entry.reload.title
+    assert_select "input[name='challenge[title]'][value='Unsaved title']"
+    assert_select "#collaborator-results #challenge_collaborator_#{@other.id}"
+    patch challenge_path(entry), params: { search_collaborators: "1", collaborator_query: "Nobody", challenge: { title: "Unsaved title", collaborator_ids: [ "", @other.id.to_s ] } }
+    assert_select "[data-selected-collaborators] #challenge_collaborator_#{@other.id}[checked]"
+    assert_empty entry.reload.collaborator_ids
+    assert_no_difference "Challenge.count" do
+      post challenges_path, params: { search_collaborators: "1", collaborator_query: "Other", challenge: { title: "Unfinished draft", status: "draft" } }
+    end
+    assert_response :success
+    assert_select "input[name='challenge[title]'][value='Unfinished draft']"
+  end
+
+  test "collaborator checkboxes can remove one member or clear everyone" do
+    third = profile("third@example.test")
+    entry = @owner.challenges.create!(@attributes.merge(collaborator_ids: [ @other.id, third.id ]))
+    login
+    get edit_challenge_path(entry)
+    assert_select "select[multiple][name='challenge[collaborator_ids][]']", count: 0
+    assert_select "input[type=hidden][name='challenge[collaborator_ids][]'][value='']"
+    assert_select "#challenge_collaborator_#{@other.id}[checked]"
+    assert_select "#challenge_collaborator_#{third.id}[checked]"
+    assert_select "form form", count: 0
+    assert_select "#email-invitations form[action='#{challenge_collaborator_invitations_path(entry)}'] input[type=email]"
+    patch challenge_path(entry), params: { challenge: { collaborator_ids: [ "", third.id.to_s ] } }
+    assert_response :see_other
+    assert_equal [ third.id.to_s ], entry.reload.collaborator_ids
+    patch challenge_path(entry), params: { challenge: { collaborator_ids: [ "" ] } }
+    assert_response :see_other
+    assert_empty entry.reload.collaborator_ids
+  end
+
+  test "owner can remove a collaborator directly but other accounts cannot" do
+    entry = @owner.challenges.create!(@attributes.merge(collaborator_ids: [ @other.id ]))
+    login(@other)
+    get challenge_path(entry)
+    assert_select "#collaborators a[href='#{profile_path(@other.public_slug)}']"
+    assert_select "#collaborators form", count: 0
+    delete challenge_collaborator_path(entry, @other.id)
+    assert_response :not_found
+    assert_equal [ @other.id ], entry.reload.collaborator_ids
+    delete logout_path
+    delete challenge_collaborator_path(entry, @other.id)
+    assert_redirected_to login_path
+    login
+    get challenge_path(entry)
+    assert_select "#collaborators button[aria-label='Remove #{@other.display_name} from this project']"
+    assert_select "#collaborators input[type=email]"
+    delete challenge_collaborator_path(entry, @other.id)
+    assert_redirected_to challenge_path(entry, anchor: "collaborators")
+    assert_empty entry.reload.collaborator_ids
+    delete challenge_collaborator_path(entry, @other.id)
+    assert_response :not_found
+  end
+
+  test "unpublished existing collaborators can be removed without exposing unrelated private profiles" do
+    entry = @owner.challenges.create!(@attributes.merge(collaborator_ids: [ @other.id ]))
+    @other.update!(published: false)
+    secret = profile("secret@example.test", published: false)
+    login
+    get edit_challenge_path(entry)
+    assert_select "#challenge_collaborator_#{@other.id}[checked]"
+    assert_select "#challenge_collaborator_#{secret.id}", count: 0
+    patch challenge_path(entry), params: { challenge: { collaborator_ids: [ secret.id.to_s ] } }
+    assert_response :unprocessable_entity
+    assert_select "#challenge_collaborator_#{secret.id}", count: 0
+    assert_equal [ @other.id ], entry.reload.collaborator_ids
+    delete challenge_collaborator_path(entry, @other.id)
+    assert_response :see_other
+    assert_empty entry.reload.collaborator_ids
   end
 end

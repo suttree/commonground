@@ -17,6 +17,7 @@ class Submission < ApplicationRecord
   has_many :provocation_answers, dependent: :destroy
   has_many :side_projects, dependent: :destroy
   has_many :portfolio_images, dependent: :destroy
+  has_one :profile_photo, dependent: :destroy
   attr_accessor :consent, :website_confirmation
 
   # Keep the original columns and their contents for applications already received.

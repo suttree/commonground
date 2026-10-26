@@ -3,6 +3,9 @@ require "test_helper"
 class QuizWizardTest < ActionDispatch::IntegrationTest
   test "wizard completes, explains suggestions and retains edits" do
     get quiz_path
+    assert_select "h1", text: "What matters to you?"
+    assert_select "a[href='#{quiz_path(question: 0)}']", text: "Start the questions"
+    get quiz_path(question: 0)
     assert_select "input[type=radio]", count: 5
     assert_select "h1", text: SdgQuiz::QUESTIONS.first.fetch("question")
     8.times do |index|
@@ -25,14 +28,15 @@ class QuizWizardTest < ActionDispatch::IntegrationTest
     assert_select ".quiz-answer", count: 3
     post quiz_path, params: { restart: "1" }
     follow_redirect!
+    assert_select "h1", text: "What matters to you?"
+    get quiz_path(question: 0)
     assert_select "input[checked]", count: 0
-    assert_select "h1", text: SdgQuiz::QUESTIONS.first.fetch("question")
   end
 
   test "skips do not create false matches and forged steps do not bypass wizard" do
     post quiz_path, params: { question: 7, answer: "1" }
     follow_redirect!
-    assert_select "h1", text: SdgQuiz::QUESTIONS.first.fetch("question")
+    assert_select "h1", text: "What matters to you?"
     post quiz_path, params: { question: 0, answer: "invalid" }
     assert_response :unprocessable_entity
     assert_select "[role=alert]"

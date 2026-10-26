@@ -4,7 +4,7 @@
     <p class="eyebrow">Find your common ground</p>
     <h1>Different paths.<br>Shared purpose.</h1>
     <%= render "shared/ambient_mark" %>
-    <ol class="join-steps"><li><span>01</span> Create your account</li><li><span>02</span> Find what matters to you</li><li><span>03</span> Tell people about yourself</li><li><span>04</span> Discover companies</li></ol>
+    <ol class="join-steps"><li><span>01</span> Create your account</li><li><span>02</span> Find what matters to you</li><li><span>03</span> Tell people about yourself</li><li><span>04</span> <%= session[:collaborator_invitation_token].present? ? "Accept your invitation" : "Discover companies" %></li></ol>
   </aside>
   <section class="join-form" aria-labelledby="join-title">
     <p class="eyebrow">Step 1 of 4</p>

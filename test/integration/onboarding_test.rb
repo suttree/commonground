@@ -4,7 +4,7 @@ class OnboardingTest < ActionDispatch::IntegrationTest
   def join(email = "joining@example.test")
     post login_path, params: { individual_signup: "1", name: "Alex", email: email }
     assert_redirected_to verify_login_path
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
   end
 
@@ -58,10 +58,12 @@ class OnboardingTest < ActionDispatch::IntegrationTest
     assert_equal 0, Submission.where(email: "joining@example.test").count
     delete logout_path
     post login_path, params: { email: "joining@example.test" }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
     get dashboard_path
-    assert_select "a", text: "Continue setting up your profile"
+    assert_select ".journey-current h3", text: "Tell people about yourself"
+    assert_select ".journey-current a[href='#{new_person_path}']", text: "Continue"
+    assert_select ".dashboard-discovery", count: 0
     get new_person_path
     assert_redirected_to onboarding_profile_path
   end

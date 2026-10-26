@@ -4,11 +4,11 @@
   <header class="dashboard-heading">
     <p class="eyebrow"><%= @profile&.organisation? ? "Company dashboard" : "Your dashboard" %></p>
     <h1><%= @profile ? link_to(@profile.display_name, profile_path(@profile.public_slug)) : "Welcome to Commonbound" %></h1>
-    <% if @profile %><%= link_to "Edit profile", edit_account_profile_path, class: "button secondary dashboard-edit-profile" %><% end %>
+    <% if @profile %><%= link_to "Edit profile", edit_account_profile_path, class: "button secondary small dashboard-edit-profile" %><% end %>
   </header>
-  <% if current_account.onboarding.present? && !current_account.submissions.exists?(kind: "person") %>
-    <section class="onboarding-reminder"><h2>Pick up where you left off</h2><p>Your personal profile isn't public yet. Finish your priorities and short introduction when you're ready.</p><%= link_to "Continue setting up your profile", new_person_path, class: "button" %></section>
-  <% end %>
+  <% if current_account.submissions.none? %>
+    <%= render "journey" %>
+  <% else %>
   <div class="dashboard-overview<%= " dashboard-overview-meta-only" unless @provocation_answer_count %>">
     <%= render "provocations" if @provocation_answer_count %>
     <%= render "meta" %>
@@ -41,5 +41,6 @@
     </div>
   </section>
   <% if @recommended_challenges&.any? %><section class="recent-work"><h2>Projects to explore</h2><p>Work connected to your selected goals, when you have added them.</p><div class="challenge-grid"><%= render partial: "challenges/card", collection: @recommended_challenges, as: :challenge %></div></section><% end %>
+  <% end %>
   <div class="dashboard-footer"><%= button_to "Log out", logout_path, method: :delete, class: "button secondary" %></div>
 </div>

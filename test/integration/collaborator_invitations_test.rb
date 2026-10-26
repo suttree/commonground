@@ -13,7 +13,7 @@ class CollaboratorInvitationsTest < ActionDispatch::IntegrationTest
 
   def login(email)
     post login_path, params: { email: email }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
   end
 
@@ -31,7 +31,7 @@ class CollaboratorInvitationsTest < ActionDispatch::IntegrationTest
     assert_redirected_to challenge_collaborator_invitations_path(@challenge)
     assert invitation.sent_at
     assert_equal @recipient.email, invitation.email
-    assert_match "Community garden", ActionMailer::Base.deliveries.last.body.decoded
+    assert_match "Community garden", ActionMailer::Base.deliveries.last.subject
     token = invitation.token
     delete logout_path
     get challenge_path(@challenge)
@@ -39,7 +39,7 @@ class CollaboratorInvitationsTest < ActionDispatch::IntegrationTest
     get invitation_path(token: token)
     assert_select "a", text: "Sign in to continue"
     assert_no_match @recipient.email, response.body
-    assert_equal "no-referrer", response.headers["Referrer-Policy"]
+    assert_equal "same-origin", response.headers["Referrer-Policy"]
     assert_select "script[src*=withcabin]", count: 0
     login(@recipient.email)
     assert_redirected_to invitation_path(token: token)
@@ -199,5 +199,118 @@ class CollaboratorInvitationsTest < ActionDispatch::IntegrationTest
     patch invitation_path(token: token)
     assert_nil invitation.reload.accepted_at
     assert_empty @challenge.reload.collaborator_ids
+  end
+
+  test "inline email forms send invitations and return to the project or edit page" do
+    login(@owner.email)
+    get challenge_path(@challenge)
+    assert_select "#collaborators form[action='#{challenge_collaborator_invitations_path(@challenge)}']" do
+      assert_select "input[name=return_to][value=project]"
+      assert_select "input[type=email][required]"
+    end
+    assert_difference "ActionMailer::Base.deliveries.size", 1 do
+      post challenge_collaborator_invitations_path(@challenge), params: { return_to: "project", collaborator_invitation: { email: "new-member@example.test" } }
+    end
+    assert_redirected_to challenge_path(@challenge, anchor: "collaborators")
+    mail = ActionMailer::Base.deliveries.last
+    assert_equal [ "new-member@example.test" ], mail.to
+    assert_includes mail.body.decoded, "Sign up or log in with this email address"
+    assert_includes mail.body.decoded, @challenge.collaborator_invitations.last.token
+    post challenge_collaborator_invitations_path(@challenge), params: { return_to: "edit", collaborator_invitation: { email: "another@example.test" } }
+    assert_redirected_to edit_challenge_path(@challenge, anchor: "email-invitations")
+    post challenge_collaborator_invitations_path(@challenge), params: { return_to: "https://untrusted.example", collaborator_invitation: { email: "third@example.test" } }
+    assert_redirected_to challenge_collaborator_invitations_path(@challenge)
+  end
+
+  test "invalid inline invitations preserve the email and do not send a message" do
+    login(@owner.email)
+    assert_no_difference "ActionMailer::Base.deliveries.size" do
+      post challenge_collaborator_invitations_path(@challenge), params: { return_to: "edit", collaborator_invitation: { email: "invalid-address" } }
+    end
+    assert_response :unprocessable_entity
+    assert_select ".error-summary[role=alert]"
+    assert_select "input[type=email][value='invalid-address']"
+    assert_select "input[name=return_to][value=edit]"
+  end
+
+  test "an invited newcomer completes current signup and is added after accepting" do
+    login(@owner.email)
+    invitation = invite("newcomer@example.test")
+    token = invitation.token
+    delete logout_path
+    get invitation_path(token: token)
+    assert_select "a[href='#{join_path}']", text: "Create an account"
+    get join_path
+    assert_select ".join-steps", text: /Accept your invitation/
+    post login_path, params: { individual_signup: "1", name: "New collaborator", email: "newcomer@example.test" }
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
+    post verify_login_path, params: { code: code }
+    assert_redirected_to quiz_path
+    post skip_onboarding_quiz_path
+    assert_redirected_to onboarding_profile_path
+    get onboarding_profile_path
+    assert_select "input[type=submit][value='Save profile & return to invitation']"
+    post onboarding_profile_path, params: { submission: { name: "New collaborator", purpose: "Food for everyone", experience: "Gardening", consent: "1" } }
+    assert_redirected_to invitation_path(token: token)
+    assert_empty @challenge.reload.collaborator_ids
+    follow_redirect!
+    assert_select "[role=status]", text: "Your profile is ready. Accept the invitation below to join the project."
+    assert_select "button", text: "Accept invitation"
+    patch invitation_path(token: token), params: { profile_id: Account.find_by!(email: "newcomer@example.test").submission.id }
+    assert_redirected_to challenge_path(@challenge)
+    assert invitation.reload.accepted_at
+    follow_redirect!
+    assert_select "#collaborators a", text: "New collaborator"
+    assert_select "#collaborators form", count: 0
+  end
+
+  test "removed collaborators can be reinvited but their original link cannot rejoin" do
+    login(@owner.email)
+    invitation = invite
+    delete logout_path
+    login(@recipient.email)
+    patch invitation_path(token: invitation.token)
+    assert invitation.reload.accepted_at
+    delete logout_path
+    login(@owner.email)
+    assert_no_difference "ActionMailer::Base.deliveries.size" do
+      invite
+    end
+    assert_response :unprocessable_entity
+    delete challenge_collaborator_path(@challenge, @recipient.id)
+    assert_empty @challenge.reload.collaborator_ids
+    replacement = invite
+    assert_response :see_other
+    assert_not_equal invitation.id, replacement.id
+    delete logout_path
+    login(@recipient.email)
+    patch invitation_path(token: invitation.token)
+    assert_empty @challenge.reload.collaborator_ids
+    patch invitation_path(token: replacement.token)
+    assert_equal [ @recipient.id ], @challenge.reload.collaborator_ids
+  end
+
+  test "acceptance works with CSRF protection while foreign origins and missing tokens are rejected" do
+    login(@owner.email)
+    invitation = invite
+    delete logout_path
+    login(@recipient.email)
+    previous = ActionController::Base.allow_forgery_protection
+    ActionController::Base.allow_forgery_protection = true
+    path = invitation_path(token: invitation.token)
+    get path
+    assert_equal "same-origin", response.headers["Referrer-Policy"]
+    token = css_select("form[action='#{path}'] input[name=authenticity_token]").sole["value"]
+    patch path, params: { authenticity_token: token, profile_id: @recipient.id }, headers: { "Origin" => "https://untrusted.example" }
+    assert_response :unprocessable_entity
+    assert_empty @challenge.reload.collaborator_ids
+    patch path, params: { profile_id: @recipient.id }, headers: { "Origin" => "http://www.example.com" }
+    assert_response :unprocessable_entity
+    assert_empty @challenge.reload.collaborator_ids
+    patch path, params: { authenticity_token: token, profile_id: @recipient.id }, headers: { "Origin" => "http://www.example.com" }
+    assert_redirected_to challenge_path(@challenge)
+    assert_equal [ @recipient.id ], @challenge.reload.collaborator_ids
+  ensure
+    ActionController::Base.allow_forgery_protection = previous
   end
 end
