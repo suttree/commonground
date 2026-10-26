@@ -845,3 +845,9 @@ input[type=file] { max-width: 100%; font-size: 1rem; }
 .priority-edit { margin-bottom: 24px; }
 .priority-edit summary { color: var(--green); text-decoration: underline; cursor: pointer; font-size: 1rem; }
 .priority-edit fieldset { margin-top: 16px; }
+.quiz-intro-lead { font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.5; }
+.quiz-intro-points { margin: 40px 0; border-top: 1px solid var(--line); }
+.quiz-intro-points dt { font-weight: 600; margin-top: 20px; }
+.quiz-intro-points dd { margin: 4px 0 20px; color: var(--muted); padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.quiz-intro .actions { align-items: center; }
+.quiz-intro-skip { display: inline; }
