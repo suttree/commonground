@@ -6,6 +6,9 @@ kill_timeout = '65s'
 [build]
   dockerfile = 'Dockerfile'
 
+[processes]
+  app = 'supervisord -c /rails/config/supervisord.conf'
+
 [env]
   PORT = '3000'
   RAILS_ENV = 'production'

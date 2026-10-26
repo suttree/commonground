@@ -34,7 +34,7 @@ For subsequent deployments:
 fly deploy --remote-only --ha=false
 ```
 
-The container prepares the database on startup, where it can access the mounted volume. Do not move SQLite migrations into a Fly release command, which runs without that volume. The entrypoint fixes the volume directory's ownership and drops to the unprivileged Rails user before running migrations and the server.
+The container prepares the database on startup, where it can access the mounted volume. Do not move SQLite migrations into a Fly release command, which runs without that volume. The entrypoint fixes the volume directory's ownership and runs migrations as the unprivileged Rails user. Supervisor runs as root to open Fly's log descriptors, then starts both Rails and Supercronic as the Rails user.
 
 ### Daily invitation reminders
 
