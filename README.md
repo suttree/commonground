@@ -1,6 +1,6 @@
 # Common Ground
 
-A small Rails pilot for introductions around what needs doing and why it matters. See [PLAN.md](PLAN.md) and [TECHNOLOGY.md](TECHNOLOGY.md).
+A small Rails pilot for introductions around what needs doing and why it matters. See [PLAN.md](PLAN.md), [TECHNOLOGY.md](TECHNOLOGY.md) and [DESIGN.md](DESIGN.md).
 
 ## Run locally
 
