@@ -1,7 +1,6 @@
 <% content_for :title, "Your suggested priorities" %>
 <div class="quiz-page quiz-results">
   <%= render "shared/journey_bar", step: 2 if onboarding_person? %>
-  <p class="eyebrow">Your suggested priorities</p>
   <%= render "shared/ambient_mark" %>
   <h1><%= @matches.any? ? "A starting point for your next project." : "Still exploring? That's fine." %></h1>
   <% if @matches.any? %>
@@ -9,8 +8,7 @@
     <div class="priority-suggestions">
     <% @matches.each do |id, reasons| %>
       <article class="quiz-answer">
-        <%= render "shared/section_icon", section: "priorities" %>
-        <p class="eyebrow">SDG target <%= id %></p>
+        <div class="quiz-answer-label"><%= render "shared/section_icon", section: "priorities" %><p class="eyebrow">SDG target <%= id %></p></div>
         <h3><%= SdgQuiz::LABELS.fetch(id) %></h3>
         <p class="small-note">Suggested because you chose:</p>
         <ul class="quiz-reasons"><% reasons.uniq.first(2).each do |reason| %><li><%= reason %></li><% end %></ul>
@@ -42,11 +40,10 @@
   </div>
 
   <section class="quiz-next-steps" aria-labelledby="next-steps-heading">
-    <h2 id="next-steps-heading">Prefer a conversation?</h2>
-    <p>Start a conversation with Nika.</p>
+    <h2 id="next-steps-heading">Prefer a conversation? <span>Start a conversation with Nika.</span></h2>
     <%= form_with url: new_profile_contact_path("nika-van-olst-3e4265d5c4bf"), method: :get do %>
       <fieldset class="wizard-options">
-        <legend>Choose one option</legend>
+        <legend class="sr-only">Choose one option</legend>
         <div class="next-step-tiles">
         <% ContactRequest::OPTIONS.each do |intent, option| %>
           <label class="wizard-option next-step-option">
