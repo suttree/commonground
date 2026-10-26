@@ -5,7 +5,7 @@ class SideProjectsTest < ActionDispatch::IntegrationTest
   def setup
     @profile = Submission.create!(kind: "person", profile_version: 2, name: "Alex", email: "side@example.test", purpose: "Community", experience: "Making things", consent: "1")
     post login_path, params: { email: @profile.email }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
   end
 

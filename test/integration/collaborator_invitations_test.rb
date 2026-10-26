@@ -13,7 +13,7 @@ class CollaboratorInvitationsTest < ActionDispatch::IntegrationTest
 
   def login(email)
     post login_path, params: { email: email }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
   end
 
@@ -31,7 +31,7 @@ class CollaboratorInvitationsTest < ActionDispatch::IntegrationTest
     assert_redirected_to challenge_collaborator_invitations_path(@challenge)
     assert invitation.sent_at
     assert_equal @recipient.email, invitation.email
-    assert_match "Community garden", ActionMailer::Base.deliveries.last.body.decoded
+    assert_match "Community garden", ActionMailer::Base.deliveries.last.subject
     token = invitation.token
     delete logout_path
     get challenge_path(@challenge)
@@ -214,7 +214,7 @@ class CollaboratorInvitationsTest < ActionDispatch::IntegrationTest
     assert_redirected_to challenge_path(@challenge, anchor: "collaborators")
     mail = ActionMailer::Base.deliveries.last
     assert_equal [ "new-member@example.test" ], mail.to
-    assert_includes mail.body.decoded, "You do not need an account yet."
+    assert_includes mail.body.decoded, "Sign up or log in with this email address"
     assert_includes mail.body.decoded, @challenge.collaborator_invitations.last.token
     post challenge_collaborator_invitations_path(@challenge), params: { return_to: "edit", collaborator_invitation: { email: "another@example.test" } }
     assert_redirected_to edit_challenge_path(@challenge, anchor: "email-invitations")
@@ -243,7 +243,7 @@ class CollaboratorInvitationsTest < ActionDispatch::IntegrationTest
     get join_path
     assert_select ".join-steps", text: /Accept your invitation/
     post login_path, params: { individual_signup: "1", name: "New collaborator", email: "newcomer@example.test" }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
     assert_redirected_to quiz_path
     post skip_onboarding_quiz_path

@@ -10,7 +10,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
   def login(email)
     post login_path, params: { email: email }
     assert_redirected_to verify_login_path
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     assert code
     post verify_login_path, params: { code: code }
     assert_redirected_to dashboard_path
@@ -88,7 +88,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
       post verify_login_path, params: { code: "wrong" }
       assert_response :unprocessable_entity
     end
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
     assert_response :unprocessable_entity
     get dashboard_path
@@ -142,7 +142,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
   test "expired sessions require login and codes cannot be replayed" do
     owned = profile
     login(owned.email)
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
     assert_response :unprocessable_entity
     travel 31.days do
@@ -312,7 +312,7 @@ class AccountsTest < ActionDispatch::IntegrationTest
     assert_redirected_to verify_login_path
     assert_equal [ "different@example.test" ], ActionMailer::Base.deliveries.last.to
     pending = Submission.order(:id).last
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
     assert_redirected_to dashboard_path
     assert_equal "different@example.test", pending.reload.email

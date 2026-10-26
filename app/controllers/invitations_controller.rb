@@ -13,6 +13,7 @@ class InvitationsController < ApplicationController
     check_profile_id
     if @invitation.accept!(current_account, profile: current_profile)
       session.delete(:collaborator_invitation_token)
+      notify { MemberMailer.invitation_accepted(@invitation, current_profile) }
       redirect_to challenge_path(@invitation.challenge), notice: "You are now listed as a collaborator.", status: :see_other
     else
       redirect_to invitation_path(token: params[:token]), alert: "This invitation cannot be accepted. Check the account and profile requirements below.", status: :see_other

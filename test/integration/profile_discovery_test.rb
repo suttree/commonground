@@ -43,7 +43,7 @@ class ProfileDiscoveryTest < ActionDispatch::IntegrationTest
   test "signed in navigation and manually selected priorities have useful next steps" do
     owner = profile
     post login_path, params: { email: owner.email }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
     get dashboard_path
     assert_select "a.wordmark[href='#{dashboard_path}']"

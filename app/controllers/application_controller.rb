@@ -3,6 +3,13 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # Notification emails are a courtesy: a failed send must not undo the action.
+  def notify
+    yield.deliver_now
+  rescue StandardError => error
+    Rails.logger.error("Notification delivery failed: #{error.class.name}")
+  end
+
   def current_account
     return unless session[:authenticated_at].to_i > 30.days.ago.to_i
     @current_account ||= Account.find_by(id: session[:account_id])

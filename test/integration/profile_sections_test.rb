@@ -7,7 +7,7 @@ class ProfileSectionsTest < ActionDispatch::IntegrationTest
       purpose: "Help communities", experience: "Community work", consent: "1", target_ids: [ "2.1" ],
       contact_action: "Follow me", contact_destination: "https://example.test")
     post login_path, params: { email: @account.email }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
   end
 
