@@ -1,5 +1,6 @@
 <% content_for :title, "Your suggested priorities" %>
 <div class="quiz-page quiz-results">
+  <%= render "shared/journey_bar", step: 2 if onboarding_person? %>
   <p class="eyebrow">Your suggested priorities</p>
   <%= render "shared/ambient_mark" %>
   <h1><%= @matches.any? ? "A starting point for your next project." : "Still exploring? That's fine." %></h1>

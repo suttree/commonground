@@ -1,5 +1,6 @@
 <% content_for :title, "Find your priorities" %>
 <div class="quiz-page narrow quiz-wizard">
+  <%= render "shared/journey_bar", step: 2 if onboarding_person? %>
   <p class="eyebrow">Question <%= @index + 1 %> of <%= SdgQuiz::QUESTIONS.size %></p>
   <progress value="<%= @index %>" max="<%= SdgQuiz::QUESTIONS.size %>" aria-label="Questions answered"><%= @index %> of <%= SdgQuiz::QUESTIONS.size %></progress>
   <% if @index.zero? %><p class="small-note">About 3 minutes. No SDG knowledge needed.</p><% end %>

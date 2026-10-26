@@ -1,0 +1,4 @@
+<div class="journey-bar">
+  <p class="journey-bar-label">Step <%= step %> of 4</p>
+  <div class="journey-bar-track" aria-hidden="true"><% 4.times do |index| %><span<%= ' class="done"'.html_safe if index < step %>></span><% end %></div>
+</div>
