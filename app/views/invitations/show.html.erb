@@ -1,0 +1,22 @@
+<% content_for :title, "Collaborator invitation" %>
+<div class="form-page narrow">
+  <h1>Collaborator invitation</h1>
+  <% if @invitation.available? %>
+    <p><%= @invitation.challenge.submission.display_name %> invited you to collaborate on <%= link_to @invitation.challenge.title, challenge_path(@invitation.challenge) %>.</p>
+    <p>Accepting will link your public profile from this work. It does not give you editing access.</p>
+    <% if !current_account %>
+      <p>Use the email address that received this invitation. If you are new, create an account and profile, then accept the invitation to join the project.</p>
+      <div class="actions"><%= link_to "Create an account", join_path, class: "button" %><%= link_to "Sign in to continue", login_path, class: "button secondary" %></div>
+    <% elsif current_account.email != @invitation.email %>
+      <p>This invitation was sent to a different email address. Sign out, reopen the invitation and sign in with that address.</p>
+      <%= button_to "Sign out", logout_path, method: :delete, class: "button secondary" %>
+    <% elsif !current_profile %>
+      <%= link_to "Create your profile", new_person_path, class: "button" %>
+    <% elsif !current_profile.published? %>
+      <p>Your profile must be public before it can be credited. Contact the Commonbound team if you want to publish it.</p>
+    <% else %>
+      <p>You will be credited as <%= current_profile.display_name %>. <%= link_to "Choose a different profile on your dashboard", dashboard_path %>, then return to this invitation.</p>
+      <%= button_to "Accept invitation", invitation_path(token: params[:token]), method: :patch, params: { profile_id: current_profile.id }, class: "button" %>
+    <% end %>
+  <% else %><p>This invitation has already been accepted, was cancelled, or is no longer available.</p><% end %>
+</div>

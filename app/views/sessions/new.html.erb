@@ -1,0 +1,11 @@
+<% content_for :title, "Log in" %>
+<div class="form-page narrow">
+  <h1>Log in</h1>
+  <p>Enter your email address. We'll send you a six-digit code.</p>
+  <% if @error %><p role="alert"><%= @error %></p><% end %>
+  <%= form_with url: login_path do |form| %>
+    <div class="field"><%= form.label :email, "Email address" %><%= form.email_field :email, value: params[:email], required: true, autocomplete: "email", maxlength: 254 %></div>
+    <%= form.submit "Send code", class: "button" %>
+  <% end %>
+  <p>New here? <%= link_to "Create a personal profile", new_person_path %> or <%= link_to "create a company profile", new_organisation_path %>.</p>
+</div>

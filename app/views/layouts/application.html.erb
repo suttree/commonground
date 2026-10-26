@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title><%= content_for?(:title) ? "#{yield(:title)} · Common Ground" : "Common Ground · Work worth doing, together" %></title>
+    <title><% if content_for?(:title) %><%= yield(:title) %> · Commonbound<% else %>Commonbound · Work worth doing, together<% end %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Find people through what needs doing and why it matters. Personal introductions for people and organisations.">
+    <meta name="description" content="Commonbound connects people and organisations around meaningful work and the problems they want to solve.">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "application" %>
+    <% unless %w[invitations collaborator_invitations].include?(controller_name) %><script src="https://scripts.withcabin.com/hello.js" async defer></script><% end %>
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
   </head>
-  <body>
+  <body<% if content_for?(:body_class) %> class="<%= yield(:body_class) %>"<% end %>>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header wrap">
-      <%= link_to root_path, class: "wordmark", aria: { label: "Common Ground home" } do %><span class="brand-mark" aria-hidden="true">cg.</span> Common Ground<% end %>
-      <span class="pilot-label">An early experiment in finding work</span>
+    <header class="site-header wrap<%= " home-header" if controller_name == "pages" && %w[home althomepage].include?(action_name) %>">
+      <%= link_to(current_account ? dashboard_path : root_path, class: "wordmark", aria: { label: current_account ? "Commonbound dashboard" : "Commonbound home" }) do %><%= image_tag "commonbound-logo.jpg", class: "brand-mark", alt: "", width: 44, height: 44 %> Commonbound<% end %>
+      <nav aria-label="Main navigation">
+        <%= main_navigation_link "About", about_path, section: :about %>
+        <% if current_account&.admin? %><%= main_navigation_link "Admin", admin_root_path, section: :admin %><% end %>
+        <%= link_to "Blog", "https://commonbound.pika.page/" %>
+        <% if current_account %><%= main_navigation_link "Dashboard", dashboard_path, section: :dashboard %><% end %>
+        <%= main_navigation_link "Discover", challenges_path, section: :discover %>
+        <%= main_navigation_link "Goals", sdgs_path, section: :goals %>
+        <% if current_account %><%= button_to "Log out", logout_path, method: :delete, class: "nav-logout" %><% else %><%= main_navigation_link "Log in", login_path, section: :login %><% end %>
+      </nav>
     </header>
     <main id="main" class="wrap" tabindex="-1">
       <% if notice %><p class="notice" role="status"><%= notice %></p><% end %>
+      <% if alert %><p class="error-summary" role="alert"><%= alert %></p><% end %>
       <%= yield %>
     </main>
     <footer class="site-footer wrap">

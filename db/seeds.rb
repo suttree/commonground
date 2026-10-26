@@ -7,3 +7,10 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# This versioned catalogue is also used by the expansion migration. Do not edit its wording.
+JSON.parse(File.read(Rails.root.join("db/data/provocations_v1.json"))).each do |attributes|
+  Provocation.find_or_create_by!(key: attributes.fetch("key")) do |provocation|
+    provocation.assign_attributes(attributes)
+  end
+end

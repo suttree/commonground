@@ -1,0 +1,6 @@
+    <fieldset>
+      <legend>Your profile button</legend>
+      <p class="hint">Choose what you want people to do after reading your profile. Both fields are optional. To remove the button, clear both fields.</p>
+      <div class="field"><%= form.label :contact_action, "What do you want people to do?" %><%= form.select :contact_action, Submission::CONTACT_ACTIONS, include_blank: "No button" %></div>
+      <div class="field"><%= form.label :contact_destination, "Email address or full web address" %><p class="hint">Use an email address for Email me, or an https:// link for Follow me or Connect on LinkedIn. This destination will be public. Your login email stays private unless you enter it here.</p><%= form.text_field :contact_destination, maxlength: 500 %></div>
+    </fieldset>

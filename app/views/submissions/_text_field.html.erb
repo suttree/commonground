@@ -1,0 +1,8 @@
+<% required = local_assigns.fetch(:required, false) %>
+<% hint = local_assigns[:hint] %>
+<div class="field">
+  <%= form.label attribute, "#{label}#{required ? '' : ' (optional)'}" %>
+  <% if hint %><p class="hint" id="<%= attribute %>-hint"><%= hint %></p><% end %>
+  <%= form.text_area attribute, required: required, rows: local_assigns.fetch(:rows, 3), maxlength: 5000, **field_options(@submission, attribute, hint: hint.present?) %>
+  <%= render "shared/field_error", record: @submission, attribute: attribute %>
+</div>

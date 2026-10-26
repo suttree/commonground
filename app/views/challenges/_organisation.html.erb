@@ -1,0 +1,3 @@
+<% if challenge.on_behalf_of_name.present? %>
+  <p class="project-organisation small-note">On behalf of <% if (company = challenge.public_organisation) %><%= link_to company.display_name, profile_path(company.public_slug) %><% else %><%= challenge.on_behalf_of_name %><% end %></p>
+<% end %>

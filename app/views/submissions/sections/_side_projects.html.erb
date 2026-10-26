@@ -1,0 +1,13 @@
+<p>Make space for hobbies, experiments and things you do for the joy of it. They can be unfinished and don't need to be looking for collaborators.</p>
+<p class="hint">Side projects and photos appear on your public profile when you save them. You can add up to 10 projects.</p>
+<%= link_to "Add a side project", new_side_project_path(profile_id: @submission.id), class: "button" %>
+<% @submission.side_projects.order(:created_at).each do |project| %>
+  <article class="side-project-summary">
+    <h3><%= project.name %></h3>
+    <p><%= truncate(project.description, length: 180) %></p>
+    <div class="actions">
+      <%= link_to "Edit #{project.name}", edit_side_project_path(project, profile_id: @submission.id) %>
+      <details><summary>Remove <%= project.name %></summary><p>This removes the side project and all its photos.</p><%= button_to "Confirm removal", side_project_path(project, profile_id: @submission.id), method: :delete, class: "button secondary" %></details>
+    </div>
+  </article>
+<% end %>

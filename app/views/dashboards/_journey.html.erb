@@ -1,0 +1,22 @@
+<% step = current_account.onboarding["quiz_done"] ? 3 : 2 %>
+<% steps = [
+  ["Find what matters to you", "Eight quick questions, about three minutes."],
+  ["Tell people about yourself", "A short introduction and a photo."]
+] %>
+<section class="journey" aria-labelledby="journey-title">
+  <p id="journey-title">Four steps to a profile people can find. You're on step <%= step %>.</p>
+  <ol class="journey-steps">
+    <li class="journey-done"><span class="journey-num" aria-hidden="true">✓</span><div><h3>Account created</h3></div></li>
+    <% steps.each_with_index do |(title, note), index| %>
+      <% number = index + 2 %>
+      <% if number < step %>
+        <li class="journey-done"><span class="journey-num" aria-hidden="true">✓</span><div><h3><%= title %></h3></div></li>
+      <% elsif number == step %>
+        <li class="journey-current" aria-current="step"><span class="journey-num">0<%= number %></span><div><h3><%= title %></h3><p><%= note %></p></div><%= link_to number == 2 ? "Start" : "Continue", new_person_path, class: "button" %></li>
+      <% else %>
+        <li class="journey-later"><span class="journey-num">0<%= number %></span><div><h3><%= title %></h3><p><%= note %></p></div></li>
+      <% end %>
+    <% end %>
+    <li class="journey-later"><span class="journey-num">04</span><div><h3><%= session[:collaborator_invitation_token].present? ? "Then: accept your project invitation" : "Then: meet the people, companies and projects working on the same problems" %></h3></div></li>
+  </ol>
+</section>

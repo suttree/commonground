@@ -4,6 +4,12 @@
 if [ "$(id -u)" = "0" ]; then
   mkdir -p /data
   chown rails:rails /data
+  # Fly's log descriptors belong to root. Supervisor opens them before it
+  # starts the web server and scheduler as the unprivileged rails user.
+  if [ "$1" = "supervisord" ]; then
+    gosu rails "$0" ./bin/rails db:prepare
+    exec "$@"
+  fi
   exec gosu rails "$0" "$@"
 fi
 
@@ -13,7 +19,7 @@ if [ -z "${LD_PRELOAD+x}" ]; then
 fi
 
 # SQLite migrations must run on the machine with the mounted volume.
-if [ "${@: -2:1}" = "./bin/rails" ] && [ "${@: -1:1}" = "server" ]; then
+if [ "$1" = "supervisord" ] || { [ "${@: -2:1}" = "./bin/rails" ] && [ "${@: -1:1}" = "server" ]; }; then
   ./bin/rails db:prepare
 fi
 

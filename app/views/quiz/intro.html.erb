@@ -1,0 +1,18 @@
+<% content_for :title, "Find your priorities" %>
+<div class="quiz-page narrow quiz-intro">
+  <%= render "shared/journey_bar", step: 2 if onboarding_person? %>
+  <h1>What matters to you?</h1>
+  <p class="quiz-intro-lead">Eight quick questions about the problems you'd like to help with. About three minutes, and no SDG knowledge needed.</p>
+  <dl class="quiz-intro-points">
+    <dt>What you get</dt>
+    <dd>Up to three priorities linked to the UN Sustainable Development Goals. You can keep or change them.</dd>
+    <dt>Why it helps</dt>
+    <dd>People, companies and projects working on the same problems can find you, and you them.</dd>
+    <dt>What stays private</dt>
+    <dd>Your answers. Only the priorities you confirm appear on your profile.</dd>
+  </dl>
+  <div class="actions">
+    <%= link_to "Start the questions", quiz_path(question: 0, profile_id: current_profile&.id), class: "button" %>
+    <% if onboarding_person? %><%= button_to "Skip for now", skip_onboarding_quiz_path, class: "quiz-restart", form: { class: "quiz-intro-skip" } %><% end %>
+  </div>
+</div>

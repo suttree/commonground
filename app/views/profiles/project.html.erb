@@ -1,0 +1,27 @@
+<% title = @project["title"].presence || "Project #{@position}" %>
+<% content_for :title, "#{title} · #{@profile.display_name}" %>
+<article class="narrow skill-detail project-detail">
+  <p class="back-link"><%= link_to "← Back to #{@profile.display_name}", profile_path(@profile.public_slug, anchor: "project-#{@position}") %></p>
+  <header class="page-intro compact project-opening">
+    <%= render "shared/ambient_mark" %>
+    <p class="eyebrow">Case study · <%= @profile.display_name %></p>
+    <h1><%= title %></h1>
+    <% if @project["role"].present? %><p><%= @project["role"] %></p><% end %>
+    <p class="small-note"><%= [@project["organisation"], @project["time"]].compact_blank.join(" · ") %></p>
+  </header>
+  <% if (image = @profile.portfolio_images.find_by(id: @project["image_id"])) %>
+    <figure class="portfolio-figure"><%= image_tag portfolio_image_path(image), alt: @project["caption"].presence || title, class: "portfolio-image" %><% if @project["caption"].present? %><figcaption><%= @project["caption"] %></figcaption><% end %></figure>
+  <% end %>
+  <div class="prose">
+    <% ProfileOptions::REPEATED_FIELDS.fetch("projects").each do |key, label| %>
+      <% if @project[key].present? %><section><h2><%= label %></h2><%= simple_format @project[key] %></section><% end %>
+    <% end %>
+  </div>
+  <% if @project["url"].to_s.match?(%r{\Ahttps?://}i) %><p><%= link_to "Visit the project website ↗", @project["url"], rel: "noopener noreferrer" %></p><% end %>
+  <% if @projects.many? %>
+    <nav class="skill-detail-navigation" aria-label="Other projects">
+      <% if @position > 1 %><%= link_to "← #{@projects[@position - 2]['title'].presence || 'Previous project'}", profile_project_path(@profile.public_slug, @position - 1) %><% end %>
+      <% if @position < @projects.size %><%= link_to "#{@projects[@position]['title'].presence || 'Next project'} →", profile_project_path(@profile.public_slug, @position + 1) %><% end %>
+    </nav>
+  <% end %>
+</article>

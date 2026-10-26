@@ -1,5 +1,6 @@
 <% content_for :title, "Applications" %>
 <section class="page-intro compact"><p class="eyebrow">Private · Team review</p><h1>Applications.</h1><p>Read the context. Start a conversation. Make an introduction when it feels useful.</p></section>
+<p><%= link_to "View conversation requests", admin_contact_requests_path %></p>
 <%= form_with url: admin_root_path, method: :get, local: true, class: "filters" do |form| %>
   <div><%= form.label :kind, "From" %><%= form.select :kind, [["Everyone", ""], ["People", "person"], ["Organisations", "organisation"]], selected: @kind %></div>
   <div><%= form.label :status, "Review status" %><%= form.select :status, [["All statuses", ""]] + Submission::STATUSES.map { |status| [status, status] }, selected: @status %></div>

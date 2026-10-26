@@ -1,0 +1,114 @@
+<% if @challenge.errors.any? %>
+  <div class="error-summary" role="alert"><h2>Please check your answers.</h2><ul><% @challenge.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul></div>
+<% end %>
+<% if @active_challenge && @active_challenge != @challenge && !@challenge.completed? %>
+  <p class="notice">Your current project is <%= link_to @active_challenge.title, edit_challenge_path(@active_challenge) %>. You can save this one as a draft. Before making it active, update the previous project to completed, paused or abandoned.</p>
+<% end %>
+<%= form_with model: @challenge do |form| %>
+  <fieldset>
+    <legend>What are you working on?</legend>
+    <div class="field"><%= form.label :title, "My current project" %><%= form.text_field :title, required: true, maxlength: 200 %></div>
+    <div class="field"><%= form.label :submission_id, "Project owner" %><%= form.collection_select :submission_id, @owned_profiles, :id, :display_name %><p class="hint">Choose your personal profile or a company you manage. The project will appear on that profile.</p></div>
+    <p class="hint">Need a company profile first? <%= link_to "Create a company profile", new_organisation_path %>.</p>
+    <div class="field" data-project-organisation>
+      <%= form.label :organisation_id, "On behalf of (optional)" %>
+      <p class="hint" id="organisation-hint">Which company or organisation is this work for? Choosing one does not give it editing access to your project.</p>
+      <%= form.select :organisation_id, @organisations.map { |company| [ [company.display_name, company.location.presence].compact.join(" · "), company.id ] }, { include_blank: "No company selected" }, aria: { describedby: "organisation-hint" } %>
+      <% if @challenge.organisation_id.present? && !@organisations.exists?(id: @challenge.organisation_id) %><p class="hint">The previously selected company is no longer public. Its saved name is shown below.</p><% end %>
+      <div data-new-company>
+        <%= form.label :organisation_name, "Company not listed? Add its name" %>
+        <%= form.text_field :organisation_name, value: @challenge.organisation_id.present? && @organisations.exists?(id: @challenge.organisation_id) ? "" : @challenge.organisation_name, maxlength: 200 %>
+        <p class="hint">Leave the list unselected to use this name. This adds it to your project without creating a company profile. Leave both blank for independent work.</p>
+      </div>
+    </div>
+    <div class="field"><%= form.label :industry, "Industry (optional)" %><%= form.select :industry, ProfileOptions::SECTORS, include_blank: "Choose an industry" %></div>
+    <div class="field"><%= form.label :location, "Location" %><p class="hint">A city, region or country, or Anywhere for work that can happen remotely.</p><%= form.text_field :location, maxlength: 200 %></div>
+    <div class="field"><%= form.label :description, "The problem or challenge" %><%= form.text_area :description, rows: 4, maxlength: 5000 %></div>
+    <div class="field"><%= form.label :objectives, "Mission & objectives" %><%= form.text_area :objectives, rows: 3, maxlength: 5000 %></div>
+    <div class="field"><%= form.label :target, "Target or KPI (optional)" %><p class="hint">What would progress look like? Add a measure or a deadline if you have one.</p><%= form.text_area :target, rows: 2, maxlength: 5000 %></div>
+  </fieldset>
+  <fieldset>
+    <legend>Ways to help (optional)</legend>
+    <%= hidden_field_tag "challenge[help_options][]", "" %>
+    <div class="challenge-choices"><% Challenge::HELP_OPTIONS.each_with_index do |option, index| %>
+      <div class="check-choice"><%= check_box_tag "challenge[help_options][]", option, Array(@challenge.help_options).include?(option), id: "challenge_help_#{index}" %><%= label_tag "challenge_help_#{index}", option %></div>
+    <% end %></div>
+    <p class="hint">When your project is active and public, its page includes a “Get involved” button. This opens a form where visitors can leave their name, email and a message. Requests go to the Commonbound team for review, rather than directly to you.</p>
+  </fieldset>
+  <details class="challenge-optional" <%= "open" if @challenge.target_ids.any? %>>
+    <summary>Connect this work to SDG priorities (optional)</summary>
+    <p class="hint">Choose up to three targets to help people discover this work.</p>
+    <%= hidden_field_tag "challenge[target_ids][]", "" %>
+    <% ProfileOptions::GOALS.each do |goal| %>
+      <details class="sdg-goal" <%= "open" if goal.fetch("targets").any? { |target| @challenge.target_ids.include?(target.fetch("id")) } %>>
+        <summary><%= goal.fetch("name") %></summary>
+        <% goal.fetch("targets").each do |target| %><div class="check-choice">
+          <%= check_box_tag "challenge[target_ids][]", target.fetch("id"), @challenge.target_ids.include?(target.fetch("id")), id: "challenge_target_#{target.fetch('id').tr('.', '_')}" %>
+          <%= label_tag "challenge_target_#{target.fetch('id').tr('.', '_')}", "#{target.fetch('id')}: #{SdgDirectory::LABELS.fetch(target.fetch('id'))}" %>
+        </div><% end %>
+      </details>
+    <% end %>
+  </details>
+  <fieldset id="collaborator-selection" data-collaborator-picker data-search-url="<%= collaborator_search_challenges_path %>">
+    <legend>Collaborators (optional)</legend>
+    <p class="hint">Search for someone to add, or invite someone new by email. Changes to selected collaborators take effect when you save. Only add people who are happy to be credited.</p>
+    <%= hidden_field_tag "challenge[collaborator_ids][]", "" %>
+    <div data-selected-collaborators>
+      <% @members.each do |member| %>
+        <div class="check-choice" data-collaborator-id="<%= member.id %>">
+          <%= check_box_tag "challenge[collaborator_ids][]", member.id, true, id: "challenge_collaborator_#{member.id}" %>
+          <%= label_tag "challenge_collaborator_#{member.id}" do %><%= member.display_name %><% unless member.published? %> · Profile no longer public<% end %><% end %>
+          <button type="button" data-remove-collaborator hidden>Remove</button>
+        </div>
+      <% end %>
+    </div>
+    <p class="hint" data-selected-hint><%= @members.any? ? "Untick a name to remove it. You can add up to 20 collaborators." : "No collaborators selected yet." %></p>
+    <div class="collaborator-search">
+      <%= label_tag :collaborator_query, "Search collaborators" %>
+      <%= search_field_tag :collaborator_query, @collaborator_query, maxlength: 100, placeholder: "Type at least two letters of a name", autocomplete: "off", aria: { controls: "collaborator-results" } %>
+      <button type="submit" name="search_collaborators" value="1" formnovalidate data-search-collaborators class="button secondary">Search</button>
+    </div>
+    <p class="hint" role="status" data-collaborator-status><% if @collaborator_query.length >= 2 %><%= @collaborator_matches.any? ? "Choose a match below. Showing up to 10 results." : "No matches. Try another name or invite someone by email." %><% end %></p>
+    <div id="collaborator-results">
+      <% @collaborator_matches.each do |member| %>
+        <div class="check-choice" data-collaborator-id="<%= member.id %>">
+          <%= check_box_tag "challenge[collaborator_ids][]", member.id, false, id: "challenge_collaborator_#{member.id}" %>
+          <%= label_tag "challenge_collaborator_#{member.id}", [member.display_name, member.location.presence].compact.join(" · ") %>
+        </div>
+      <% end %>
+    </div>
+    <% if @challenge.persisted? %>
+      <p><%= link_to "Add new: invite by email", "#email-invitations" %></p>
+    <% else %>
+      <details><summary>Add new: invite by email</summary><p class="hint">Save and publish this project first, then enter their email on the project page. They can sign up and accept your invitation to join.</p></details>
+    <% end %>
+  </fieldset>
+  <details class="challenge-optional" <%= "open" if @challenge.completed? || @challenge.results.present? || @challenge.errors.any? %>>
+    <summary>Record the project outcome</summary>
+    <p class="hint">When this work is complete, fill in these fields and choose Completed below. It will appear in your profile's completed projects.</p>
+    <div class="field"><%= form.label :project_role, "Your role" %><%= form.text_field :project_role, maxlength: 200 %></div>
+    <div class="field"><%= form.label :context, "Context" %><%= form.text_area :context, rows: 3, maxlength: 5000 %></div>
+    <div class="field"><%= form.label :approach, "How you approached it" %><%= form.text_area :approach, rows: 3, maxlength: 5000 %></div>
+    <div class="field"><%= form.label :results, "Results & what changed" %><%= form.text_area :results, rows: 4, maxlength: 5000 %></div>
+    <div class="field"><%= form.label :project_url, "Project website (optional)" %><%= form.url_field :project_url, maxlength: 500, placeholder: "https://" %></div>
+  </details>
+  <fieldset>
+    <legend>Save or publish</legend>
+    <div class="field"><%= form.label :status, "Status" %><%= form.select :status, [["Draft", "draft"], ["Active", "active"], ["Completed", "completed"], ["Paused", "paused"], ["Abandoned", "abandoned"]] %></div>
+    <p class="hint">Drafts are only visible to you. Active work appears in discovery. Completed work also appears in your portfolio. Paused and abandoned work stays in your profile's archive. Your profile must be public for any of this work to be public.</p>
+    <p class="hint">To publish, add a location, description and objectives. Completed projects also need your role, context, approach and results.</p>
+    <div class="actions"><%= form.submit "Save project", class: "button" %><%= link_to "Back to dashboard", dashboard_path %></div>
+  </fieldset>
+<% end %>
+<%= javascript_include_tag "project_organisation", defer: true %>
+<% if @challenge.persisted? %>
+  <section class="project-invites" id="email-invitations" aria-labelledby="email-invitations-title">
+    <h2 id="email-invitations-title">Invite someone by email</h2>
+    <p>They do not need a Commonbound account. The email will guide them through signing up and accepting the invitation.</p>
+    <p class="hint">Save any project changes above before sending an invitation.</p>
+    <%= render "collaborator_invitations/email_form", invitation: @challenge.collaborator_invitations.new, return_to: "edit" %>
+    <p><%= link_to "View invitations", challenge_collaborator_invitations_path(@challenge) %></p>
+  </section>
+<% end %>
+
+<%= javascript_include_tag "collaborator_picker", defer: true %>

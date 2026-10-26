@@ -1,0 +1,46 @@
+<% content_for :title, @company ? "Company directory" : "People directory" %>
+<div class="form-page">
+  <%= render "shared/discovery_nav", current_section: @company ? "companies" : "people" %>
+  <%= render "shared/discovery_intro", title: @company ? "Company directory" : "People directory", description: @company ? "Find companies by name, location, sector or shared goals." : "Find people by name, skill, location, sector or shared goals." %>
+  <% if @use_priorities %><p class="notice"><%= @priority_goals.any? ? "Showing profiles connected to your selected goals." : "No priorities selected yet. Explore all profiles." %> <%= link_to "Show all", @company ? companies_path : people_path %></p><% end %>
+  <% if current_account %>
+  <%= form_with url: @company ? companies_path : people_path, method: :get, class: "directory-filters" do |form| %>
+    <%= hidden_field_tag :priorities, "1" if @use_priorities %>
+    <div class="field"><%= form.label :q, "Name" %><%= form.search_field :q, value: @query %></div>
+    <% unless @company %><div class="field"><%= form.label :skill, "Skill" %><%= form.search_field :skill, value: @skill, placeholder: "e.g. Research" %></div><% end %>
+    <div class="field"><%= form.label :location, "Location" %><%= form.search_field :location, value: @location %></div>
+    <div class="field"><%= form.label :sector, "Sector" %><%= form.select :sector, options_for_select(ProfileOptions::SECTORS, @sector), include_blank: "All sectors" %></div>
+    <div class="field"><%= form.label :goal, "SDG goal" %><%= form.select :goal, options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("id")] }, @goal), include_blank: "All goals" %></div>
+    <% if @target.present? %>
+      <div class="field"><%= form.label :target, "SDG target" %><%= form.select :target, options_for_select(SdgDirectory::LABELS.map { |id, label| ["#{id}: #{label}", id] }, @target), include_blank: "All targets" %></div>
+    <% end %>
+    <%= form.submit "Search", class: "button" %>
+    <%= link_to "Clear filters", @company ? companies_path : people_path %>
+  <% end %>
+  <p role="status"><%= pluralize(@count, "profile") %> found.</p>
+  <div class="directory-grid">
+    <% @profiles.each do |profile| %>
+      <article class="directory-card">
+        <h2><%= link_to profile.display_name, profile_path(profile.public_slug) %></h2>
+        <p class="directory-location"><%= profile.location.presence || "Location not added" %></p>
+        <p><%= truncate(profile.sector_reason.presence || profile.purpose, length: 220) %></p>
+        <% if @sector.present? %><p class="small-note"><%= @sector %></p><% end %>
+        <% if @skill.present? %><p class="small-note"><%= @skill %></p><% end %>
+        <% goal_ids = Array(profile.target_ids).map { |id| id.split(".").first }.uniq %>
+        <ul>
+          <% ProfileOptions::GOALS.select { |goal| goal_ids.include?(goal.fetch("id")) }.each do |goal| %>
+            <li><%= link_to "SDG #{goal.fetch('id')}: #{goal.fetch('name')}", sdg_goal_path(goal.fetch("id")) %></li>
+          <% end %>
+        </ul>
+      </article>
+    <% end %>
+  </div>
+  <% if @profiles.empty? %><p>No profiles match. Try another name or remove a filter.</p><% end %>
+  <nav aria-label="Directory pages">
+    <% if @page > 1 %><%= link_to "Previous", url_for(priorities: @use_priorities ? "1" : nil, q: @query, skill: @skill, location: @location, sector: @sector, goal: @goal, target: @target, page: @page - 1) %><% end %>
+    <% if @page * 24 < @count %><%= link_to "Next", url_for(priorities: @use_priorities ? "1" : nil, q: @query, skill: @skill, location: @location, sector: @sector, goal: @goal, target: @target, page: @page + 1) %><% end %>
+  </nav>
+  <% else %>
+    <%= render "shared/discovery_signup" %>
+  <% end %>
+</div>

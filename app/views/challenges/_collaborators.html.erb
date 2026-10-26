@@ -1,0 +1,27 @@
+<% owner = owns_profile?(@challenge.submission) %>
+<% collaborators = owner ? Submission.where(id: @challenge.collaborator_ids).order(:name) : @challenge.collaborators %>
+<% if owner || collaborators.any? %>
+  <section class="project-collaborators" id="collaborators" aria-labelledby="collaborators-title">
+    <h2 id="collaborators-title">Collaborators</h2>
+    <p class="small-note">Credited by <%= @challenge.submission.display_name %>.</p>
+    <% if collaborators.any? %>
+      <ul class="collaborator-list">
+        <% collaborators.each do |person| %>
+          <li>
+            <span><% if person.published? %><%= link_to person.display_name, profile_path(person.public_slug) %><% else %><%= person.display_name %> <span class="small-note">· Profile no longer public</span><% end %></span>
+            <% if owner %><%= button_to "Remove", challenge_collaborator_path(@challenge, person.id), method: :delete, class: "button secondary", aria: { label: "Remove #{person.display_name} from this project" } %><% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% elsif owner %><p>No collaborators yet.</p><% end %>
+    <% if owner %>
+      <p><%= link_to "Choose existing members", edit_challenge_path(@challenge, anchor: "collaborator-selection") %></p>
+      <div class="project-invites">
+        <h3>Invite someone by email</h3>
+        <p>They do not need an account yet. They can sign up, create a profile and accept the invitation to join this project.</p>
+        <%= render "collaborator_invitations/email_form", invitation: @challenge.collaborator_invitations.new, return_to: "project" %>
+        <p><%= link_to "View invitations", challenge_collaborator_invitations_path(@challenge) %></p>
+      </div>
+    <% end %>
+  </section>
+<% end %>

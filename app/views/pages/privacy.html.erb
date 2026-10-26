@@ -1,14 +1,31 @@
 <% content_for :title, "Privacy & your details" %>
 <section class="page-intro narrow prose">
   <p class="eyebrow">The pilot</p><h1>Privacy &<br><em>your details.</em></h1>
-  <p>Common Ground is an early pilot run by Monika, Sarper and Duncan. We collect the details you submit so we can review your interest, ask follow-up questions and suggest relevant introductions.</p>
-  <h2>Who can see what you share?</h2>
-  <p>Submissions are private. The team reviews them in a protected admin area. There are no public profiles. We ask both sides before sharing details for an introduction.</p>
-  <h2>What do we store?</h2>
-  <p>Your form answers, contact details, submission date and permission to contact you. We may add private notes about conversations and introductions. Please leave out confidential information and other people's personal details.</p>
-  <p>The app and its database are hosted on Fly.io. We use an essential session cookie for form security. We don't use advertising cookies or analytics trackers.</p>
-  <h2>Changes or removal</h2>
-  <p>To update or remove your submission, contact the team member who invited you, or reply to a message from us. Please use the email address you submitted so we can verify the request.</p>
-  <p>We keep submissions while we run this pilot and review whether they are still needed when it ends. We won't publish your answers or add you to a marketing mailing list.</p>
-  <p><%= link_to "Back to Common Ground", root_path %></p>
+  <p>Commonbound is an early pilot run by Monika, Sarper and Duncan. You can create a personal or company profile, explore the Sustainable Development Goals and find people and organisations with related interests.</p>
+
+  <h2>Your public profile</h2>
+  <p>Profiles are public as soon as you create them and appear in the people or company directory. Anyone can view them without an account. Your profile can include your name or company name, profile photo, the communities you want to serve, location, experience, interests, skills, projects, portfolio images, website and Sustainable Development Goal priorities.</p>
+  <p>Your login email, a company's contact person, pay expectations and the team's review notes are not shown on public profiles. Please leave confidential information and other people's personal details out of your profile answers and images.</p>
+
+  <h2>Your quiz answers</h2>
+  <p>If you take the quiz while logged in with a profile, we save your completed answers and suggested priorities to that profile. Your public page shows the priorities, rather than your individual quiz answers. You can retake the quiz or edit your priorities from your profile.</p>
+  <p>If you take the quiz without a profile, your answers stay in your browser session and are not saved to an account.</p>
+
+  <h2>Conversation requests</h2>
+  <p>At the end of the quiz, you can pitch a problem, suggest a coffee chat or request services from Nika. If you send a request, we store the option you chose, your message, name, email and the date you gave permission to be contacted. You can also choose to include the quiz suggestions shown on the request form.</p>
+  <p>Requests are not public. The Commonbound team reviews them and helps arrange a reply. The form asks for permission for the team and the person named on the request to read it and contact you. Sending a request does not automatically email that person or book a meeting.</p>
+
+  <h2>Your account and uploaded images</h2>
+  <p>We store your account email, profile answers, uploaded images and the dates you submitted or updated them. The team can review these details in a protected admin area and add private notes about conversations and introductions.</p>
+  <p>Images become public when you save them to your profile. Images uploaded to an unfinished form are private to that browser's draft. Draft links expire after 24 hours. We remove unsaved images more than 24 hours old when another image is uploaded or the team runs cleanup.</p>
+  <p>Login codes are sent by email, expire after ten minutes and can be used once. We store a protected version of each code, its request time, IP address and verification attempts to prevent repeated requests and guessing. Login sessions last up to 30 days, or until you log out.</p>
+
+  <h2>Hosting and cookies</h2>
+  <p>The app and its database are hosted on Fly.io. Login emails are sent through Amazon Simple Email Service. We use an essential session cookie for login, form security and quiz progress. We do not use advertising cookies.</p>
+  <p>We use <%= link_to "Cabin", "https://withcabin.com/" %> for website analytics. It measures page visits, referral sources, page load times and how visitors use pages, including time spent and scrolling. The script sends the page URL and browser information such as screen width to Cabin. Cabin says its analytics do not use cookies or store IP addresses or individual visitor profiles.</p>
+
+  <h2>Editing or removing your details</h2>
+  <p>Log in to edit your profile. Saved changes appear on your public page. To take your profile out of the directory, delete your account or remove a conversation request, contact the team member who invited you or reply to a message from us. Use your account email, or the email on the request, so we can verify it is yours.</p>
+  <p>We keep profiles and requests while we run the pilot and review whether they are still needed when it ends. We do not add you to a marketing mailing list.</p>
+  <p><%= link_to "Back to Commonbound", root_path %></p>
 </section>
