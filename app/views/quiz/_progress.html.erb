@@ -1,0 +1,7 @@
+<% content_for :title, "Find your priorities" %>
+<nav class="quiz-progress" aria-label="Quiz progress">
+  <% ["Topics", "Priorities", "Your answers"].each_with_index do |label, index| %>
+    <span <%= 'aria-current=step' if step == index + 1 %>><%= index + 1 %>. <%= label %></span>
+  <% end %>
+</nav>
+<% if @error %><p class="error-summary" role="alert"><%= @error %></p><% end %>

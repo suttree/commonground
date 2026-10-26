@@ -1,0 +1,25 @@
+<% projects = profile.side_projects.includes(:photos).order(:created_at) %>
+<% if projects.any? %>
+  <section class="profile-section" id="side-projects" aria-labelledby="side-projects-title">
+    <h2 id="side-projects-title">Side projects</h2>
+    <div class="side-project-grid">
+      <% projects.each do |project| %>
+        <article class="side-project-card">
+          <% if (cover = project.cover_photo) %><%= image_tag portfolio_image_path(cover), alt: "#{project.name} cover photo", class: "side-project-cover", loading: "lazy" %><% end %>
+          <div class="side-project-copy">
+            <h3><%= project.name %></h3>
+            <%= simple_format project.description if project.description.present? %>
+            <% if project.purpose.present? || project.joy.present? || project.photos.size > 1 %>
+              <details><summary>More about <%= project.name %></summary>
+                <% if project.purpose.present? %><h4>Its purpose</h4><%= simple_format project.purpose %><% end %>
+                <% if project.joy.present? %><h4>Why it gives or spreads joy</h4><%= simple_format project.joy %><% end %>
+                <% if project.photos.size > 1 %><div class="side-project-gallery"><% project.photos.each_with_index do |photo, index| %><%= link_to portfolio_image_path(photo), aria: { label: "Open photo #{index + 1} of #{project.name}" } do %><%= image_tag portfolio_image_path(photo), alt: "#{project.name}, photo #{index + 1}", loading: "lazy" %><% end %><% end %></div><% end %>
+              </details>
+            <% end %>
+            <% if project.url.present? %><p><%= link_to "Visit project website", project.url, rel: "noopener noreferrer" %></p><% end %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  </section>
+<% end %>

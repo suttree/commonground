@@ -1,0 +1,108 @@
+<% content_for :title, @profile.display_name %>
+<article class="public-profile">
+  <nav class="profile-toolbar" aria-label="Profile navigation">
+    <%= link_to @profile.organisation? ? "← All companies" : "← All people", @profile.organisation? ? companies_path : people_path, class: "button ghost small back" %>
+    <% if current_profile == @profile %>
+      <%= link_to "Edit profile", edit_account_profile_path, class: "button secondary small" %>
+    <% end %>
+  </nav>
+  <% if current_profile == @profile %>
+    <% unless @profile.published? %><p class="small-note">Only you can see this preview. Contact the team to restore your public profile.</p><% end %>
+  <% end %>
+  <header class="profile-opening">
+    <div>
+      <p class="eyebrow profile-kind"><%= render "shared/section_icon", section: @profile.organisation? ? "companies" : "people" %><%= @profile.organisation? ? "Organisation" : "Personal profile" %></p>
+      <h1><%= @profile.display_name %></h1>
+      <% if @profile.location.present? %><p class="profile-location"><%= @profile.location %><% if @profile.radius_km.present? %> · Within <%= @profile.radius_km %> km<% end %></p><% end %>
+      <% if @profile.website.to_s.match?(%r{\Ahttps?://}i) %><%= link_to "Website & work ↗", @profile.website, target: "_blank", rel: "noopener noreferrer", class: "profile-website" %><% end %>
+    </div>
+    <div class="profile-purpose">
+      <div class="profile-purpose-images">
+        <% if !@profile.organisation? && (photo = @profile.profile_photo) %>
+          <%= render "shared/profile_avatar", profile: @profile, photo: photo %>
+        <% else %>
+          <%= render "shared/ambient_mark" %>
+        <% end %>
+      </div>
+      <h2><%= @profile.organisation? ? "Who we serve" : "Who I want to serve" %></h2>
+      <%= simple_format @profile.purpose %>
+    </div>
+  </header>
+  <% if @current_challenge %><section class="profile-section current-challenge"><h2><%= @profile.organisation? ? "Our current project" : "My current project" %></h2><%= render "challenges/card", challenge: @current_challenge %></section><% end %>
+  <div class="profile-body">
+    <div class="profile-main">
+      <% fields = @profile.organisation? ? { mission: "Our purpose", offering: "What we offer", impact_metrics: "Our impact", proud_of: "What we're proud of" } : { experience: "The thread through my work", education_topics: "What shaped my thinking" } %>
+      <% fields.each do |field, heading| %>
+        <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><%= simple_format @profile.public_send(field) %></section><% end %>
+      <% end %>
+      <% if !@profile.organisation? && @profile.satisfaction_notes.present? %>
+        <section class="profile-section"><h2>I feel most <%= @profile.satisfaction_feeling.to_s.downcase %> when...</h2><%= simple_format @profile.satisfaction_notes %></section>
+      <% end %>
+      <% unless @profile.organisation? %>
+        <% if @profile.skills_summary.present? %><section class="profile-section"><h2>Skills & interests</h2><%= simple_format @profile.skills_summary %></section><% end %>
+        <%= render "skills", profile: @profile %>
+      <% else %>
+        <% if @profile.profile_entries("products").any? %>
+          <section class="profile-section"><h2>Products & services</h2>
+            <% @profile.profile_entries("products").each do |entry| %>
+              <div class="profile-evidence">
+                <h3><%= entry["name"] %></h3>
+                <%= simple_format entry["special"] %>
+                <h4>The impact we want to have</h4>
+                <%= simple_format entry["impact"] %>
+              </div>
+            <% end %>
+          </section>
+        <% end %>
+      <% end %>
+    </div>
+    <% if @profile.organisation? %>
+      <aside class="profile-interests" aria-label="Challenges and collaboration">
+        <% { challenge: @profile.challenge_kind == "Goals" ? "Our current goals" : "Our current challenges", help_needed: "Who can help" }.each do |field, heading| %>
+          <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><%= simple_format @profile.public_send(field) %></section><% end %>
+        <% end %>
+      </aside>
+    <% else %>
+      <aside class="profile-interests" aria-label="Sector interests">
+        <% { sectors_future: "Where I'd like to work", sectors_past: "Where I've worked" }.each do |field, heading| %>
+          <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><ul class="profile-tags"><% @profile.public_send(field).each do |sector| %><li><%= link_to sector, people_path(sector: sector) %></li><% end %></ul></section><% end %>
+        <% end %>
+        <% if @profile.sector_reason.present? %><section class="profile-section"><h2>Why these sectors</h2><%= simple_format @profile.sector_reason %></section><% end %>
+      </aside>
+    <% end %>
+  </div>
+  <% if (example = SdgQuiz::EXAMPLES[@profile.public_slug]) && !@profile.organisation? && @profile.profile["quiz_completed_at"].blank? %>
+    <section class="profile-targets profile-section" id="quiz-answers">
+      <p class="eyebrow">Example quiz answers</p>
+      <h2>Problems to work on next</h2>
+      <p class="small-note">Illustrative answers based on Nika's portfolio, added to show how the quiz could look on a profile. Nika hasn't completed the quiz.</p>
+      <%= render "quiz/answers", target_ids: example.keys, notes: example %>
+      <p class="quiz-footnote"><%= link_to "Find your own priorities", quiz_path %></p>
+    </section>
+  <% end %>
+  <% if @profile.exploring == "1" %>
+    <section class="profile-targets profile-section"><h2>My current priorities</h2><p>I'm still exploring which problems I want to work on next.</p></section>
+  <% elsif @profile.target_ids.present? && @profile.target_ids.size <= 3 %>
+    <section class="profile-targets profile-section">
+      <p class="eyebrow">Sustainable development goals</p>
+      <h2>Problems I want to work on next</h2>
+      <p class="small-note">Selected UN targets. Open a goal to read the targets in full.</p>
+      <div class="profile-goals">
+        <% ProfileOptions::GOALS.each do |goal| %>
+          <% targets = goal.fetch("targets").select { |target| @profile.target_ids.include?(target.fetch("id")) } %>
+          <% if targets.any? %>
+            <details class="sdg-goal"><summary><%= goal.fetch("name") %> <span class="small-note">· <%= pluralize(targets.size, "target") %></span></summary>
+              <ul><% targets.each do |target| %><li><strong><%= target.fetch("id") %></strong> <%= target.fetch("text") %></li><% end %></ul>
+            </details>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+  <%= render "projects", profile: @profile %>
+  <%= render "side_projects", profile: @profile unless @profile.organisation? %>
+  <% if @archived_challenges.any? %><details class="challenge-optional"><summary>Previous projects</summary><ul class="work-archive"><% @archived_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span></li><% end %></ul></details><% end %>
+  <% if @profile.contact_link.present? %>
+    <section class="profile-contact profile-section" aria-label="Contact <%= @profile.display_name %>"><%= link_to @profile.contact_action, @profile.contact_link, class: "button", rel: "noopener noreferrer" %></section>
+  <% end %>
+</article>

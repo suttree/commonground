@@ -1,0 +1,14 @@
+  <details <%= "open" if @submission.satisfaction_feeling.present? || @submission.satisfaction_notes.present? %>>
+    <summary>When I feel most alive, satisfied or at peace</summary>
+    <fieldset class="choice-group" id="submission_satisfaction_feeling" tabindex="-1">
+      <legend>I feel most…</legend>
+      <div class="feeling-choices">
+        <% ProfileOptions::FEELINGS.each do |feeling| %>
+          <div class="feeling-choice"><%= form.radio_button :satisfaction_feeling, feeling %><%= form.label :satisfaction_feeling, feeling, value: feeling %></div>
+        <% end %>
+        <div class="feeling-choice"><%= form.radio_button :satisfaction_feeling, "" %><%= form.label :satisfaction_feeling, "Skip this section", value: "" %></div>
+      </div>
+      <%= render "shared/field_error", record: @submission, attribute: :satisfaction_feeling %>
+    </fieldset>
+    <%= render "submissions/text_field", form: form, attribute: :satisfaction_notes, label: "When…", hint: "Write a list of moments or situations. Use separate paragraphs if you'd like to explain them. To skip this section after starting, clear this answer and choose Skip this section.", rows: 6 %>
+  </details>

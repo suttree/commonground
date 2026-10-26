@@ -1,0 +1,45 @@
+<% entries = @submission.profile_entries(field) %>
+<% entries = [{}] if entries.empty? %>
+<fieldset class="repeat-group" id="submission_<%= field %>" tabindex="-1">
+  <legend><%= title %> (optional)</legend>
+  <p class="hint">Leave an entry empty to skip it. If you start one, complete the fields not marked optional. You can add up to 10 entries.</p>
+  <%= render "shared/field_error", record: @submission, attribute: field %>
+  <% entries.each_with_index do |entry, index| %>
+    <fieldset class="repeat-entry">
+      <legend><%= singular %> <%= index + 1 %></legend>
+      <% fields = field == "projects" ? ProfileOptions::PROJECT_DETAILS.merge(ProfileOptions::REPEATED_FIELDS.fetch(field)) : ProfileOptions::REPEATED_FIELDS.fetch(field) %>
+      <% fields.each do |key, label| %>
+        <% input_id = "submission_#{field}_#{index}_#{key}" %>
+        <div class="field">
+          <%= label_tag input_id, label %>
+          <% if key == "url" %>
+            <%= url_field_tag "submission[#{field}][][#{key}]", entry[key], id: input_id, maxlength: 5000, placeholder: "https://" %>
+          <% else %>
+          <%= text_area_tag "submission[#{field}][][#{key}]", entry[key], id: input_id, rows: 2, maxlength: 5000, aria: { describedby: @submission.errors[field].any? ? "#{field}-error" : nil } %>
+          <% end %>
+        </div>
+      <% end %>
+      <% if field == "projects" %>
+        <% if entry["remove_image"] == "1" %><%= hidden_field_tag "submission[projects][][remove_image]", "1" %><% end %>
+        <div class="field">
+          <%= label_tag "project_image_#{index}", "Project image (optional)" %>
+          <p class="hint">One JPEG, PNG or WebP image per project, up to 2 MB. Only upload images you have permission to share. Add a description above for people who cannot see the image.</p>
+          <% if entry["image_token"].present? %>
+            <%= hidden_field_tag "submission[projects][][image_token]", entry["image_token"] %>
+            <%= image_tag draft_portfolio_image_path(token: entry["image_token"]), alt: entry["caption"].presence || "Project image preview", class: "portfolio-image" %>
+            <p class="hint">Image saved with this draft for 24 hours. Choose a file to replace it.</p>
+            <div class="check-choice"><%= check_box_tag "submission[projects][][remove_image]", "1", false, id: "remove_image_#{index}" %><%= label_tag "remove_image_#{index}", "Remove image" %></div>
+          <% elsif entry["image_id"].present? && @submission.persisted? %>
+            <p class="hint">Your existing project image is saved. Choose a file to replace it.</p>
+            <div class="check-choice"><%= check_box_tag "submission[projects][][remove_image]", "1", false, id: "remove_image_#{index}" %><%= label_tag "remove_image_#{index}", "Remove image" %></div>
+          <% end %>
+          <%= file_field_tag "project_images[#{index}]", id: "project_image_#{index}", accept: "image/jpeg,image/png,image/webp" %>
+        </div>
+      <% end %>
+    </fieldset>
+  <% end %>
+  <% if entries.size < 10 %>
+    <%= form.button "Add another #{singular.downcase}", name: "add_section", value: field, formnovalidate: true, formaction: "#{@submission.persisted? ? account_profile_path : (@submission.organisation? ? organisations_path : people_path)}#submission_#{field}", class: "button secondary" %>
+    <p class="hint add-hint">Your answers stay in the form. This does not submit your profile.</p>
+  <% end %>
+</fieldset>

@@ -1,0 +1,25 @@
+<% content_for :title, "Join Commonbound" %>
+<div class="form-page join-layout">
+  <aside class="join-story" aria-label="Your first steps">
+    <p class="eyebrow">Find your common ground</p>
+    <h1>Different paths.<br>Shared purpose.</h1>
+    <%= render "shared/ambient_mark" %>
+    <ol class="join-steps"><li><span>01</span> Create your account</li><li><span>02</span> Find what matters to you</li><li><span>03</span> Tell people about yourself</li><li><span>04</span> <%= session[:collaborator_invitation_token].present? ? "Accept your invitation" : "Discover companies" %></li></ol>
+  </aside>
+  <section class="join-form" aria-labelledby="join-title">
+    <p class="eyebrow">Step 1 of 4</p>
+    <h2 id="join-title">Start with you.</h2>
+    <p>A name and an email. We'll take it from there.</p>
+    <% if @error %><p class="error-summary" role="alert"><%= @error %></p><% end %>
+    <%= form_with url: login_path do |form| %>
+      <%= hidden_field_tag :individual_signup, "1" %>
+      <div class="field"><%= form.label :name, "Your name" %><%= form.text_field :name, value: params[:name], required: true, maxlength: 200, autocomplete: "name" %></div>
+      <div class="field"><%= form.label :email, "Email address" %><%= form.email_field :email, value: params[:email], required: true, maxlength: 254, autocomplete: "email" %></div>
+      <p class="hint">We'll send a six-digit code. Your email stays private.</p>
+      <%= form.submit "Send verification code", class: "button" %>
+    <% end %>
+    <p class="small-note">Already a member? <%= link_to "Log in", login_path %>.</p>
+    <p class="small-note">Joining as a company? <%= link_to "Create a company profile", new_organisation_path %>.</p>
+    <p class="small-note"><%= link_to "How we use your details", privacy_path %></p>
+  </section>
+</div>

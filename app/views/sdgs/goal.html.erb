@@ -1,0 +1,22 @@
+<% content_for :title, "Goal #{@goal.fetch('id')}: #{@goal.fetch('name')}" %>
+<div class="sdg-directory">
+  <nav class="back-link" aria-label="Breadcrumb"><%= link_to "SDG directory", sdgs_path %> / Goal <%= @goal.fetch("id") %></nav>
+  <header class="sdg-intro sdg-goal-opening sdg-color-<%= @goal.fetch('id') %>">
+    <p class="eyebrow">Goal <%= @goal.fetch("id") %> · <%= @goal.fetch("targets").size %> targets</p>
+    <h1><%= @goal.fetch("name") %></h1>
+    <p class="intro"><%= @guide.fetch("summary") %></p>
+    <p><%= link_to "Find people who selected this goal", people_path(goal: @goal.fetch("id")), class: "button" %></p>
+  </header>
+  <h2 class="sdg-section-title">The targets</h2>
+  <p class="small-note">Short titles are a reading guide. Each target page includes the full source wording and a direct link you can share.</p>
+  <div class="sdg-target-grid">
+    <% @goal.fetch("targets").each do |target| %>
+      <article class="sdg-target-card" id="target-<%= target.fetch('id') %>">
+        <p class="eyebrow">Target <%= target.fetch("id") %></p>
+        <h3><%= link_to SdgDirectory::LABELS.fetch(target.fetch("id")), sdg_target_path(target.fetch("id")) %></h3>
+        <p><%= truncate(target.fetch("text"), length: 230, separator: " ") %></p>
+      </article>
+    <% end %>
+  </div>
+  <%= render "source" %>
+</div>

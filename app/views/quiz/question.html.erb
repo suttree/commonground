@@ -1,0 +1,29 @@
+<% content_for :title, "Find your priorities" %>
+<div class="quiz-page narrow quiz-wizard">
+  <%= render "shared/journey_bar", step: 2 if onboarding_person? %>
+  <p class="eyebrow">Question <%= @index + 1 %> of <%= SdgQuiz::QUESTIONS.size %></p>
+  <progress value="<%= @index %>" max="<%= SdgQuiz::QUESTIONS.size %>" aria-label="Questions answered"><%= @index %> of <%= SdgQuiz::QUESTIONS.size %></progress>
+  <% if @error %><p class="error-summary" role="alert"><%= @error %></p><% end %>
+  <% question = SdgQuiz::QUESTIONS.fetch(@index) %>
+  <h1 id="quiz-question"><%= question.fetch("question") %></h1>
+  <%= form_with url: quiz_path do %>
+    <%= hidden_field_tag :question, @index %>
+    <%= hidden_field_tag :profile_id, current_profile.id if current_profile %>
+    <fieldset class="wizard-options" aria-labelledby="quiz-question">
+      <legend class="small-note">Pick the closest fit.</legend>
+      <% question.fetch("options").each_with_index do |option, index| %>
+        <label class="wizard-option">
+          <%= radio_button_tag :answer, index, @answers[@index.to_s] == index.to_s %>
+          <span><%= option.fetch("label") %></span>
+        </label>
+      <% end %>
+      <label class="wizard-skip"><%= radio_button_tag :answer, "skip", @answers[@index.to_s] == "skip" %> <span>Nothing stands out. Skip this one.</span></label>
+    </fieldset>
+    <div class="actions">
+      <button class="button"><%= @index == SdgQuiz::QUESTIONS.size - 1 ? "See my suggestions" : "Next question" %></button>
+      <% if @index.positive? %><%= link_to "Back", quiz_path(question: @index - 1, profile_id: current_profile&.id) %><% end %>
+    </div>
+  <% end %>
+  <p class="small-note">Your answers stay private. You'll review your suggested priorities before saving them to your profile.</p>
+  <% if onboarding_person? %><%= button_to "Skip quiz for now", skip_onboarding_quiz_path, class: "button secondary" %><% end %>
+</div>

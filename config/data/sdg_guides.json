@@ -1,0 +1,19 @@
+{
+  "1": {"summary":"Income, essential services and protection from the shocks that push people into poverty.","color":"#e5243b"},
+  "2": {"summary":"Access to nutritious food, resilient farming and the livelihoods of people who produce food.","color":"#dda63a"},
+  "3": {"summary":"Healthcare, prevention, mental health and the conditions that help people live healthy lives.","color":"#4c9f38"},
+  "4": {"summary":"Learning throughout life, from early childhood and school to skills for work and sustainable living.","color":"#c5192d"},
+  "5": {"summary":"Equal rights and opportunities for women and girls, freedom from violence and a fair share of care.","color":"#ff3a21"},
+  "6": {"summary":"Safe water and sanitation, healthy freshwater ecosystems and shared management of water resources.","color":"#26bde2"},
+  "7": {"summary":"Reliable energy people can afford, renewable sources and more efficient use of energy.","color":"#fcc30b"},
+  "8": {"summary":"Decent jobs, workers' rights, enterprise and economic development that uses resources responsibly.","color":"#a21942"},
+  "9": {"summary":"Reliable infrastructure, cleaner industry, research and wider access to technology.","color":"#fd6925"},
+  "10": {"summary":"Fair opportunities, social inclusion and a stronger voice for people and countries left behind.","color":"#dd1367"},
+  "11": {"summary":"Housing, transport, public spaces and communities that are inclusive, safe and resilient.","color":"#fd9d24"},
+  "12": {"summary":"How we use materials, make and buy things, reduce waste and account for environmental impacts.","color":"#bf8b2e"},
+  "13": {"summary":"Preparing for climate hazards, building climate knowledge and putting action into public policy.","color":"#3f7e44"},
+  "14": {"summary":"Healthy oceans and coasts, sustainable fishing and the communities that depend on marine life.","color":"#0a97d9"},
+  "15": {"summary":"Forests, land, freshwater habitats and biodiversity, including the species at risk of extinction.","color":"#56c02b"},
+  "16": {"summary":"Peace, access to justice, accountable institutions and a voice in decisions that affect people's lives.","color":"#00689d"},
+  "17": {"summary":"The finance, knowledge, trade, data and partnerships needed to put the goals into practice.","color":"#19486a"}
+}

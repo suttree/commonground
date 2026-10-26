@@ -1,0 +1,9 @@
+<% if invitation.errors.any? %><div class="error-summary" role="alert"><ul><% invitation.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul></div><% end %>
+<% if @challenge.public? %>
+  <%= form_with model: [@challenge, invitation], class: "collaborator-email-form" do |form| %>
+    <%= hidden_field_tag :return_to, return_to %>
+    <div class="field"><%= form.label :email, "Their email address" %><%= form.email_field :email, required: true, maxlength: 254, autocomplete: "off", placeholder: "name@example.com" %></div>
+    <p class="hint">They will be added after accepting the invitation. Send invitations only to people who would expect to hear from you. Links expire after 14 days.</p>
+    <%= form.submit "Send invitation", class: "button" %>
+  <% end %>
+<% else %><p>Publish this project and your profile before inviting collaborators.</p><% end %>

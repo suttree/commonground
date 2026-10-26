@@ -1,0 +1,7 @@
+<section class="recent-work" aria-labelledby="recent-work-title">
+  <p class="eyebrow">From the community</p>
+  <h2 id="recent-work-title">Work happening now</h2>
+  <p>See what people are working on and what they have achieved.</p>
+  <% if challenges.any? %><div class="challenge-grid"><%= render partial: "challenges/card", collection: challenges, as: :challenge %></div><% else %><p class="empty-state">What are you working on? Share the first project and help others find a way to contribute.</p><% end %>
+  <div class="actions"><%= link_to "Explore projects", challenges_path, class: "button secondary" %><%= link_to "Start a project", new_challenge_path %></div>
+</section>

@@ -1,0 +1,14 @@
+<%= render "submissions/sections/purpose", form: form %>
+<%= render "shared/priorities", form: form if @submission.persisted? %>
+<%= render "submissions/sections/experience", form: form %>
+<%= render "submissions/sections/skills", form: form %>
+<%= render "submissions/sections/learning", form: form %>
+<section aria-labelledby="optional-sections-title" class="optional-sections">
+  <h2 id="optional-sections-title">More about you</h2>
+  <p>Choose either section, both, or neither.</p>
+  <%= render "submissions/sections/perspective", form: form %>
+  <details <%= "open" if @expanded_section == "projects" || @submission.profile_entries("projects").any? { |row| row.values.any?(&:present?) } %>>
+    <summary>My project portfolio</summary>
+    <%= render "submissions/sections/portfolio", form: form %>
+  </details>
+</section>

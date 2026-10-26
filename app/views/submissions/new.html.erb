@@ -1,48 +1,25 @@
 <% organisation = @submission.organisation? %>
-<% content_for :title, organisation ? "Tell us what needs doing" : "Tell us about yourself" %>
+<% content_for :title, organisation ? "Company profile" : "Personal profile" %>
 <div class="form-page narrow">
-  <p class="back-link"><%= link_to "← Back to Common Ground", root_path %></p>
+  <p class="back-link"><%= link_to "← Back to Commonbound", root_path %></p>
   <div class="page-intro compact">
     <p class="eyebrow"><%= organisation ? "For organisations" : "For people" %></p>
-    <h1><%= organisation ? "What needs" : "What work" %><br><em><%= organisation ? "doing?" : "matters to you?" %></em></h1>
-    <p class="intro"><%= organisation ? "Tell us what you'd like someone to accomplish, and why it matters." : "Tell us what you care about, how you work, and what you'd like to do next." %></p>
-    <p>Short, honest answers are enough. <%= organisation ? "If the problem isn't clear yet, say so. We can talk it through." : "One example tells us more than a polished CV." %></p>
-    <p class="small-note">All fields are required unless marked optional. Your answers stay private.</p>
+    <h1><%= organisation ? "Company profile" : "Personal profile" %></h1>
+    <p class="intro"><%= organisation ? "Tell us why you exist, who benefits from your work, and what you want to achieve next." : "Tell us who you want to serve, what you want to change, and the experiences that connect your work." %></p>
+    <p class="small-note">All fields are required unless marked optional. Your profile, SDG priorities and portfolio images are public. Your email and private account details stay hidden.</p>
   </div>
   <%= render "shared/errors", record: @submission %>
-  <%= form_with model: @submission, url: organisation ? organisations_path : people_path, local: true do |form| %>
-    <fieldset>
-      <legend><span class="section-number">01</span> <%= organisation ? "You & your organisation" : "A little about you" %></legend>
-      <% if organisation %>
-        <div class="field"><%= form.label :organisation_name, "Organisation name" %><%= form.text_field :organisation_name, required: true, maxlength: 200, autocomplete: "organization", **field_options(@submission, :organisation_name) %><%= render "shared/field_error", record: @submission, attribute: :organisation_name %></div>
-      <% end %>
-      <div class="field"><%= form.label :name, "Your name" %><%= form.text_field :name, required: true, maxlength: 200, autocomplete: "name", **field_options(@submission, :name) %><%= render "shared/field_error", record: @submission, attribute: :name %></div>
-      <div class="field"><%= form.label :email, "Email address" %><p id="email-hint" class="hint">So we can follow up with you. We won't add you to a mailing list.</p><%= form.email_field :email, required: true, maxlength: 254, autocomplete: "email", **field_options(@submission, :email, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :email %></div>
-      <div class="field"><%= form.label :website, organisation ? "Organisation website (optional)" : "A link to your work or profile (optional)" %><p id="website-hint" class="hint">Use the full address, starting with https://.</p><%= form.url_field :website, maxlength: 500, autocomplete: "url", **field_options(@submission, :website, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :website %></div>
-    </fieldset>
+  <%= form_with model: @submission, url: @submission.persisted? ? account_profile_path : (organisation ? organisations_path : people_path), local: true, html: { multipart: true } do |form| %>
+    <%= hidden_field_tag :profile_id, @submission.id if @submission.persisted? %>
+    <%= render "submissions/sections/basics", form: form %>
 
-    <fieldset>
-      <legend><span class="section-number">02</span> The work & why it matters</legend>
-      <% if organisation %>
-        <div class="field"><%= form.label :challenge, "What do you need someone to accomplish?" %><p id="challenge-hint" class="hint">Describe the problem and what a good result would look like. "We need help figuring this out" is a useful answer too.</p><%= form.text_area :challenge, required: true, rows: 5, maxlength: 5000, **field_options(@submission, :challenge, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :challenge %></div>
-      <% end %>
-      <div class="field"><%= form.label :purpose, organisation ? "Who benefits from this work, and how?" : "What problems do you care about, and who would you like your work to serve?" %><p id="purpose-hint" class="hint"><%= organisation ? "Tell us about the people, community or cause behind the work. A concrete example helps." : "You might care about a community, a cause, or making a particular part of everyday life better." %></p><%= form.text_area :purpose, required: true, rows: 5, maxlength: 5000, **field_options(@submission, :purpose, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :purpose %></div>
-      <% unless organisation %>
-        <div class="field"><%= form.label :experience, "Tell us about one piece of work you've done." %><p id="experience-hint" class="hint">What needed doing? What was your contribution? What happened? Paid work, volunteering and personal projects all count.</p><%= form.text_area :experience, required: true, rows: 5, maxlength: 5000, **field_options(@submission, :experience, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :experience %></div>
-      <% end %>
-      <div class="field"><%= form.label :working_style, organisation ? "What kind of contribution do you need?" : "Which kind of work suits you?" %><%= form.select :working_style, Submission::WORKING_STYLES, { prompt: "Choose an option" }, { required: true, **field_options(@submission, :working_style) } %><%= render "shared/field_error", record: @submission, attribute: :working_style %></div>
-    </fieldset>
-
-    <fieldset>
-      <legend><span class="section-number">03</span> Making it work</legend>
-      <div class="field"><%= form.label :engagement, organisation ? "What kind of engagement are you offering?" : "What kind of engagement are you looking for?" %><%= form.select :engagement, Submission::ENGAGEMENTS, { prompt: "Choose an option" }, { required: true, **field_options(@submission, :engagement) } %><%= render "shared/field_error", record: @submission, attribute: :engagement %></div>
-      <div class="field"><%= form.label :availability, organisation ? "When do you need help, and for how much time?" : "When are you available, and for how much time?" %><p id="availability-hint" class="hint">A rough start date and time commitment are enough.</p><%= form.text_area :availability, required: true, rows: 2, maxlength: 5000, **field_options(@submission, :availability, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :availability %></div>
-      <div class="field"><%= form.label :location, "Location & remote working" %><p id="location-hint" class="hint"><%= organisation ? "Where would the work happen? Is remote working possible?" : "Where are you based? Would you like to work remotely, in person, or either?" %></p><%= form.text_area :location, required: true, rows: 2, maxlength: 5000, **field_options(@submission, :location, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :location %></div>
-      <div class="field"><%= form.label :pay_expectations, organisation ? "What is the budget or pay range?" : "What are your pay expectations?" %><p id="pay_expectations-hint" class="hint">Include the currency and whether it's per hour, day, year or project. If it's undecided, tell us where things stand.</p><%= form.text_area :pay_expectations, required: true, rows: 2, maxlength: 5000, **field_options(@submission, :pay_expectations, hint: true) %><%= render "shared/field_error", record: @submission, attribute: :pay_expectations %></div>
-    </fieldset>
+    <%= render organisation ? "submissions/organisation" : "submissions/person", form: form %>
+    <%= render "submissions/sections/contact", form: form %>
     <div class="honeypot" aria-hidden="true"><%= form.label :website_confirmation, "Leave this empty" %><%= form.text_field :website_confirmation, tabindex: -1, autocomplete: "off" %></div>
-    <div class="consent field"><%= form.check_box :consent, { required: true, **field_options(@submission, :consent) }, "1", "0" %><%= form.label :consent, "I'm happy for the Common Ground team to review my answers and contact me about the pilot." %><%= render "shared/field_error", record: @submission, attribute: :consent %></div>
+    <% unless @submission.persisted? %>
+    <div class="consent field"><%= form.check_box :consent, { required: true, **field_options(@submission, :consent) }, "1", "0" %><%= form.label :consent, "I'm happy for the Commonbound team to review my answers and contact me about the pilot." %><%= render "shared/field_error", record: @submission, attribute: :consent %></div>
+    <% end %>
     <p class="hint">We'll ask before sharing your details for an introduction. Read <%= link_to "how we use your details", privacy_path %>.</p>
-    <%= form.submit organisation ? "Send your brief" : "Send your introduction", class: "button" %>
+    <%= form.submit(@submission.persisted? ? "Save profile" : (current_account ? "Create profile" : "Continue to create account"), class: "button") %>
   <% end %>
 </div>

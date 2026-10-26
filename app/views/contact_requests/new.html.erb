@@ -1,0 +1,32 @@
+<% content_for :title, "Start a conversation with #{@recipient.display_name}" %>
+<div class="quiz-page narrow">
+  <p class="back-link"><% if @challenge %><%= link_to "Back to challenge", challenge_path(@challenge) %> · <% end %> <%= link_to @recipient.display_name, profile_path(@recipient.public_slug) %></p>
+  <h1 class="contact-heading">Start a conversation.</h1>
+  <p>For <%= @recipient.display_name %>. The Commonbound team will review your request and help arrange a reply.</p>
+  <% if @contact_request.errors.any? %><div class="error-summary" role="alert"><h2>Check your answers</h2><ul><% @contact_request.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul></div><% end %>
+  <%= form_with model: @contact_request, url: profile_contact_path(@recipient.public_slug) do |form| %>
+    <% if @challenge %>
+      <%= hidden_field_tag :challenge_id, @challenge.id %>
+      <%= form.hidden_field :intent, value: "problem" %>
+      <p>Get involved in <%= link_to @challenge.title, challenge_path(@challenge) %>.</p>
+    <% else %>
+    <fieldset class="wizard-options field">
+      <legend>Choose one option</legend>
+      <% ContactRequest::OPTIONS.each do |intent, option| %>
+        <label class="wizard-option"><%= form.radio_button :intent, intent, required: true %><span><%= option.fetch(:label) %></span></label>
+      <% end %>
+    </fieldset>
+    <% end %>
+    <div class="field"><%= form.label :name, "Your name" %><%= form.text_field :name, required: true, maxlength: 200, autocomplete: "name" %></div>
+    <div class="field"><%= form.label :email, "Your email" %><%= form.email_field :email, required: true, maxlength: 254, autocomplete: "email" %></div>
+    <div class="field"><%= form.label :message, @challenge ? "How could you help?" : "What do you have in mind?" %><p class="hint"><%= @challenge ? "Describe what you can contribute and when you are available. A few sentences are enough." : "A few sentences are enough. For a project, include any timing or budget you have in mind. For a chat, tell us what you'd like to talk about." %></p><%= form.text_area :message, required: true, maxlength: 5000, rows: 5 %></div>
+    <% if @priorities.any? %>
+      <div class="check-choice"><%= form.check_box :include_priorities %><%= form.label :include_priorities, "Include my quiz suggestions with this request" %></div>
+      <ul class="small-note"><% @priorities.each do |id| %><li><%= SdgDirectory::LABELS.fetch(id) %></li><% end %></ul>
+    <% end %>
+    <div class="honeypot" aria-hidden="true"><%= form.label :website_confirmation, "Leave this blank" %><%= form.text_field :website_confirmation, tabindex: -1, autocomplete: "off" %></div>
+    <div class="check-choice"><%= form.check_box :consent, required: true %><%= form.label :consent do %>The team and <%= @recipient.display_name %> may read this request and contact me about it. <%= link_to "Privacy & your details", privacy_path %>.<% end %></div>
+    <div class="actions"><%= form.submit "Send request", class: "button" %></div>
+    <p class="small-note">Your request stays private.<% unless @challenge %> A coffee chat isn't booked until a time is agreed.<% end %></p>
+  <% end %>
+</div>

@@ -1,0 +1,30 @@
+<% content_for :title, @side_project.persisted? ? "Edit side project" : "Add a side project" %>
+<div class="form-page narrow">
+  <p class="back-link"><%= link_to "Back to side projects", edit_account_profile_path(section: "side_projects", profile_id: @profile.id) %></p>
+  <h1><%= @side_project.persisted? ? "Edit side project" : "Add a side project" %></h1>
+  <p>A hobby, experiment or something you make time for. Only the name is required.</p>
+  <%= render "shared/errors", record: @side_project %>
+  <% if @side_project.errors.any? %><p class="hint">Your text is still here. Please choose any new photo files again before saving.</p><% end %>
+  <%= form_with model: @side_project, html: { multipart: true } do |form| %>
+    <%= hidden_field_tag :profile_id, @profile.id %>
+    <div class="field"><%= form.label :name, "Project name" %><%= form.text_field :name, required: true, maxlength: 200 %></div>
+    <% { description: "What is it about?", purpose: "What is its purpose?", joy: "Why does it give or spread joy?" }.each do |field, label| %>
+      <div class="field"><%= form.label field, "#{label} (optional)" %><%= form.text_area field, rows: 4, maxlength: 5000 %></div>
+    <% end %>
+    <div class="field"><%= form.label :url, "Link (optional)" %><%= form.url_field :url, maxlength: 500, placeholder: "https://" %></div>
+    <fieldset><legend>Photos (optional)</legend>
+      <p class="hint">Up to five photos per project. JPEG, PNG or WebP, under 2 MB each. The first photo is the cover until you choose another. Photos will be public with your profile.</p>
+      <div class="side-photo-editor">
+        <% @side_project.photos.each do |photo| %>
+          <div>
+            <%= image_tag portfolio_image_path(photo), alt: "Photo for #{@side_project.name}", class: "side-photo-preview" %>
+            <label><%= radio_button_tag :cover_image_id, photo.id, @side_project.cover_photo == photo %> Use as cover</label>
+            <label><%= check_box_tag "remove_photo_ids[]", photo.id, false, id: "remove_photo_#{photo.id}" %> Remove photo</label>
+          </div>
+        <% end %>
+      </div>
+      <%= label_tag :photos, "Add photos" %><%= file_field_tag "photos[]", id: "photos", multiple: true, accept: "image/jpeg,image/png,image/webp" %>
+    </fieldset>
+    <div class="actions"><%= form.submit "Save side project", class: "button" %><%= link_to "Cancel", edit_account_profile_path(section: "side_projects", profile_id: @profile.id) %></div>
+  <% end %>
+</div>

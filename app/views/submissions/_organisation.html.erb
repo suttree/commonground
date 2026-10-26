@@ -1,0 +1,5 @@
+<%= render "submissions/sections/offering", form: form %>
+<%= render "submissions/sections/products", form: form %>
+<%= render "submissions/sections/goals", form: form %>
+<%= render "submissions/sections/location", form: form %>
+<%= render "shared/priorities", form: form if @submission.persisted? %>

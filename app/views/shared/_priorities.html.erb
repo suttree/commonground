@@ -1,0 +1,23 @@
+  <fieldset class="choice-group" id="submission_target_ids" tabindex="-1">
+    <legend>Which problems do I most want to work on next? (optional)</legend>
+    <p class="hint">Choose up to three current priorities. You can care about other problems too. Open a goal to read its targets.</p>
+    <p class="hint">Target wording from <%= link_to "the Human Rights Guide to the SDGs", "https://sdg.humanrights.dk/list-goals-targets" %>. Dates and thresholds follow that source.</p>
+    <div class="check-choice"><%= form.check_box :exploring, {}, "1", "0" %><%= form.label :exploring, "I'm still exploring" %></div>
+    <p class="hint">If you're still exploring, leave the targets unchecked. You can choose your priorities later with the team.</p>
+    <% if Array(@submission.target_ids).size > 3 %><p class="notice">This profile has more than three targets. Choose up to three to show them on the public page. Your existing selections are retained until you save changes.</p><% end %>
+    <%= hidden_field_tag "submission[target_ids][]", "" %>
+    <% ProfileOptions::GOALS.each do |goal| %>
+      <% selected_count = goal.fetch("targets").count { |target| Array(@submission.target_ids).include?(target.fetch("id")) } %>
+      <details class="sdg-goal" <%= "open" if selected_count.positive? %>>
+        <summary><%= goal.fetch("id") %>. <%= goal.fetch("name") %><% if selected_count.positive? %> · <%= selected_count %> selected<% end %></summary>
+        <% goal.fetch("targets").each do |target| %>
+          <% input_id = "target_#{target.fetch('id').tr('.', '_')}" %>
+          <div class="check-choice target-choice">
+            <%= check_box_tag "submission[target_ids][]", target.fetch("id"), Array(@submission.target_ids).include?(target.fetch("id")), id: input_id %>
+            <%= label_tag input_id do %><strong><%= target.fetch("id") %></strong> <%= target.fetch("text") %><% end %>
+          </div>
+        <% end %>
+      </details>
+    <% end %>
+    <%= render "shared/field_error", record: @submission, attribute: :target_ids %>
+  </fieldset>

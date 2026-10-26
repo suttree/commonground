@@ -1,0 +1,22 @@
+<% projects = profile.profile_entries("projects") %>
+<% if projects.any? || @completed_challenges.any? %>
+  <section class="profile-section" id="projects" aria-labelledby="projects-heading">
+    <h2 id="projects-heading">Projects</h2>
+    <div class="profile-project-grid">
+      <% projects.each_with_index do |project, index| %>
+        <% title = project["title"].presence || "Project #{index + 1}" %>
+        <article class="skill-card project-card" id="project-<%= index + 1 %>" aria-labelledby="project-heading-<%= index + 1 %>">
+          <% if (image = profile.portfolio_images.find_by(id: project["image_id"])) %>
+            <%= link_to profile_project_path(profile.public_slug, index + 1), aria: { label: "Read #{title}" } do %><%= image_tag portfolio_image_path(image), alt: project["caption"].presence || title, class: "portfolio-image project-thumbnail", loading: "lazy" %><% end %>
+          <% end %>
+          <h3 id="project-heading-<%= index + 1 %>"><%= link_to title, profile_project_path(profile.public_slug, index + 1) %></h3>
+          <% if project["role"].present? %><p class="project-role small-note"><%= project["role"] %></p><% end %>
+          <p class="small-note"><%= [project["organisation"], project["time"]].compact_blank.join(" · ") %></p>
+          <p class="skill-preview"><%= truncate(strip_tags(project["problem"].to_s).squish, length: 140, separator: " ") %></p>
+          <%= link_to "Read the case study →", profile_project_path(profile.public_slug, index + 1), aria: { label: "Read the case study: #{title}" }, class: "skill-read-more" %>
+        </article>
+      <% end %>
+      <%= render partial: "challenges/card", collection: @completed_challenges, as: :challenge %>
+    </div>
+  </section>
+<% end %>

@@ -1,0 +1,18 @@
+<% content_for :title, "Target #{@target.fetch('id')}: #{SdgDirectory::LABELS.fetch(@target.fetch('id'))}" %>
+<div class="sdg-directory narrow">
+  <nav class="back-link" aria-label="Breadcrumb"><%= link_to "SDG directory", sdgs_path %> / <%= link_to "Goal #{@goal.fetch('id')}", sdg_goal_path(@goal.fetch("id")) %> / Target <%= @target.fetch("id") %></nav>
+  <header class="sdg-intro sdg-goal-opening sdg-color-<%= @goal.fetch('id') %>">
+    <p class="eyebrow">Target <%= @target.fetch("id") %> · <%= @goal.fetch("name") %></p>
+    <h1><%= SdgDirectory::LABELS.fetch(@target.fetch("id")) %></h1>
+    <p class="small-note">Commonbound's short title for this target.</p>
+    <p><%= link_to "Find people who selected this target", people_path(target: @target.fetch("id")), class: "button" %></p>
+  </header>
+  <section class="sdg-full-target"><h2>Full target wording</h2><p><%= @target.fetch("text") %></p></section>
+  <section class="sdg-context"><h2>Part of goal <%= @goal.fetch("id") %></h2><p><%= @guide.fetch("summary") %></p><%= link_to "Explore #{@goal.fetch('name').downcase}", sdg_goal_path(@goal.fetch("id")) %></section>
+  <p class="small-note"><%= link_to "Direct link to target #{@target.fetch('id')}", sdg_target_path(@target.fetch("id")) %> · Copy this page's address to share it.</p>
+  <nav class="sdg-pagination" aria-label="Other targets in this goal">
+    <% if @previous %><%= link_to "Previous target: #{@previous.fetch('id')}", sdg_target_path(@previous.fetch("id")) %><% end %>
+    <% if @next %><%= link_to "Next target: #{@next.fetch('id')}", sdg_target_path(@next.fetch("id")) %><% end %>
+  </nav>
+  <%= render "source" %>
+</div>

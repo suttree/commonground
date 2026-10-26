@@ -1,0 +1,182 @@
+[
+  {
+    "key": "repairable-products-v1",
+    "goal_id": "12",
+    "question": "Should companies be required to make their products repairable, even if that makes them more expensive to buy?",
+    "position": 1
+  },
+  {
+    "key": "public-transport-v1",
+    "goal_id": "11",
+    "question": "Should cities give more road space to public transport, even if that leaves less room for private cars?",
+    "position": 2
+  },
+  {
+    "key": "paid-training-v1",
+    "goal_id": "8",
+    "question": "Should employers provide paid time for staff to learn new skills, even if that reduces the time spent on their usual work?",
+    "position": 3
+  },
+  {
+    "key": "basic-income-v1",
+    "goal_id": "1",
+    "question": "Should everyone receive a basic income, even if funding it requires higher income taxes?",
+    "position": 4
+  },
+  {
+    "key": "free-school-meals-v1",
+    "goal_id": "2",
+    "question": "Should school meals be free for every child, even if that leaves less funding for other school services?",
+    "position": 5
+  },
+  {
+    "key": "sugar-tax-v1",
+    "goal_id": "3",
+    "question": "Should governments tax foods high in added sugar, even if that makes some everyday groceries more expensive?",
+    "position": 6
+  },
+  {
+    "key": "free-university-v1",
+    "goal_id": "4",
+    "question": "Should universities be free to attend, with the cost shared by taxpayers who may never attend one?",
+    "position": 7
+  },
+  {
+    "key": "women-board-seats-v1",
+    "goal_id": "5",
+    "question": "Should large employers reserve half their board seats for women, even if that limits their choice of candidates?",
+    "position": 8
+  },
+  {
+    "key": "water-allowance-v1",
+    "goal_id": "6",
+    "question": "Should households pay a higher rate for water used above a basic allowance, even in places where water is currently plentiful?",
+    "position": 9
+  },
+  {
+    "key": "local-wind-farm-veto-v1",
+    "goal_id": "7",
+    "question": "Should communities be able to block nearby wind farms, even if that delays national clean-energy targets?",
+    "position": 10
+  },
+  {
+    "key": "public-inventions-v1",
+    "goal_id": "9",
+    "question": "Should publicly funded inventions be free for any company to use, even if that reduces the income available for further research?",
+    "position": 11
+  },
+  {
+    "key": "inheritance-tax-v1",
+    "goal_id": "10",
+    "question": "Should large inheritances be taxed more heavily than income earned through work?",
+    "position": 12
+  },
+  {
+    "key": "frequent-flyer-tax-v1",
+    "goal_id": "13",
+    "question": "Should people who fly frequently pay higher taxes on each additional flight they take in a year?",
+    "position": 13
+  },
+  {
+    "key": "marine-fishing-bans-v1",
+    "goal_id": "14",
+    "question": "Should commercial fishing be banned in some marine areas, even if nearby fishing communities lose income?",
+    "position": 14
+  },
+  {
+    "key": "farmland-habitats-v1",
+    "goal_id": "15",
+    "question": "Should governments pay farmers to restore wildlife habitats on productive farmland, even if that reduces domestic food production?",
+    "position": 15
+  },
+  {
+    "key": "lobbying-transparency-v1",
+    "goal_id": "16",
+    "question": "Should public officials publish records of their meetings with lobbyists, even if that makes some organisations less willing to speak openly?",
+    "position": 16
+  },
+  {
+    "key": "aid-during-recession-v1",
+    "goal_id": "17",
+    "question": "Should governments maintain overseas aid spending during a domestic recession, even when public services at home face cuts?",
+    "position": 17
+  },
+  {
+    "key": "unconditional-income-support-v1",
+    "goal_id": "1",
+    "question": "Should financial support be available to everyone below an income threshold without a requirement to look for work?",
+    "position": 18
+  },
+  {
+    "key": "local-public-food-v1",
+    "goal_id": "2",
+    "question": "Should governments prioritise locally grown food for public institutions, even when imported food costs less?",
+    "position": 19
+  },
+  {
+    "key": "preventative-health-funding-v1",
+    "goal_id": "3",
+    "question": "Should health services move more funding into preventing illness, even if that leaves less money for treatments available today?",
+    "position": 20
+  },
+  {
+    "key": "practical-school-skills-v1",
+    "goal_id": "4",
+    "question": "Should schools give practical life skills the same teaching time as academic subjects, even if pupils cover less academic material?",
+    "position": 21
+  },
+  {
+    "key": "equal-parental-leave-v1",
+    "goal_id": "5",
+    "question": "Should each parent have an equal share of paid parental leave that cannot be transferred to the other parent?",
+    "position": 22
+  },
+  {
+    "key": "water-limited-housing-v1",
+    "goal_id": "6",
+    "question": "Should new housing be delayed in areas with limited water supplies, even when those areas urgently need more homes?",
+    "position": 23
+  },
+  {
+    "key": "nuclear-power-funding-v1",
+    "goal_id": "7",
+    "question": "Should governments fund new nuclear power stations, even though they create radioactive waste that needs long-term management?",
+    "position": 24
+  },
+  {
+    "key": "predictable-work-hours-v1",
+    "goal_id": "8",
+    "question": "Should workers have a legal right to predictable weekly hours, even if employers respond by offering fewer jobs?",
+    "position": 25
+  },
+  {
+    "key": "remote-internet-access-v1",
+    "goal_id": "9",
+    "question": "Should governments prioritise reliable internet in remote communities over faster connections in cities, even if it costs more per household?",
+    "position": 26
+  },
+  {
+    "key": "disadvantaged-applicants-v1",
+    "goal_id": "10",
+    "question": "Should employers favour applicants from disadvantaged backgrounds when candidates are equally qualified?",
+    "position": 27
+  },
+  {
+    "key": "taller-housing-v1",
+    "goal_id": "11",
+    "question": "Should cities allow taller apartment buildings in existing neighbourhoods, even when residents want to preserve the area's character?",
+    "position": 28
+  },
+  {
+    "key": "unsold-goods-v1",
+    "goal_id": "12",
+    "question": "Should shops be prohibited from destroying unsold goods, even if storing, donating or recycling them increases business costs?",
+    "position": 29
+  },
+  {
+    "key": "wealthier-country-emissions-v1",
+    "goal_id": "13",
+    "question": "Should wealthier countries cut emissions faster than poorer countries, even if that raises their costs of doing business?",
+    "position": 30
+  }
+]

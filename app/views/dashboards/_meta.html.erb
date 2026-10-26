@@ -1,0 +1,29 @@
+<aside class="dashboard-meta" aria-label="Your project and profiles">
+  <% if @profile %>
+    <section aria-labelledby="current-work-title">
+      <h2 class="eyebrow" id="current-work-title">Your current project</h2>
+      <% if @active_challenge %>
+        <p class="dashboard-project-link"><%= link_to @active_challenge.title, challenge_path(@active_challenge) %></p>
+        <% if @active_challenge.description.present? %><p class="dashboard-project-description"><%= truncate(@active_challenge.description, length: 150) %></p><% end %>
+        <p class="dashboard-meta-actions"><%= link_to "Update project", edit_challenge_path(@active_challenge) %> · <%= link_to "Start a project", new_challenge_path %></p>
+      <% else %>
+        <p>No current project. <%= link_to "Start a project", new_challenge_path %></p>
+      <% end %>
+      <% if @past_challenges.any? %><details class="dashboard-past-projects"><summary>Your drafts & previous work (<%= @past_challenges.size %>)</summary><ul class="work-archive"><% @past_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span> <%= link_to "Edit", edit_challenge_path(challenge), aria: { label: "Edit #{challenge.title}" } %></li><% end %></ul></details><% end %>
+    </section>
+  <% end %>
+  <section aria-labelledby="manage-profiles-title">
+    <h2 id="manage-profiles-title">Your profiles</h2>
+    <% profiles = current_account.submissions.order(:kind, :organisation_name, :name) %>
+    <% if profiles.size > 1 %>
+      <%= form_with url: switch_profile_path, method: :patch, class: "dashboard-profile-switcher" do |form| %>
+        <%= form.label :selected_profile_id, "Profile", class: "eyebrow" %>
+        <%= form.collection_select :selected_profile_id, profiles, :id, :display_name, selected: @profile.id %>
+        <%= form.submit "Switch profile", class: "button secondary" %>
+      <% end %>
+    <% elsif @profile %>
+      <p><%= link_to @profile.display_name, profile_path(@profile.public_slug) %></p>
+    <% end %>
+    <p><%= link_to "Create a company profile", new_organisation_path %><% unless profiles.any? { |profile| !profile.organisation? } %> · <%= link_to "Create a personal profile", new_person_path %><% end %></p>
+  </section>
+</aside>

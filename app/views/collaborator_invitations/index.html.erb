@@ -1,0 +1,15 @@
+<% content_for :title, "Invite collaborators" %>
+<div class="form-page narrow">
+  <p class="back-link"><%= link_to "Back to your work", challenge_path(@challenge) %></p>
+  <h1>Invite collaborators</h1>
+  <p>Invite someone to <%= link_to @challenge.title, challenge_path(@challenge) %>. They will receive an email and can create a profile before accepting. Their public profile will then be linked from this work. They will not have editing access.</p>
+  <%= render "email_form", invitation: @invitation, return_to: params[:return_to] %>
+  <h2>Invitations</h2>
+  <% invitations = @challenge.collaborator_invitations.where.not(id: nil).order(created_at: :desc) %>
+  <% if invitations.empty? %><p>No invitations yet.</p><% end %>
+  <% invitations.each do |invitation| %>
+    <div class="challenge-optional"><p><%= invitation.email %> · <%= invitation.status %></p>
+      <% unless invitation.accepted_at || invitation.revoked_at %><%= button_to "Cancel invitation", challenge_collaborator_invitation_path(@challenge, invitation), method: :delete, class: "button secondary" %><% end %>
+    </div>
+  <% end %>
+</div>
