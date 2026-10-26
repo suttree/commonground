@@ -17,7 +17,7 @@ end
 class ActionDispatch::IntegrationTest
   def sign_in_account(account)
     post login_path, params: { email: account.email }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
     assert_response :see_other
   end

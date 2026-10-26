@@ -16,7 +16,7 @@ class ChallengesTest < ActionDispatch::IntegrationTest
 
   def login(owner = @owner)
     post login_path, params: { email: owner.email }
-    code = ActionMailer::Base.deliveries.last.body.decoded[/code is (\d{6})/, 1]
+    code = ActionMailer::Base.deliveries.last.body.decoded[/^(\d{6})$/, 1]
     post verify_login_path, params: { code: code }
   end
 

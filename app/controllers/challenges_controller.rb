@@ -76,7 +76,12 @@ class ChallengesController < ApplicationController
       prepare_form
       return render :edit
     end
+    previous_ids = Array(@challenge.collaborator_ids_in_database).map(&:to_i)
     if @challenge.save
+      added_ids = Array(@challenge.collaborator_ids).map(&:to_i) - previous_ids
+      if @challenge.public?
+        Submission.published.where(id: added_ids).each { |member| notify { MemberMailer.added_to_project(@challenge, member) } }
+      end
       redirect_to challenge_path(@challenge), notice: @challenge.completed? ? "Your completed project is now in your portfolio." : "Your project has been saved.", status: :see_other
     else
       prepare_form
