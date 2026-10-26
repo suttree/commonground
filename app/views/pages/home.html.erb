@@ -15,9 +15,9 @@
 </section>
 
 <nav class="community-doors" aria-label="Explore Commonbound">
-  <%= link_to companies_path, class: "community-door" do %><%= render "shared/section_icon", section: "companies" %><h2>Find a company</h2><p>See who is working on the problems you care about.</p><span aria-hidden="true">↗</span><% end %>
-  <%= link_to people_path, class: "community-door" do %><%= render "shared/section_icon", section: "people" %><h2>Find a collaborator</h2><p>Find people with skills and interests that fit yours.</p><span aria-hidden="true">↗</span><% end %>
-  <%= link_to challenges_path, class: "community-door" do %><%= render "shared/section_icon", section: "challenges" %><h2>Join a project</h2><p>Find work you can help move forward.</p><span aria-hidden="true">↗</span><% end %>
+  <%= link_to companies_path, class: "community-door" do %><%= render "shared/section_icon", section: "companies" %><h2>Companies</h2><p>See who is working on the problems you care about.</p><% unless current_account %><p class="door-note">Sign up to see</p><% end %><span aria-hidden="true">↗</span><% end %>
+  <%= link_to people_path, class: "community-door" do %><%= render "shared/section_icon", section: "people" %><h2>People</h2><p>Find people with skills and interests that fit yours.</p><% unless current_account %><p class="door-note">Sign up to see</p><% end %><span aria-hidden="true">↗</span><% end %>
+  <%= link_to challenges_path, class: "community-door" do %><%= render "shared/section_icon", section: "challenges" %><h2>Projects</h2><p>Find work you can help move forward.</p><% unless current_account %><p class="door-note">Sign up to see</p><% end %><span aria-hidden="true">↗</span><% end %>
 </nav>
 
 <%= render "challenges/recent", challenges: @recent_challenges %>

@@ -53,7 +53,7 @@ class ProfileDiscoveryTest < ActionDispatch::IntegrationTest
     delete logout_path
     get root_path
     assert_select "a.wordmark[href='#{root_path}']"
-    assert_select "a[href='#{people_path}']", text: /Find a collaborator/
+    assert_select "a[href='#{people_path}']", text: /People/
     assert_select "a[href='#{new_person_path}']", text: /Create a profile/
   end
 end
