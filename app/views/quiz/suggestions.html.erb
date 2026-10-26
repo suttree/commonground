@@ -23,14 +23,18 @@
   <% if @error %><p class="error-summary" role="alert"><%= @error %></p><% end %>
   <%= form_with url: confirm_quiz_path do |form| %>
     <%= hidden_field_tag :profile_id, current_profile.id if current_profile %>
-    <fieldset>
-      <legend>Choose your priorities</legend>
-      <p class="hint">Keep or change these suggestions. Choose up to three, or clear them to keep exploring. Confirmed priorities appear on your public profile; your answers stay private.</p>
-      <%= hidden_field_tag "target_ids[]", "" %>
-      <% 3.times do |index| %>
-        <div class="field"><%= label_tag "priority_#{index}", "Priority #{index + 1} (optional)" %><%= select_tag "target_ids[]", grouped_options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("targets").map { |target| ["#{target.fetch('id')}: #{SdgQuiz::LABELS.fetch(target.fetch('id'))}", target.fetch("id")] }] }, @selected_targets[index]), include_blank: "Still exploring", id: "priority_#{index}" %></div>
-      <% end %>
-    </fieldset>
+    <p class="priority-summary"><%= @matches.any? ? "We'll save these as your priorities, but you can change them." : "You can also choose priorities yourself." %> Priorities show on your public profile; your answers stay private.</p>
+    <details class="priority-edit"<%= " open" if @error %>>
+      <summary><%= @matches.any? ? "Change priorities" : "Choose priorities" %></summary>
+      <fieldset>
+        <legend class="sr-only">Choose your priorities</legend>
+        <p class="hint">Choose up to three, or set them to "Still exploring".</p>
+        <%= hidden_field_tag "target_ids[]", "" %>
+        <% 3.times do |index| %>
+          <div class="field"><%= label_tag "priority_#{index}", "Priority #{index + 1} (optional)" %><%= select_tag "target_ids[]", grouped_options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("targets").map { |target| ["#{target.fetch('id')}: #{SdgQuiz::LABELS.fetch(target.fetch('id'))}", target.fetch("id")] }] }, @selected_targets[index]), include_blank: "Still exploring", id: "priority_#{index}" %></div>
+        <% end %>
+      </fieldset>
+    </details>
     <div class="actions"><%= form.submit(onboarding_person? ? "Continue to your profile" : "Find companies with these priorities", class: "button") %></div>
   <% end %>
 
