@@ -35,6 +35,11 @@
     </fieldset>
     <div class="actions"><%= form.submit(onboarding_person? ? "Continue to your profile" : "Find companies with these priorities", class: "button") %><%= link_to "Explore projects", challenges_path %></div>
   <% end %>
+  <div class="quiz-change-answers small-note">
+    <span>Want different suggestions?</span>
+    <%= link_to "Change my answers", quiz_path(question: 0, profile_id: current_profile&.id) %>
+    <%= form_with url: quiz_path do %><%= hidden_field_tag :profile_id, current_profile.id if current_profile %><button class="quiz-restart" name="restart" value="1">Clear answers and start again</button><% end %>
+  </div>
 
   <section class="quiz-next-steps" aria-labelledby="next-steps-heading">
     <h2 id="next-steps-heading">Prefer a conversation?</h2>
@@ -42,19 +47,19 @@
     <%= form_with url: new_profile_contact_path("nika-van-olst-3e4265d5c4bf"), method: :get do %>
       <fieldset class="wizard-options">
         <legend>Choose one option</legend>
+        <div class="next-step-tiles">
         <% ContactRequest::OPTIONS.each do |intent, option| %>
           <label class="wizard-option next-step-option">
             <%= radio_button_tag :intent, intent, false, required: true %>
             <span><strong><%= option.fetch(:label) %></strong><span><%= option.fetch(:description) %></span></span>
           </label>
         <% end %>
+        </div>
       </fieldset>
       <button class="button">Continue</button>
     <% end %>
   </section>
-  <div class="actions"><%= link_to "Review my answers", quiz_path(question: 0, profile_id: current_profile&.id), class: "button secondary" %></div>
-  <%= form_with url: quiz_path do %><%= hidden_field_tag :profile_id, current_profile.id if current_profile %><button class="quiz-restart" name="restart" value="1">Start again</button><% end %>
-  <% unless current_account %><p class="small-note quiz-footnote"><%= link_to "Create your account", new_person_path %> to build a profile. You can also browse companies without joining.</p><% end %>
+  <% unless current_account %><p class="small-note quiz-footnote"><%= link_to "Create your account", new_person_path %> to build a profile.</p><% end %>
   <% if current_profile %>
     <div class="actions"><%= link_to "Review profile", profile_path(current_profile.public_slug), class: "button" %></div>
   <% end %>
