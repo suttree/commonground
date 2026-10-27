@@ -24,7 +24,7 @@
     </div>
   </aside>
   <div class="discovery-results">
-  <div class="challenge-grid"><%= render partial: "card", collection: @challenges, as: :challenge %></div>
+  <div class="directory-grid"><%= render partial: "card", collection: @challenges, as: :challenge %></div>
   <% if @challenges.empty? %><p class="empty-state">No work matches yet. Try another location or remove a filter.</p><% end %>
   <nav class="actions" aria-label="Project pages"><% if @page > 1 %><%= link_to "Previous", challenges_path(@filters.merge(page: @page - 1)) %><% end %><% if @page * 24 < @count %><%= link_to "Next", challenges_path(@filters.merge(page: @page + 1)) %><% end %></nav>
   <div class="actions"><%= link_to "Start a project", new_challenge_path, class: "button secondary" %></div>

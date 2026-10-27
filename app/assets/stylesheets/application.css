@@ -655,8 +655,8 @@ input[type=file] { max-width: 100%; font-size: var(--text-base); }
 .directory-card:nth-child(3n + 2) { background: var(--peach); border-color: var(--peach-edge); }
 .directory-card:nth-child(3n) { background: var(--citrus); border-color: var(--citrus-edge); }
 .directory-card h2 { margin-top: 0; font-size: var(--heading-3); }
-.challenge-grid > .challenge-card:nth-child(3n + 2) { background: var(--sky); border-color: var(--sky-edge); }
-.challenge-grid > .challenge-card:nth-child(3n) { background: var(--peach); border-color: var(--peach-edge); }
+.challenge-grid > .challenge-card:nth-child(3n + 2), .directory-grid > .challenge-card:nth-child(3n + 2) { background: var(--sky); border-color: var(--sky-edge); }
+.challenge-grid > .challenge-card:nth-child(3n), .directory-grid > .challenge-card:nth-child(3n) { background: var(--peach); border-color: var(--peach-edge); }
 .dashboard-work + .dashboard-work { background: var(--peach); border-left-color: var(--peach-edge); }
 .dashboard-quiz, .onboarding-reminder { background: var(--yellow); border-color: var(--yellow-edge); }
 .dashboard-directory-links li { padding: var(--space-5) 0; padding-inline: var(--space-4); border-top: 0; border-left: 3px solid var(--sky-edge); background: var(--sky); margin-bottom: var(--space-3); }
