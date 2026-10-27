@@ -1,0 +1,10 @@
+<%= @profile.display_name %> would like an introduction after reading your shared note on:
+
+<%= @request.provocation_answer.provocation.question %>
+
+Their profile: <%= profile_url(@profile.public_slug) %>
+Their email: <%= @request.requester.email %>
+
+Review, accept or decline: <%= provocation_introduction_url(@request) %>
+
+Sign in with the account that received this email. Accepting shares your name, profile and email with this person. Declining shares nothing. This request expires after 30 days.

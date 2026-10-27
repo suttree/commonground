@@ -1,0 +1,9 @@
+<%= form_with model: [:admin, @provocation] do |form| %>
+  <% if @provocation.errors.any? %><p role="alert"><%= @provocation.errors.full_messages.to_sentence %></p><% end %>
+  <p>Published questions keep their original wording and goal. Create a revised draft to change them.</p>
+  <p><%= form.label :question %><%= form.text_area :question, required: true, rows: 4 %></p>
+  <p><%= form.label :goal_id, "SDG goal" %><%= form.select :goal_id, ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("id")] } %></p>
+  <p><%= form.label :position %><%= form.number_field :position, required: true %></p>
+  <p><%= form.label :status %><%= form.select :status, %w[draft published retired] %></p>
+  <%= form.submit "Save question", class: "button" %>
+<% end %>

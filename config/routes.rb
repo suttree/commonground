@@ -56,7 +56,14 @@ Rails.application.routes.draw do
   get "profile-photos/draft", to: "profile_photos#draft", as: :draft_profile_photo
   get "profile-photos/:id", to: "profile_photos#show", as: :profile_photo
 
+  resources :provocations, only: :show
+  delete "profiles/:slug/provocation-answers/:id", to: "provocation_answers#destroy", as: :profile_provocation_answer
+  resources :provocation_introductions, only: [ :create, :show, :update ]
+
   namespace :admin do
+    resources :provocations, except: [ :show, :destroy ] do
+      post :revise, on: :member
+    end
     root "submissions#index"
     resources :contact_requests, only: [ :index, :show ]
     resources :submissions, only: [ :index, :show, :update ]

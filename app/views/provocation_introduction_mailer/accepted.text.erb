@@ -1,0 +1,13 @@
+You both agreed to this introduction through Commonbound.
+
+<%= @requester&.display_name %>: <%= @request.requester.email %>
+<% if @requester %><%= profile_url(@requester.public_slug) %><% end %>
+
+<%= @author.display_name %>: <%= @request.recipient.email %>
+<%= profile_url(@author.public_slug) %>
+
+The question that started it:
+<%= @request.provocation_answer.provocation.question %>
+<%= provocation_url(@request.provocation_answer.provocation) %>
+
+Reply all to continue the conversation.

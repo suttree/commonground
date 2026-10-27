@@ -29,6 +29,16 @@
     </div>
   </header>
   <% if @current_challenge %><section class="profile-section current-challenge"><h2><%= @profile.organisation? ? "Our current project" : "My current project" %></h2><%= render "challenges/card", challenge: @current_challenge %></section><% end %>
+  <% if owns_profile?(@profile) && !@profile.organisation? %>
+    <section class="profile-section" aria-labelledby="your-answers-title">
+      <h2 id="your-answers-title">Your answers</h2>
+      <p>Only you can see this section. Manage your answers, notes and sharing preferences.</p>
+      <p><%= link_to "View and edit all your answers", profile_provocation_answers_path(@profile.public_slug) %></p>
+      <% @profile.provocation_answers.includes(:provocation).order(created_at: :desc).limit(5).each do |answer| %>
+        <p><%= link_to answer.provocation.question, provocation_path(answer.provocation) %><br><%= answer.label %> · <%= answer.shared? ? "Shared anonymously" : "Private" %></p>
+      <% end %>
+    </section>
+  <% end %>
   <div class="profile-body">
     <div class="profile-main">
       <% fields = @profile.organisation? ? { mission: "Our purpose", offering: "What we offer", impact_metrics: "Our impact", proud_of: "What we're proud of" } : { experience: "The thread through my work", education_topics: "What shaped my thinking" } %>

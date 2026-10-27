@@ -2,14 +2,17 @@
 <article class="answer-history">
   <p class="back-link"><%= link_to "Back to your dashboard", dashboard_path(anchor: "provocations") %></p>
   <h1>Your answers</h1>
-  <p>Your answers are private. Choose a different answer below to change it.</p>
+  <p>Your answers and notes are private unless you choose to share them. Choose an answer button to save your changes.</p>
   <% if @answers.any? %>
     <p class="small-note"><%= pluralize(@answer_count, "answer") %> · Page <%= @page %> of <%= @total_pages %></p>
     <% @answers.each do |answer| %>
       <section class="provocations" aria-label="Answer to <%= answer.provocation.question %>">
         <p><%= link_to "Goal #{answer.provocation.goal_id} · #{answer.provocation.goal.fetch('name')}", sdg_goal_path(answer.provocation.goal_id) %></p>
+        <p><%= link_to "View question and shared notes", provocation_path(answer.provocation) %></p>
+        <p><%= answer.shared? ? "Shared anonymously" : "Private" %></p>
         <p>Your answer: <strong><%= answer.label %></strong></p>
-        <%= render "choices", provocation: answer.provocation, selected: answer.choice, history_page: @page %>
+        <%= render "choices", provocation: answer.provocation, selected: answer.choice, history_page: @page, answer: answer %>
+        <%= button_to "Delete answer and note", profile_provocation_answer_path(@profile.public_slug, answer), method: :delete, class: "button ghost small" %>
       </section>
     <% end %>
     <% if @total_pages > 1 %>

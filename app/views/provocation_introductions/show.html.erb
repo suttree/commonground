@@ -1,0 +1,15 @@
+<article class="answer-history">
+  <h1>Introduction request</h1>
+  <p>About: <%= @request.provocation_answer.provocation.question %></p>
+  <% if @request.available? %>
+    <p><%= @request.requester_profile.display_name %> would like to talk after reading your shared note.</p>
+    <p><%= link_to "View their profile", profile_path(@request.requester_profile.public_slug) %> · <%= @request.requester.email %></p>
+    <%= form_with model: @request do |form| %>
+      <label><%= form.check_box :consent, name: :consent, required: true %> Share my name, profile and email with this person in an introduction email.</label>
+      <%= form.button "Accept introduction", name: :decision, value: "accept", class: "button" %>
+    <% end %>
+    <%= button_to "Decline", provocation_introduction_path(@request), method: :patch, params: { decision: "decline" }, class: "button ghost" %>
+  <% else %>
+    <p><%= @request.status == "accepted" ? "Introduction accepted. We have emailed you both so you can continue the conversation." : "This request is closed or no longer available. Your details have not been shared through this request." %></p>
+  <% end %>
+</article>

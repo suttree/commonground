@@ -1,0 +1,8 @@
+<div class="provocation-details">
+  <%= label_tag "note_#{provocation.id}", "Your note, optional" %>
+  <%= text_area_tag :note, answer&.note, id: "note_#{provocation.id}", maxlength: 2000, rows: 4 %>
+  <p class="small-note">Private unless you choose to share it. Shared notes hide your profile, but details in your writing may identify you.</p>
+  <label><%= hidden_field_tag :shared, "0", id: nil %><%= check_box_tag :shared, "1", answer&.shared?, id: "shared_#{provocation.id}" %> Share my answer in the results and my note anonymously with members</label>
+  <label><%= hidden_field_tag :allow_introductions, "0", id: nil %><%= check_box_tag :allow_introductions, "1", answer&.allow_introductions?, id: "introductions_#{provocation.id}" %> Allow introduction requests on my shared note</label>
+  <p class="small-note">You choose whether to accept each request. Nothing identifies you to the requester until you accept.</p>
+</div>

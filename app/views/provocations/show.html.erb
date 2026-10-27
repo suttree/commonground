@@ -1,0 +1,60 @@
+<% content_for :title, @provocation.question %>
+<article class="answer-history provocation-page">
+  <p class="eyebrow">A question to think about</p>
+  <h1><%= @provocation.question %></h1>
+  <p><%= link_to "Goal #{@provocation.goal_id} · #{@provocation.goal.fetch('name')}", sdg_goal_path(@provocation.goal_id) %></p>
+  <% if @provocation.status == "retired" %><p>This question is retired. Existing answers and notes remain available.</p><% end %>
+  <% if current_account %>
+    <% if @profile && (@answer || @provocation.status == "published") %>
+      <section class="provocations">
+        <h2>Your answer</h2>
+        <p>Choose an answer button to save your answer, note and sharing preferences.</p>
+        <%= render "provocation_answers/choices", provocation: @provocation, selected: @answer&.choice, answer: @answer, detail_page: true %>
+        <% if @answer %><%= button_to "Delete answer and note", profile_provocation_answer_path(@profile.public_slug, @answer), method: :delete, class: "button ghost small" %><% end %>
+      </section>
+    <% end %>
+    <section class="provocations">
+      <h2>How members answered</h2>
+      <% if @show_results %>
+        <% if @distribution.values.sum < 5 %>
+          <p>Still gathering responses.</p>
+        <% else %>
+          <div class="response-temperature" aria-label="Relative spread of shared answers">
+            <% ProvocationAnswer::CHOICES.each do |choice, label| %>
+              <% level = (@distribution.fetch(choice, 0).to_f / @distribution.values.max * 3).round %>
+              <div class="temperature-cell temperature-<%= level %>"><span><%= label %></span><small><%= ["Quiet", "Cool", "Warm", "Hot"][level] %></small></div>
+            <% end %>
+          </div>
+          <p class="small-note">Warmer shades mean more of the shared answers fall here.</p>
+        <% end %>
+      <% else %>
+        <p>Answer first, or <%= link_to "view results without answering", provocation_path(@provocation, results: 1) %>.</p>
+      <% end %>
+    </section>
+    <section>
+      <h2>Members' notes</h2>
+      <% if @notes.empty? %><p>No shared notes yet.</p><% end %>
+      <% @notes.first(20).each do |note| %>
+        <article class="provocations shared-note">
+          <p class="eyebrow"><%= note.label %></p>
+          <%= simple_format(note.note) %>
+          <% if owns_profile?(note.submission) %>
+            <p>This is your shared note.</p>
+          <% elsif @profile && note.allow_introductions? && note.submission.account %>
+            <%= form_with url: provocation_introductions_path do |form| %>
+              <%= form.hidden_field :provocation_answer_id, value: note.id %>
+              <label><%= form.check_box :consent, required: true, id: "consent_#{note.id}" %> Share my name, profile and email with the author to request an introduction.</label>
+              <%= form.submit "Request an introduction", class: "button secondary small" %>
+            <% end %>
+          <% end %>
+        </article>
+      <% end %>
+      <nav class="answer-pagination" aria-label="Shared notes pages">
+        <% if @page > 1 %><%= link_to "Previous notes", provocation_path(@provocation, page: @page - 1, results: params[:results]) %><% end %>
+        <% if @notes.size > 20 %><%= link_to "More notes", provocation_path(@provocation, page: @page + 1, results: params[:results]) %><% end %>
+      </nav>
+    </section>
+  <% else %>
+    <p><%= link_to "Log in", login_path %> to answer and read members' shared notes.</p>
+  <% end %>
+</article>

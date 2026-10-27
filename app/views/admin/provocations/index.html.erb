@@ -1,0 +1,11 @@
+<% content_for :title, "Provocations" %>
+<h1>Provocations</h1>
+<p><%= link_to "Back to admin", admin_root_path %> · <%= link_to "Add a question", new_admin_provocation_path %></p>
+<% @provocations.each do |question| %>
+  <section class="provocations">
+    <p><%= question.question %></p>
+    <p><%= question.status.capitalize %> · Position <%= question.position %> · Goal <%= question.goal_id %></p>
+    <p><%= link_to "Edit", edit_admin_provocation_path(question) %><% unless question.status == "draft" %> · <%= link_to "View", provocation_path(question) %><% end %></p>
+    <%= button_to "Create revised draft", revise_admin_provocation_path(question), class: "button secondary small" %>
+  </section>
+<% end %>

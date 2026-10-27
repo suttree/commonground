@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_26_203627) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_27_000000) do
   create_table "accounts", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
@@ -118,9 +118,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_203627) do
   end
 
   create_table "provocation_answers", force: :cascade do |t|
+    t.boolean "allow_introductions", default: false, null: false
     t.string "choice", null: false
     t.datetime "created_at", null: false
+    t.text "note"
     t.integer "provocation_id", null: false
+    t.boolean "shared", default: false, null: false
     t.integer "submission_id", null: false
     t.datetime "updated_at", null: false
     t.index ["provocation_id"], name: "index_provocation_answers_on_provocation_id"
@@ -129,12 +132,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_203627) do
     t.check_constraint "choice IN ('strong_no', 'no', 'yes', 'strong_yes')", name: "provocation_answer_choice"
   end
 
+  create_table "provocation_introductions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "provocation_answer_id", null: false
+    t.integer "recipient_id", null: false
+    t.integer "requester_id", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provocation_answer_id"], name: "index_provocation_introductions_on_provocation_answer_id"
+    t.index ["recipient_id"], name: "index_provocation_introductions_on_recipient_id"
+    t.index ["requester_id", "recipient_id"], name: "unique_provocation_introduction_pair", unique: true
+    t.index ["requester_id"], name: "index_provocation_introductions_on_requester_id"
+  end
+
   create_table "provocations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "goal_id", null: false
     t.string "key", null: false
     t.integer "position", null: false
     t.text "question", null: false
+    t.string "status", default: "published", null: false
     t.datetime "updated_at", null: false
     t.index ["key"], name: "index_provocations_on_key", unique: true
   end
@@ -193,6 +210,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_203627) do
   add_foreign_key "profile_photos", "submissions"
   add_foreign_key "provocation_answers", "provocations"
   add_foreign_key "provocation_answers", "submissions"
+  add_foreign_key "provocation_introductions", "accounts", column: "recipient_id"
+  add_foreign_key "provocation_introductions", "accounts", column: "requester_id"
+  add_foreign_key "provocation_introductions", "provocation_answers"
   add_foreign_key "side_projects", "submissions"
   add_foreign_key "submissions", "accounts"
 end

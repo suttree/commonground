@@ -906,3 +906,22 @@ input[type=file] { max-width: 100%; font-size: var(--text-base); }
   .discovery-nav.profile-tabs { gap: 0; }
   .discovery-nav.profile-tabs a { padding-inline: var(--space-3); font-size: var(--text-sm); }
 }
+
+/* Provocation notes and the shared response temperature. */
+.provocation-details { display: grid; gap: .7rem; margin: 1rem 0; }
+.provocation-details textarea { width: 100%; min-height: 7rem; box-sizing: border-box; }
+.provocation-details label, .shared-note label { line-height: 1.5; }
+.provocation-details input[type="checkbox"], .shared-note input[type="checkbox"] { width: auto; margin-right: .5rem; }
+.response-temperature { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .4rem; }
+.temperature-cell { padding: 1rem .3rem; text-align: center; border-radius: .4rem; color: #25312d; }
+.temperature-cell span, .temperature-cell small { display: block; }
+.temperature-0 { background: #edf0ef; }
+.temperature-1 { background: #d4e5df; }
+.temperature-2 { background: #e8d6a8; }
+.temperature-3 { background: #eab180; }
+.shared-note { overflow-wrap: anywhere; margin: 1rem 0; }
+.shared-note form { display: grid; gap: .8rem; }
+.provocation-page h1 { overflow-wrap: anywhere; }
+
+.provocation-note-options { margin: 1rem 0; }
+.provocation-note-options summary { cursor: pointer; text-decoration: underline; text-underline-offset: .2em; }
