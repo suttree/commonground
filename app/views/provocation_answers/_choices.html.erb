@@ -4,14 +4,14 @@
   <%= form.hidden_field :return_to_provocation, value: "1" if local_assigns[:detail_page] %>
   <fieldset>
     <legend><%= local_assigns[:detail_page] ? "Choose your response" : provocation.question %></legend>
-    <details class="provocation-note-options" <%= "open" if local_assigns[:detail_page] %>>
-      <summary><%= local_assigns[:answer] ? "Edit note and sharing" : "Add a note or share your answer" %></summary>
-      <%= render "provocation_answers/details", provocation: provocation, answer: local_assigns[:answer] %>
-    </details>
     <div class="provocation-choices">
       <% ProvocationAnswer::CHOICES.each do |value, label| %>
         <%= button_tag label, name: "choice", value: value, type: "submit", aria: { pressed: selected == value } %>
       <% end %>
     </div>
+    <details class="provocation-note-options" <%= "open" if local_assigns[:detail_page] %>>
+      <summary><%= local_assigns[:answer] ? "Edit note and sharing" : "Add a note or share your answer" %></summary>
+      <%= render "provocation_answers/details", provocation: provocation, answer: local_assigns[:answer] %>
+    </details>
   </fieldset>
 <% end %>
