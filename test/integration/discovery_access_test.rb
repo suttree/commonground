@@ -15,7 +15,7 @@ class DiscoveryAccessTest < ActionDispatch::IntegrationTest
       assert_response :success
       assert_not_includes response.body, name
       assert_select ".directory-card, .challenge-card, [role=status], nav[aria-label='Directory pages'], nav[aria-label='Project pages']", count: 0
-      assert_select "form.directory-filters", count: 0
+      assert_select "form#directory-filters, form#project-filters, .discovery-sidebar", count: 0
       assert_select ".discovery-signup a[href='#{join_path}']", text: "Sign up"
       assert_select ".discovery-signup a[href='#{login_path}']", text: "Log in"
       get path, params: { page: 2, q: "", location: "" }
@@ -48,7 +48,7 @@ class DiscoveryAccessTest < ActionDispatch::IntegrationTest
     [ people_path, companies_path, challenges_path ].each do |path|
       get path, params: { q: "Public" }
       assert_response :success
-      assert_select "form.directory-filters"
+      assert_select "form#directory-filters, form#project-filters"
       assert_select ".directory-card, .challenge-card", count: 1
       assert_select ".discovery-signup", count: 0
     end

@@ -56,7 +56,7 @@ class QuizController < ApplicationController
       redirect_to companies_path(priorities: "1"), notice: "Priorities saved. Explore companies with shared interests.", status: :see_other
     else
       session[:confirmed_quiz_targets] = @selected_targets
-      redirect_to companies_path(priorities: "1"), status: :see_other
+      redirect_to (params[:signup] == "1" ? new_person_path : companies_path(priorities: "1")), status: :see_other
     end
   end
 

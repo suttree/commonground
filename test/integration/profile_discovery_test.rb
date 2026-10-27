@@ -47,7 +47,7 @@ class ProfileDiscoveryTest < ActionDispatch::IntegrationTest
     post verify_login_path, params: { code: code }
     get dashboard_path
     assert_select "a.wordmark[href='#{dashboard_path}']"
-    assert_select "nav form[action='#{logout_path}'] button", text: "Log out"
+    assert_select "nav a.nav-account[href='#{edit_account_profile_path}']"
     assert_select "h2", text: "What matters to you"
     assert_select "a", text: "Take the eight-question SDG quiz", count: 0
     delete logout_path

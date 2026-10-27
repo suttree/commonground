@@ -1,23 +1,35 @@
 <% content_for :title, @company ? "Company directory" : "People directory" %>
+<%= javascript_include_tag "discovery_filters", defer: true %>
 <div class="form-page">
   <%= render "shared/discovery_nav", current_section: @company ? "companies" : "people" %>
   <%= render "shared/discovery_intro", title: @company ? "Company directory" : "People directory", description: @company ? "Find companies by name, location, sector or shared goals." : "Find people by name, skill, location, sector or shared goals." %>
   <% if @use_priorities %><p class="notice"><%= @priority_goals.any? ? "Showing profiles connected to your selected goals." : "No priorities selected yet. Explore all profiles." %> <%= link_to "Show all", @company ? companies_path : people_path %></p><% end %>
   <% if current_account %>
-  <%= form_with url: @company ? companies_path : people_path, method: :get, class: "directory-filters" do |form| %>
-    <%= hidden_field_tag :priorities, "1" if @use_priorities %>
-    <div class="field"><%= form.label :q, "Name" %><%= form.search_field :q, value: @query %></div>
-    <% unless @company %><div class="field"><%= form.label :skill, "Skill" %><%= form.search_field :skill, value: @skill, placeholder: "e.g. Research" %></div><% end %>
-    <div class="field"><%= form.label :location, "Location" %><%= form.search_field :location, value: @location %></div>
-    <div class="field"><%= form.label :sector, "Sector" %><%= form.select :sector, options_for_select(ProfileOptions::SECTORS, @sector), include_blank: "All sectors" %></div>
-    <div class="field"><%= form.label :goal, "SDG goal" %><%= form.select :goal, options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("id")] }, @goal), include_blank: "All goals" %></div>
-    <% if @target.present? %>
-      <div class="field"><%= form.label :target, "SDG target" %><%= form.select :target, options_for_select(SdgDirectory::LABELS.map { |id, label| ["#{id}: #{label}", id] }, @target), include_blank: "All targets" %></div>
-    <% end %>
-    <%= form.submit "Search", class: "button" %>
-    <%= link_to "Clear filters", @company ? companies_path : people_path %>
-  <% end %>
-  <p role="status"><%= pluralize(@count, "profile") %> found.</p>
+  <% path = @company ? companies_path : people_path %>
+  <% noun = @company ? "companies" : "people" %>
+  <%= form_with url: path, method: :get, id: "directory-filters" do %><%= hidden_field_tag :priorities, "1" if @use_priorities %><% end %>
+  <div class="discovery-layout">
+  <aside class="discovery-sidebar" aria-labelledby="filters-heading">
+    <h2 id="filters-heading" class="discovery-sidebar-title">Filters</h2>
+    <div class="directory-filters">
+      <% unless @company %><div class="field"><%= label_tag :skill, "Skill" %><%= search_field_tag :skill, @skill, form: "directory-filters", placeholder: "e.g. Research" %></div><% end %>
+      <div class="field"><%= label_tag :location, "Location" %><%= search_field_tag :location, @location, form: "directory-filters", placeholder: "Any location" %></div>
+      <div class="field"><%= label_tag :sector, "Sector" %><%= select_tag :sector, options_for_select(ProfileOptions::SECTORS, @sector), include_blank: "All sectors", form: "directory-filters", data: { auto_submit: true } %></div>
+      <div class="field"><%= label_tag :goal, "SDG goal" %><%= select_tag :goal, options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("id")] }, @goal), include_blank: "All goals", form: "directory-filters", data: { auto_submit: true } %></div>
+      <% if @target.present? %>
+        <div class="field"><%= label_tag :target, "SDG target" %><%= select_tag :target, options_for_select(SdgDirectory::LABELS.map { |id, label| ["#{id}: #{label}", id] }, @target), include_blank: "All targets", form: "directory-filters", data: { auto_submit: true } %></div>
+      <% end %>
+      <%= link_to "Clear filters", path %>
+    </div>
+    <div class="discovery-search" role="search">
+      <h2 class="discovery-sidebar-title">Search</h2>
+      <%= label_tag :q, "Search #{noun} by name", class: "sr-only" %>
+      <%= search_field_tag :q, @query, form: "directory-filters", placeholder: "Search #{noun} by name" %>
+      <button class="button" form="directory-filters">Search</button>
+      <p class="discovery-count" role="status"><%= pluralize(@count, @company ? "company" : "person", plural: @company ? "companies" : "people") %></p>
+    </div>
+  </aside>
+  <div class="discovery-results">
   <div class="directory-grid">
     <% @profiles.each do |profile| %>
       <article class="directory-card">
@@ -40,6 +52,8 @@
     <% if @page > 1 %><%= link_to "Previous", url_for(priorities: @use_priorities ? "1" : nil, q: @query, skill: @skill, location: @location, sector: @sector, goal: @goal, target: @target, page: @page - 1) %><% end %>
     <% if @page * 24 < @count %><%= link_to "Next", url_for(priorities: @use_priorities ? "1" : nil, q: @query, skill: @skill, location: @location, sector: @sector, goal: @goal, target: @target, page: @page + 1) %><% end %>
   </nav>
+  </div>
+  </div>
   <% else %>
     <%= render "shared/discovery_signup" %>
   <% end %>
