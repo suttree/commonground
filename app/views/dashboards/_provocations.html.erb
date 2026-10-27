@@ -5,8 +5,7 @@
   </div>
   <% if @provocation %>
     <p class="dashboard-question-goal"><%= link_to sdg_goal_path(@provocation.goal_id) do %><span class="dashboard-goal-number" aria-label="Goal <%= @provocation.goal_id %>"><%= @provocation.goal_id %></span><%= @provocation.goal.fetch("name") %><% end %></p>
-    <p><%= link_to "View question and shared notes", provocation_path(@provocation) %></p>
-    <%= render "provocation_answers/choices", provocation: @provocation, selected: nil %>
+    <%= render "provocation_answers/choices", provocation: @provocation, selected: nil, link_question: true %>
   <% else %>
     <p>You've answered all the questions for now. You can revisit your answers at any time.</p>
   <% end %>

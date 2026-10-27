@@ -927,3 +927,6 @@ input[type=file] { max-width: 100%; font-size: var(--text-base); }
 .provocation-note-options summary { font-size: var(--text-sm); padding: var(--space-1) 0; cursor: pointer; text-decoration: underline; text-underline-offset: .2em; }
 
 .dashboard-overview-design .provocations > p { margin-bottom: var(--space-2); }
+
+.provocation-permalink { display: inline-flex; width: 1em; height: 1em; min-width: 24px; min-height: 24px; margin-left: .3em; vertical-align: -.1em; }
+.provocation-permalink svg { width: 100%; height: 100%; }

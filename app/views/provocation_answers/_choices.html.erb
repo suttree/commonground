@@ -3,7 +3,7 @@
   <%= form.hidden_field :history_page, value: history_page if local_assigns[:history_page] %>
   <%= form.hidden_field :return_to_provocation, value: "1" if local_assigns[:detail_page] %>
   <fieldset>
-    <legend><%= local_assigns[:detail_page] ? "Choose your response" : provocation.question %></legend>
+    <legend><%= local_assigns[:detail_page] ? "Choose your response" : provocation.question %><% if local_assigns[:link_question] %><%= link_to provocation_path(provocation), class: "provocation-permalink", aria: { label: "View question and shared notes" }, title: "View question and shared notes" do %><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 3h7v7M10 14 21 3M10 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg><% end %><% end %></legend>
     <div class="provocation-choices">
       <% ProvocationAnswer::CHOICES.each do |value, label| %>
         <%= button_tag label, name: "choice", value: value, type: "submit", aria: { pressed: selected == value } %>
