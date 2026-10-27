@@ -40,8 +40,9 @@ Rails.application.routes.draw do
   get "thanks", to: "pages#thanks"
   get "people/new", to: "submissions#new", as: :new_person
   post "people", to: "submissions#create"
-  get "organisations/new", to: "submissions#new", as: :new_organisation
-  post "organisations", to: "submissions#create", as: :organisations
+  get "companies/new", to: "submissions#new", as: :new_organisation, defaults: { kind: "organisation" }
+  get "organisations/new", to: redirect("/companies/new")
+  post "organisations", to: "submissions#create", as: :organisations, defaults: { kind: "organisation" }
   get "profiles/:slug/contact", to: "contact_requests#new", as: :new_profile_contact
   post "profiles/:slug/contact", to: "contact_requests#create", as: :profile_contact
   get "profiles/:slug/contact/thanks", to: "contact_requests#thanks", as: :profile_contact_thanks

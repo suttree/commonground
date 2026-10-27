@@ -178,7 +178,7 @@ class SubmissionsController < ApplicationController
 
   def submission_kind
     return @submission.kind if %w[edit update].include?(action_name) && @submission
-    request.path.start_with?("/organisations") ? "organisation" : "person"
+    request.path_parameters[:kind] || "person"
   end
 
   def allowed_repeaters

@@ -61,6 +61,23 @@ class PilotTest < ActionDispatch::IntegrationTest
     assert_select "input[name=email][value='alex@example.test']:not([readonly])"
   end
 
+  test "company signup uses the companies URL and redirects the old URL" do
+    assert_equal "/companies/new", new_organisation_path
+    get new_organisation_path, params: { kind: "person" }
+    assert_response :success
+    assert_select "h1", text: "Company profile"
+    assert_select "form[action='#{organisations_path}']"
+    assert_select "input[name='submission[organisation_name]']"
+
+    get "/organisations/new"
+    assert_response :moved_permanently
+    assert_redirected_to new_organisation_path
+
+    get new_person_path, params: { kind: "organisation" }
+    assert_response :success
+    assert_select "input[name='submission[organisation_name]']", count: 0
+  end
+
   test "organisation brief is stored and can be reviewed and updated privately" do
     post organisations_path, params: { submission: answers.except(:experience).merge(mission: "Reduce food waste", offering: "Local juice", challenge_kind: "Challenges", organisation_name: "Orchard Co-op", challenge: "We need help figuring this out.") }
     assert_redirected_to create_account_path
