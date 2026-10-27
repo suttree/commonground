@@ -53,6 +53,17 @@ h4 { font-size: var(--heading-4); line-height: 1.35; letter-spacing: -.01em; }
 .form-page { padding-bottom: var(--space-11); }
 .back-link { font-size: var(--text-base); margin: var(--space-7) 0 0; }
 .form-page form + p { margin-top: var(--space-6); }
+.company-wizard [hidden] { display: none !important; }
+.company-wizard [data-company-step]:focus { outline: none; }
+.company-progress { scroll-margin-top: var(--space-5); }
+.company-progress .eyebrow { margin-bottom: var(--space-3); }
+.company-progress ol { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-2); list-style: none; padding: 0; margin: 0; }
+.company-progress li { border-top: 4px solid var(--line); padding-top: var(--space-2); font-size: var(--text-sm); color: var(--muted); }
+.company-progress li[aria-current], .company-progress li.is-complete { border-color: var(--green); color: var(--green); }
+.company-progress li[aria-current] { font-weight: 700; }
+.company-wizard-actions { justify-content: space-between; }
+.company-wizard-actions [data-company-next], .company-wizard-actions [data-company-submit] { margin-left: auto; }
+@media (max-width: 480px) { .company-progress li { font-size: var(--text-xs); } }
 fieldset { border: 0; border-top: 1px solid var(--line); padding: var(--space-7) 0 var(--space-3); margin: var(--space-7) 0 0; min-width: 0; }
 legend { font-size: var(--text-lg); font-weight: 600; padding: 0 var(--space-5) 0 0; }
 .section-number { font-weight: 400; color: var(--muted); margin-right: var(--space-3); font-family: Georgia, serif; }

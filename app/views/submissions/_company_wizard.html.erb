@@ -1,0 +1,40 @@
+<%= form_with model: @submission, url: organisations_path, local: true, html: { class: "company-wizard", data: { company_wizard: true } } do |form| %>
+  <%= hidden_field_tag :company_step, params[:company_step].to_i.clamp(0, 4), data: { company_step_value: true } %>
+  <div class="company-progress" data-company-progress hidden>
+    <p class="eyebrow" data-company-status role="status" aria-live="polite"></p>
+    <ol aria-label="Company profile steps">
+      <% ["Company", "Purpose", "Products", "Goals", "Contact"].each do |label| %>
+        <li><%= label %></li>
+      <% end %>
+    </ol>
+  </div>
+
+  <section data-company-step="Company details" tabindex="-1" aria-label="Company details">
+    <%= render "submissions/sections/basics", form: form %>
+  </section>
+  <section data-company-step="Purpose & impact" tabindex="-1" aria-label="Purpose and impact">
+    <%= render "submissions/sections/offering", form: form %>
+  </section>
+  <section data-company-step="Products & services" tabindex="-1" aria-label="Products and services">
+    <%= render "submissions/sections/products", form: form %>
+  </section>
+  <section data-company-step="Goals & sectors" tabindex="-1" aria-label="Goals and sectors">
+    <%= render "submissions/sections/goals", form: form %>
+    <details <%= "open" if @submission.errors[:sectors_past].any? || @submission.sectors_past.present? %>>
+      <summary>Choose your sectors (optional)</summary>
+      <%= render "submissions/sections/location", form: form %>
+    </details>
+  </section>
+  <section data-company-step="Contact & consent" tabindex="-1" aria-label="Contact and consent">
+    <%= render "submissions/sections/contact", form: form %>
+    <div class="consent field"><%= form.check_box :consent, { required: true, **field_options(@submission, :consent) }, "1", "0" %><%= form.label :consent, "I'm happy for the Commonbound team to review my answers and contact me about the pilot." %><%= render "shared/field_error", record: @submission, attribute: :consent %></div>
+    <p class="hint">We'll ask before sharing your details for an introduction. Read <%= link_to "how we use your details", privacy_path %>.</p>
+  </section>
+  <div class="honeypot" aria-hidden="true"><%= form.label :website_confirmation, "Leave this empty" %><%= form.text_field :website_confirmation, tabindex: -1, autocomplete: "off" %></div>
+  <div class="actions company-wizard-actions">
+    <button type="button" class="button secondary" data-company-back hidden>Back</button>
+    <button type="button" class="button" data-company-next hidden>Continue</button>
+    <%= form.submit(current_account ? "Create profile" : "Continue to create account", class: "button", data: { company_submit: true }) %>
+  </div>
+<% end %>
+<%= javascript_include_tag "company_wizard", defer: true %>

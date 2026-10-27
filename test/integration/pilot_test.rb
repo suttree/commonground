@@ -31,14 +31,14 @@ class PilotTest < ActionDispatch::IntegrationTest
     { "HTTP_AUTHORIZATION" => ActionController::HttpAuthentication::Basic.encode_credentials("test-admin", "test-password-for-this-suite") }
   end
 
-  test "public pages use semantic HTML and load only Cabin analytics" do
+  test "public pages use semantic HTML and load only the required scripts" do
     [ root_path, new_person_path, new_organisation_path, privacy_path, thanks_path ].each do |path|
       get path
       assert_response :success
       assert_select "html[lang=en]"
       assert_select "main", count: 1
       assert_select "h1", count: 1
-      assert_select "script", count: 1
+      assert_select "script", count: path == new_organisation_path ? 2 : 1
       assert_select "script[src='https://scripts.withcabin.com/hello.js'][async][defer]", count: 1
       assert_includes response.headers["Content-Security-Policy"], "script-src 'self' https://scripts.withcabin.com"
       assert_includes response.headers["Content-Security-Policy"], "connect-src 'self' https://ping.withcabin.com"
@@ -76,6 +76,36 @@ class PilotTest < ActionDispatch::IntegrationTest
     get new_person_path, params: { kind: "organisation" }
     assert_response :success
     assert_select "input[name='submission[organisation_name]']", count: 0
+  end
+
+  test "company wizard retains answers and position when adding products without saving" do
+    assert_no_difference "Submission.count" do
+      post organisations_path, params: { company_step: "2", add_section: "products", submission: {
+        organisation_name: "Orchard", name: "Alex", email: "alex@example.test", mission: "Reduce waste",
+        products: [ { name: "Juice", special: "Surplus fruit", impact: "Less waste" } ]
+      } }
+    end
+    assert_response :success
+    assert_select "input[name=company_step][value='2']"
+    assert_select "input[name='submission[organisation_name]'][value=Orchard]"
+    assert_select "textarea[name='submission[mission]']", text: "Reduce waste"
+    assert_select "#submission_products .repeat-entry", count: 2
+    assert_select "#submission_products_0_name", text: "Juice"
+    assert_select "[data-company-step][hidden]", count: 0
+  end
+
+  test "company wizard preserves answers and links to earlier step errors" do
+    assert_no_difference "Submission.count" do
+      post organisations_path, params: { company_step: "4", submission: answers.merge(
+        organisation_name: "Orchard", mission: "Reduce waste", offering: "Juice",
+        challenge_kind: "Goals", challenge: "Grow", website: "javascript:alert(1)"
+      ) }
+    end
+    assert_response :unprocessable_entity
+    assert_select ".error-summary a[href='#submission_website']"
+    assert_select "input[name='submission[organisation_name]'][value=Orchard]"
+    assert_select "input[name='submission[consent]'][checked]"
+    assert_select "[data-company-step] #submission_website[aria-invalid=true]"
   end
 
   test "organisation brief is stored and can be reviewed and updated privately" do
