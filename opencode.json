@@ -1,0 +1,37 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "ollama/qwen3.5:9b-coding",
+  "share": "disabled",
+  "providers": {
+    "ollama": {
+      "settings": {
+        "baseURL": "http://127.0.0.1:11434/v1"
+      },
+      "models": {
+        "qwen3.5:9b-coding": {
+          "name": "Qwen 3.5 9B (local coding)",
+          "limit": {
+            "context": 65536,
+            "output": 8192
+          },
+          "capabilities": {
+            "tools": true,
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          }
+        }
+      },
+      "package": "@opencode/ai/providers/openai-compatible"
+    }
+  },
+  "instructions": [
+    "docs/local-coding.md"
+  ],
+  "enabled_providers": [
+    "ollama"
+  ]
+}

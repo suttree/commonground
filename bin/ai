@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+if ! curl --fail --silent --max-time 3 http://127.0.0.1:11434/api/version >/dev/null; then
+  echo "Ollama is not running. See docs/local-coding.md for the startup command, then retry bin/ai." >&2
+  exit 1
+fi
+exec opencode "$@"
