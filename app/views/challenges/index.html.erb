@@ -1,4 +1,5 @@
 <% content_for :title, "Projects" %>
+<% content_for :body_class, "ink-lime-theme discovery-theme " %>
 <%= javascript_include_tag "discovery_filters", defer: true %>
 <div class="form-page">
   <%= render "shared/discovery_nav", current_section: "challenges" %>
@@ -8,6 +9,13 @@
   <div class="discovery-layout">
   <aside class="discovery-sidebar" aria-labelledby="filters-heading">
     <h2 id="filters-heading" class="discovery-sidebar-title">Filters</h2>
+    <div class="discovery-search" role="search">
+      <h2 class="discovery-sidebar-title">Search</h2>
+      <%= label_tag :q, "Search projects", class: "sr-only" %>
+      <%= search_field_tag :q, @filters[:q], form: "project-filters", placeholder: "Search projects by name or topic" %>
+      <button class="button" form="project-filters">Search</button>
+
+    </div>
     <div class="directory-filters">
       <div class="field"><%= label_tag :location, "Location" %><%= search_field_tag :location, @filters[:location], form: "project-filters", placeholder: "Any location" %></div>
       <div class="field"><%= label_tag :industry, "Industry" %><%= select_tag :industry, options_for_select(ProfileOptions::SECTORS, @filters[:industry]), include_blank: "All industries", form: "project-filters", data: { auto_submit: true } %></div>
@@ -15,15 +23,11 @@
       <div class="field"><%= label_tag :status, "Show" %><%= select_tag :status, options_for_select([["Active projects", "active"], ["Completed projects", "completed"]], @filters[:status]), include_blank: "All projects", form: "project-filters", data: { auto_submit: true } %></div>
       <%= link_to "Clear filters", challenges_path %>
     </div>
-    <div class="discovery-search" role="search">
-      <h2 class="discovery-sidebar-title">Search</h2>
-      <%= label_tag :q, "Search projects", class: "sr-only" %>
-      <%= search_field_tag :q, @filters[:q], form: "project-filters", placeholder: "Search projects by name or topic" %>
-      <button class="button" form="project-filters">Search</button>
-      <p class="discovery-count" role="status"><%= pluralize(@count, "project") %></p>
-    </div>
+
   </aside>
   <div class="discovery-results">
+      <p class="discovery-count" role="status"><%= pluralize(@count, "project") %></p>
+  <%= render "shared/applied_filters", filters: @filters %>
   <div class="directory-grid"><%= render partial: "card", collection: @challenges, as: :challenge %></div>
   <% if @challenges.empty? %><p class="empty-state">No work matches yet. Try another location or remove a filter.</p><% end %>
   <nav class="actions" aria-label="Project pages"><% if @page > 1 %><%= link_to "Previous", challenges_path(@filters.merge(page: @page - 1)) %><% end %><% if @page * 24 < @count %><%= link_to "Next", challenges_path(@filters.merge(page: @page + 1)) %><% end %></nav>

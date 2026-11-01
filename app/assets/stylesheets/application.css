@@ -988,3 +988,79 @@ input[type=file] { max-width: 100%; font-size: var(--text-base); }
   .dashboard-theme .dashboard-overview-design .provocations { padding: var(--space-5); }
   .dashboard-theme .dashboard-overview { gap: var(--space-6); }
 }
+
+/* Approved discovery and personal-profile treatment; marketing remains separate. */
+.ink-lime-theme {
+  --paper: var(--dashboard-paper);
+  --ink: var(--dashboard-ink);
+  --muted: var(--dashboard-muted);
+  --green: var(--dashboard-ink);
+  --green-dark: var(--dashboard-ink);
+  --line: var(--dashboard-line);
+  --line-strong: var(--dashboard-field-line);
+  --field: var(--dashboard-surface);
+  --wash: var(--dashboard-sage);
+  font-size: var(--text-base);
+}
+.ink-lime-theme .site-header { min-height: var(--space-11); }
+.member-identity { display: grid; place-items: center; flex-shrink: 0; width: var(--space-10); height: var(--space-10); overflow: hidden; border-radius: 50%; background: var(--wash); color: var(--ink); font-family: Georgia, serif; font-size: var(--text-lg); }
+.member-identity img { width: 100%; height: 100%; object-fit: cover; }
+.identity-tone-1 { background: var(--peach); }
+.identity-tone-2 { background: var(--sky); }
+.identity-tone-3 { background: var(--citrus); }
+.organisation-identity { border-radius: var(--dashboard-radius); font-family: inherit; font-weight: 600; }
+.discovery-theme .discovery-intro { background: transparent; border: 0; border-radius: 0; padding: var(--space-7) 0; }
+.discovery-theme .discovery-intro .ambient-mark { display: none; }
+.discovery-theme .discovery-layout { grid-template-columns: 240px minmax(0, 1fr); gap: var(--space-8); }
+.discovery-theme .discovery-sidebar { grid-column: auto; position: static; background: transparent; border: 0; border-right: 1px solid var(--line); border-radius: 0; padding: 0 var(--space-6) 0 0; }
+.discovery-theme .discovery-sidebar .field { margin-bottom: var(--space-5); }
+.discovery-theme .discovery-sidebar input, .discovery-theme .discovery-sidebar select { font-size: var(--text-sm); min-height: 44px; padding: var(--space-3); }
+.discovery-theme .discovery-search { border: 0; padding: 0; margin: 0 0 var(--space-6); }
+.discovery-theme .discovery-search .button { background: var(--dashboard-lime); color: var(--ink); border-color: transparent; min-height: 44px; font-size: var(--text-sm); }
+.discovery-theme .discovery-results { grid-column: auto; min-width: 0; }
+.discovery-theme .discovery-count { margin: 0 0 var(--space-5); }
+.discovery-theme .directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); }
+.discovery-theme .directory-card, .discovery-theme .directory-grid > .challenge-card { display: flex; flex-direction: column; min-width: 0; background: var(--field); border: 1px solid var(--line); border-radius: var(--dashboard-radius); padding: var(--space-6); overflow-wrap: anywhere; }
+.directory-identity { display: flex; align-items: start; gap: var(--space-4); margin-bottom: var(--space-5); }
+.directory-identity > div:last-child { min-width: 0; }
+.discovery-theme .directory-identity h2 { font-size: var(--heading-3); }
+.discovery-theme .directory-identity p { margin-bottom: 0; }
+.discovery-theme .directory-card > p { font-size: var(--text-base); }
+.discovery-theme .directory-card .directory-goals { display: flex; flex-wrap: wrap; gap: var(--space-2); list-style: none; padding: 0; margin: var(--space-4) 0; }
+.directory-goals li { display: flex; align-items: baseline; gap: var(--space-2); font-size: var(--text-sm); }
+.goal-dot { width: var(--space-2); height: var(--space-2); border-radius: 50%; background: var(--sdg-color); flex-shrink: 0; }
+.directory-read-more { margin-top: auto; padding-top: var(--space-4); font-size: var(--text-sm); }
+.applied-filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-5); }
+.applied-filters a { background: var(--wash); border-radius: var(--dashboard-radius); padding: var(--space-2) var(--space-3); font-size: var(--text-sm); overflow-wrap: anywhere; }
+.discovery-theme .directory-grid > .challenge-card h3 { background: var(--sky); margin: 0 calc(-1 * var(--space-6)) var(--space-5); padding: var(--space-5) var(--space-6); font-family: Georgia, serif; font-size: var(--heading-2); font-weight: 400; }
+.discovery-theme .directory-grid > .challenge-card.project-tone-1 h3 { background: var(--peach); }
+.member-opening { display: flex; align-items: center; gap: var(--space-6); padding: var(--space-7) 0 var(--space-8); }
+.member-opening .member-identity { width: var(--space-11); height: var(--space-11); }
+.member-heading { flex: 1; min-width: 0; }
+.member-heading h1 { font-size: var(--heading-1); }
+.member-contact { font-size: var(--text-sm); }
+.member-theme .current-challenge { padding-top: 0; background: var(--field); border: 1px solid var(--line); border-radius: var(--dashboard-radius); overflow: hidden; }
+.member-theme .current-challenge > h2 { margin: 0; padding: var(--space-5) var(--space-6); background: var(--dashboard-lime); }
+.member-theme .current-challenge .challenge-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--space-7); background: var(--field); border: 0; border-radius: 0; }
+.member-theme .current-challenge .challenge-card h3 { font-family: Georgia, serif; font-weight: 400; font-size: var(--heading-2); grid-row: span 3; }
+.member-theme .current-challenge .challenge-card .eyebrow { grid-column: 1 / -1; }
+.member-theme .side-project-card, .member-theme .skill-card { background: var(--field); border: 1px solid var(--line); border-radius: var(--dashboard-radius); }
+.member-theme .side-project-card:nth-child(even) { background: var(--field); }
+.member-theme .side-project-cover { max-height: 240px; object-fit: cover; }
+.member-theme .profile-body { border-top: 1px solid var(--line); gap: var(--space-8); padding-top: var(--space-7); }
+.member-theme .member-purpose { max-width: 65ch; margin-block: var(--space-8); }
+.member-theme .profile-section > h2 { font-size: var(--heading-3); }
+@media (max-width: 900px) {
+  .discovery-theme .discovery-layout { grid-template-columns: 200px minmax(0, 1fr); gap: var(--space-6); }
+  .discovery-theme .directory-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 650px) {
+  .discovery-theme .discovery-layout { grid-template-columns: 1fr; }
+  .discovery-theme .discovery-sidebar { border-right: 0; border-bottom: 1px solid var(--line); padding: 0 0 var(--space-6); }
+  .member-opening { flex-wrap: wrap; gap: var(--space-4); }
+  .member-contact { margin-left: 0; }
+  .member-theme .current-challenge .challenge-card { display: flex; }
+}
+
+.discovery-theme .directory-grid > .challenge-card.project-tone-2 h3 { background: var(--citrus); }
+.discovery-theme .directory-grid > .challenge-card.project-tone-3 h3 { background: var(--wash); }

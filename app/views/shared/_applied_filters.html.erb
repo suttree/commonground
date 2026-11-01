@@ -1,0 +1,10 @@
+<% active = filters.to_h.stringify_keys.slice("q", "skill", "location", "sector", "industry", "goal", "target", "status", "priorities").reject { |_key, value| value.blank? } %>
+<% if active.any? %>
+<nav class="applied-filters" aria-label="Applied filters">
+  <% active.each do |key, value| %>
+    <% label = key == "q" ? "Search" : key.humanize %>
+    <% display_value = key == "priorities" ? "Your priorities" : value %>
+    <%= link_to "#{label}: #{display_value} ×", url_for(active.except(key).merge(only_path: true)), aria: { label: "Remove #{label.downcase} filter: #{display_value}" } %>
+  <% end %>
+</nav>
+<% end %>

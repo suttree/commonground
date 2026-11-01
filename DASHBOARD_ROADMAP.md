@@ -8,8 +8,8 @@ layout when there is real community content to support it. The visual prototype
 is a direction, not evidence that article sharing or discussions already exist.
 
 Other agreed design decisions: discovery uses a filter sidebar and refreshed
-cards; member profiles use Work & personality for now. Those pages are separate
-implementation work. Marketing is deferred. Next design reviews are project
+cards; member profiles use Work & personality for now. Both are implemented on
+the same design branch alongside the dashboard styling. Marketing is deferred. Next design reviews are project
 details and company profiles, then joining and editing; the full mobile and
 state review comes last.
 

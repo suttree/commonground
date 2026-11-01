@@ -173,3 +173,22 @@ Use existing spacing and type tokens. Serif question text, neutral project cards
 and a lime reflection panel establish hierarchy. Preserve the official SDG colours;
 the dashboard theme does not override those classes. Notes, sharing, question
 permalinks, profile switching, and normal form submissions remain available.
+
+## Discovery and member profiles
+
+The approved Ink & lime theme also applies to people/company/project discovery
+and personal profile pages through `ink-lime-theme`. Company profiles, project
+detail pages, onboarding, and marketing retain their existing layouts.
+
+Discovery preserves the filter sidebar, server-side queries, and pagination.
+Search comes first, with result counts and individually removable applied filters
+above the cards. Person photos fit a fixed circular crop; absent photos and company
+identities use initials. Identity accent colours derive from the persisted profile
+ID, so filtering or sorting does not recolour a person. No uploaded company logo
+or photograph is required. SDG labels retain official colour markers.
+
+Personal profiles follow Work & personality: identity and contact first, current
+project, side projects and portfolio, then purpose and background. All existing
+profile data and private owner controls remain available. Company profile layout
+is intentionally deferred. Shared partial styling is scoped to avoid changing the
+marketing website or project detail pages.

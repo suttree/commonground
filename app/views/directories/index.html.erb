@@ -1,4 +1,5 @@
 <% content_for :title, @company ? "Company directory" : "People directory" %>
+<% content_for :body_class, "ink-lime-theme discovery-theme " %>
 <%= javascript_include_tag "discovery_filters", defer: true %>
 <div class="form-page">
   <%= render "shared/discovery_nav", current_section: @company ? "companies" : "people" %>
@@ -11,6 +12,13 @@
   <div class="discovery-layout">
   <aside class="discovery-sidebar" aria-labelledby="filters-heading">
     <h2 id="filters-heading" class="discovery-sidebar-title">Filters</h2>
+    <div class="discovery-search" role="search">
+      <h2 class="discovery-sidebar-title">Search</h2>
+      <%= label_tag :q, "Search #{noun} by name", class: "sr-only" %>
+      <%= search_field_tag :q, @query, form: "directory-filters", placeholder: "Search #{noun} by name" %>
+      <button class="button" form="directory-filters">Search</button>
+
+    </div>
     <div class="directory-filters">
       <% unless @company %><div class="field"><%= label_tag :skill, "Skill" %><%= search_field_tag :skill, @skill, form: "directory-filters", placeholder: "e.g. Research" %></div><% end %>
       <div class="field"><%= label_tag :location, "Location" %><%= search_field_tag :location, @location, form: "directory-filters", placeholder: "Any location" %></div>
@@ -21,29 +29,30 @@
       <% end %>
       <%= link_to "Clear filters", path %>
     </div>
-    <div class="discovery-search" role="search">
-      <h2 class="discovery-sidebar-title">Search</h2>
-      <%= label_tag :q, "Search #{noun} by name", class: "sr-only" %>
-      <%= search_field_tag :q, @query, form: "directory-filters", placeholder: "Search #{noun} by name" %>
-      <button class="button" form="directory-filters">Search</button>
-      <p class="discovery-count" role="status"><%= pluralize(@count, @company ? "company" : "person", plural: @company ? "companies" : "people") %></p>
-    </div>
+
   </aside>
   <div class="discovery-results">
+      <p class="discovery-count" role="status"><%= pluralize(@count, @company ? "company" : "person", plural: @company ? "companies" : "people") %></p>
+  <%= render "shared/applied_filters", filters: request.query_parameters %>
   <div class="directory-grid">
     <% @profiles.each do |profile| %>
       <article class="directory-card">
+        <div class="directory-identity">
+        <%= render "shared/member_identity", profile: profile %>
+        <div>
         <h2><%= link_to profile.display_name, profile_path(profile.public_slug) %></h2>
         <p class="directory-location"><%= profile.location.presence || "Location not added" %></p>
+        </div></div>
         <p><%= truncate(profile.sector_reason.presence || profile.purpose, length: 220) %></p>
         <% if @sector.present? %><p class="small-note"><%= @sector %></p><% end %>
         <% if @skill.present? %><p class="small-note"><%= @skill %></p><% end %>
         <% goal_ids = Array(profile.target_ids).map { |id| id.split(".").first }.uniq %>
-        <ul>
+        <ul class="directory-goals">
           <% ProfileOptions::GOALS.select { |goal| goal_ids.include?(goal.fetch("id")) }.each do |goal| %>
-            <li><%= link_to "SDG #{goal.fetch('id')}: #{goal.fetch('name')}", sdg_goal_path(goal.fetch("id")) %></li>
+            <li class="sdg-color-<%= goal.fetch("id") %>"><span class="goal-dot" aria-hidden="true"></span><%= link_to "SDG #{goal.fetch('id')}: #{goal.fetch('name')}", sdg_goal_path(goal.fetch("id")) %></li>
           <% end %>
         </ul>
+        <%= link_to @company ? "Meet the company →" : "View profile →", profile_path(profile.public_slug), class: "directory-read-more" %>
       </article>
     <% end %>
   </div>
