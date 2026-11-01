@@ -9,8 +9,10 @@ class Submission < ApplicationRecord
   PROFILE_FIELDS = %i[target_ids sectors_past sectors_future sector_reason radius_km education_topics satisfaction_feeling satisfaction_notes skills projects mission offering impact_metrics proud_of challenge_kind help_needed products].freeze
 
   CONTACT_ACTIONS = [ "Email me", "Follow me", "Connect on LinkedIn" ].freeze
+  # Member-stated availability, shown publicly. Blank means "not provided", which is different from "unavailable".
+  AVAILABILITY_STATUSES = { "open" => "Available for new work", "limited" => "Limited availability", "unavailable" => "Not available right now" }.freeze
 
-  store_accessor :profile, *PROFILE_FIELDS, :exploring, :contact_action, :contact_destination, :skills_summary
+  store_accessor :profile, *PROFILE_FIELDS, :exploring, :contact_action, :contact_destination, :skills_summary, :availability_status, :availability_hours, :availability_note
   validate :valid_contact_action
   has_many :challenges, dependent: :destroy
   has_many :contact_requests, dependent: :destroy
@@ -51,6 +53,9 @@ class Submission < ApplicationRecord
   with_options if: :structured_profile? do
     validates :mission, :offering, :challenge_kind, presence: true, if: -> { structured_profile? && organisation? }
     validates :challenge_kind, inclusion: { in: %w[Challenges Goals] }, allow_blank: true
+    validates :availability_status, inclusion: { in: AVAILABILITY_STATUSES.keys }, allow_blank: true
+    validates :availability_hours, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 80 }, allow_blank: true
+    validates :availability_note, length: { maximum: 200 }
     validates :satisfaction_feeling, inclusion: { in: ProfileOptions::FEELINGS }, allow_blank: true
     validates :radius_km, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 20000 }, allow_blank: true
     validates :location, presence: true, if: -> { radius_km.present? }
@@ -91,6 +96,16 @@ class Submission < ApplicationRecord
   def contact_link
     return if contact_action.blank? || contact_destination.blank?
     contact_action == "Email me" ? "mailto:#{contact_destination}" : contact_destination
+  end
+
+  def availability_provided?
+    AVAILABILITY_STATUSES.key?(availability_status)
+  end
+
+  def availability_summary
+    return unless availability_provided?
+    hours = "about #{availability_hours} hours a week" if availability_status != "unavailable" && availability_hours.present?
+    [ AVAILABILITY_STATUSES.fetch(availability_status), hours ].compact.join(", ")
   end
 
   def priorities_selected?
@@ -157,6 +172,9 @@ class Submission < ApplicationRecord
       value = public_send(field)
       public_send("#{field}=", value.reject { |row| row.is_a?(Hash) && row.values.all?(&:blank?) }) if value.is_a?(Array)
     end
+    self.availability_note = availability_note.to_s.strip.presence
+    self.availability_hours = availability_hours.to_s.strip.presence
+    self.availability_hours = nil if availability_status.blank? || availability_status == "unavailable"
   end
 
   def valid_profile_choices

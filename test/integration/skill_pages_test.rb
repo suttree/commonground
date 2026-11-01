@@ -12,10 +12,10 @@ class SkillPagesTest < ActionDispatch::IntegrationTest
     entry = profile
     get profile_path(entry.public_slug)
     assert_response :success
-    assert_select ".skill-carousel.has-many .skill-card", count: 2
-    assert_select "a[href='#skill-2'][aria-label='Next skill']"
-    assert_select ".skill-preview" do |elements|
-      assert_operator elements.first.text.length, :<=, 140
+    assert_select ".skill-list > li", count: 2
+    assert_select ".skill-list a[href='#{profile_skill_path(entry.public_slug, 2)}']", text: /Read more/
+    assert_select "#skill-1 > p:not(.small-note)" do |elements|
+      assert_operator elements.first.text.length, :<=, 180
     end
     get profile_skill_path(entry.public_slug, 1)
     assert_response :success
@@ -30,12 +30,11 @@ class SkillPagesTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test "missing skills return 404 and a single card has no carousel controls" do
+  test "missing skills return 404 and a single skill renders as one entry" do
     entry = profile
     entry.update!(skills: entry.skills.first(1))
     get profile_path(entry.public_slug)
-    assert_select ".skill-card", count: 1
-    assert_select ".skill-controls", count: 0
+    assert_select ".skill-list > li", count: 1
     [ "0", "-1", "2", "nope" ].each do |position|
       get "/profiles/#{entry.public_slug}/skills/#{position}"
       assert_response :not_found

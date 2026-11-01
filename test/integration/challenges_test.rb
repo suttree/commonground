@@ -37,7 +37,7 @@ class ChallengesTest < ActionDispatch::IntegrationTest
     get challenge_path(entry)
     assert_select ".project-organisation a[href='#{profile_path(company.public_slug)}']", text: "Community Kitchen"
     get profile_path(@owner.public_slug)
-    assert_select ".challenge-card .project-organisation", text: /On behalf of Community Kitchen/
+    assert_select ".member-current .project-organisation", text: /On behalf of Community Kitchen/
     company.update!(published: false)
     get challenge_path(entry)
     assert_select ".project-organisation", text: /Community Kitchen/
@@ -134,7 +134,7 @@ class ChallengesTest < ActionDispatch::IntegrationTest
     get root_path
     assert_select ".recent-work a[href='#{challenge_path(entry)}']"
     get profile_path(@owner.public_slug)
-    assert_select ".current-challenge a[href='#{challenge_path(entry)}']"
+    assert_select ".member-current a[href='#{challenge_path(entry)}']"
     post challenges_path, params: { challenge: @attributes.merge(title: "Next challenge") }
     assert_response :unprocessable_entity
     assert_equal 1, @owner.challenges.where(status: "active").count

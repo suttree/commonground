@@ -8,6 +8,21 @@
       <%= link_to "Find people who selected this goal", people_path(goal: @goal.fetch("id")), class: "button" %>
     </div>
   </header>
+  <section class="sdg-goal-projects sdg-color-<%= @goal.fetch('id') %>" id="goal-projects" aria-labelledby="goal-projects-title">
+    <div class="sdg-goal-projects-heading">
+      <h2 id="goal-projects-title" class="sdg-section-title"><span class="goal-dot" aria-hidden="true"></span>Projects working on Goal <%= @goal.fetch("id") %></h2>
+      <% if @goal_challenges.any? %><%= link_to "See all projects for this goal", challenges_path(goal: @goal.fetch("id")) %><% end %>
+    </div>
+    <% if @goal_challenges.any? %>
+      <p class="small-note">Newest first, by publication date.</p>
+      <div class="challenge-grid"><%= render partial: "challenges/card", collection: @goal_challenges, as: :challenge %></div>
+    <% else %>
+      <div class="empty-state">
+        <p>No published projects are linked to <%= @goal.fetch("name") %> yet.</p>
+        <p class="empty-state-actions"><%= link_to "Start a project for this goal", new_challenge_path %><%= link_to "Find people who selected this goal", people_path(goal: @goal.fetch("id")) %></p>
+      </div>
+    <% end %>
+  </section>
   <h2 class="sdg-section-title"><%= @goal.fetch("targets").size %> targets for <%= @goal.fetch("name") %></h2>
   <p class="small-note">Short titles are a reading guide. Each target page includes the full source wording and a direct link you can share.</p>
   <div class="sdg-target-grid">

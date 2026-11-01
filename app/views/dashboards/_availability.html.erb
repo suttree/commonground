@@ -1,0 +1,14 @@
+<% edit_path = edit_account_profile_path(section: "availability", profile_id: @profile.id) %>
+<section class="dashboard-availability<%= " is-missing" unless @profile.availability_provided? %>" aria-labelledby="availability-title">
+  <h2 id="availability-title" class="dashboard-label">Your availability</h2>
+  <% if @profile.availability_provided? %>
+    <p class="dashboard-availability-status availability-<%= @profile.availability_status %>"><%= @profile.availability_summary %></p>
+    <% if @profile.availability_note.present? %><p class="small-note"><%= @profile.availability_note %></p><% end %>
+    <p class="small-note">Shown on your public profile.</p>
+    <p><%= link_to "Update availability", edit_path %></p>
+  <% else %>
+    <p>Not provided yet. Let people know whether you can take on new work.</p>
+    <p><%= link_to "Add your availability", edit_path, class: "button secondary" %></p>
+    <p class="small-note">It appears on your public profile once you save it.</p>
+  <% end %>
+</section>

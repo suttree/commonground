@@ -1,0 +1,82 @@
+<%= render "member_opening" %>
+<% if @current_challenge %>
+  <section class="member-current" aria-labelledby="current-work-title">
+    <h2 id="current-work-title">Working on now</h2>
+    <h3><%= link_to @current_challenge.title, challenge_path(@current_challenge) %></h3>
+    <%= render "challenges/organisation", challenge: @current_challenge %>
+    <% if @current_challenge.location.present? %><p class="small-note"><%= @current_challenge.location %></p><% end %>
+    <% if @current_challenge.description.present? %><p class="member-current-description"><%= truncate(@current_challenge.description, length: 420, separator: " ") %></p><% end %>
+    <% if @current_challenge.help_options.any? %>
+      <p class="member-current-help"><strong>Looking for help with</strong> <%= @current_challenge.help_options.map(&:downcase).to_sentence %></p>
+    <% end %>
+    <p class="member-current-actions">
+      <%= link_to "Explore the project →", challenge_path(@current_challenge) %>
+      <% if owns_profile?(@profile) %><%= link_to "Update your project", edit_challenge_path(@current_challenge), class: "owner-link" %><% end %>
+    </p>
+  </section>
+<% end %>
+<div class="member-columns">
+  <div class="member-main">
+    <%= render "side_projects", profile: @profile %>
+    <%= render "projects", profile: @profile %>
+    <% background = { experience: "The thread through my work", education_topics: "What shaped my thinking" }.select { |field, _| @profile.public_send(field).present? } %>
+    <% if background.any? || @profile.satisfaction_notes.present? %>
+      <section class="profile-section member-background" aria-labelledby="background-title">
+        <h2 id="background-title">Background</h2>
+        <% background.each do |field, heading| %><h3><%= heading %></h3><%= simple_format @profile.public_send(field) %><% end %>
+        <% if @profile.satisfaction_notes.present? %><h3>I feel most <%= @profile.satisfaction_feeling.to_s.downcase %> when...</h3><%= simple_format @profile.satisfaction_notes %><% end %>
+      </section>
+    <% end %>
+    <%= render "skills", profile: @profile %>
+  </div>
+  <% sectors = { sectors_future: "Where I'd like to work", sectors_past: "Where I've worked" }.select { |field, _| @profile.public_send(field).present? } %>
+  <% goals = @profile.exploring == "1" || (@profile.target_ids.present? && @profile.target_ids.size <= 3) %>
+  <% if @profile.skills_summary.present? || sectors.any? || @profile.sector_reason.present? || goals %>
+    <aside class="member-aside" aria-label="Interests and goals">
+      <% if @profile.exploring == "1" %>
+        <section class="profile-section profile-targets"><h2>My current priorities</h2><p>I'm still exploring which problems I want to work on next.</p></section>
+      <% elsif goals %>
+        <section class="profile-section profile-targets" aria-labelledby="goals-title">
+          <h2 id="goals-title">Problems I want to work on next</h2>
+          <p class="small-note">Selected UN targets. Open a goal to read them in full.</p>
+          <div class="profile-goals">
+            <% ProfileOptions::GOALS.each do |goal| %>
+              <% targets = goal.fetch("targets").select { |target| @profile.target_ids.include?(target.fetch("id")) } %>
+              <% if targets.any? %>
+                <details class="sdg-goal sdg-color-<%= goal.fetch('id') %>"><summary><span class="goal-dot" aria-hidden="true"></span><%= goal.fetch("name") %> <span class="small-note">· <%= pluralize(targets.size, "target") %></span></summary>
+                  <ul><% targets.each do |target| %><li><strong><%= target.fetch("id") %></strong> <%= target.fetch("text") %></li><% end %></ul>
+                  <p class="small-note"><%= link_to "Projects and people working on goal #{goal.fetch('id')}", sdg_goal_path(goal.fetch("id"), anchor: "goal-projects") %></p>
+                </details>
+              <% end %>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+      <% if @profile.skills_summary.present? %><section class="profile-section"><h2>Skills & interests</h2><%= simple_format @profile.skills_summary %></section><% end %>
+      <% sectors.each do |field, heading| %>
+        <section class="profile-section"><h2><%= heading %></h2><ul class="profile-tags"><% @profile.public_send(field).each do |sector| %><li><%= link_to sector, people_path(sector: sector) %></li><% end %></ul></section>
+      <% end %>
+      <% if @profile.sector_reason.present? %><section class="profile-section"><h2>Why these sectors</h2><%= simple_format @profile.sector_reason %></section><% end %>
+    </aside>
+  <% end %>
+</div>
+<% if (example = SdgQuiz::EXAMPLES[@profile.public_slug]) && @profile.profile["quiz_completed_at"].blank? %>
+  <section class="profile-targets profile-section" id="quiz-answers">
+    <p class="eyebrow">Example quiz answers</p>
+    <h2>Problems to work on next</h2>
+    <p class="small-note">Illustrative answers based on Nika's portfolio, added to show how the quiz could look on a profile. Nika hasn't completed the quiz.</p>
+    <%= render "quiz/answers", target_ids: example.keys, notes: example %>
+    <p class="quiz-footnote"><%= link_to "Find your own priorities", quiz_path %></p>
+  </section>
+<% end %>
+<% if @archived_challenges.any? %><details class="challenge-optional"><summary>Previous projects</summary><ul class="work-archive"><% @archived_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span></li><% end %></ul></details><% end %>
+<% if owns_profile?(@profile) %>
+  <section class="profile-section owner-panel" aria-labelledby="your-answers-title">
+    <h2 id="your-answers-title">Your answers</h2>
+    <p>Only you can see this section. Manage your answers, notes and sharing preferences.</p>
+    <p><%= link_to "View and edit all your answers", profile_provocation_answers_path(@profile.public_slug) %></p>
+    <% @profile.provocation_answers.includes(:provocation).order(created_at: :desc).limit(5).each do |answer| %>
+      <p><%= link_to answer.provocation.question, provocation_path(answer.provocation) %><br><%= answer.label %> · <%= answer.shared? ? "Shared anonymously" : "Private" %></p>
+    <% end %>
+  </section>
+<% end %>

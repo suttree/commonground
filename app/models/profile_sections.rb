@@ -8,6 +8,7 @@ class ProfileSections
     "portfolio" => [ "Portfolio", %w[projects] ],
     "side_projects" => [ "Side projects", [] ],
     "priorities" => [ "Priorities", %w[target_ids exploring] ],
+    "availability" => [ "Availability", %w[availability_status availability_hours availability_note] ],
     "contact" => [ "Contact", %w[contact_action contact_destination] ]
   }.freeze
   COMPANY = {

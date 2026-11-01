@@ -1,0 +1,29 @@
+<section class="dashboard-current-work" aria-labelledby="current-work-title">
+  <h2 id="current-work-title" class="dashboard-label">Your current project</h2>
+  <% if @active_challenge %>
+    <h3><%= link_to @active_challenge.title, challenge_path(@active_challenge) %></h3>
+    <% if @active_challenge.description.present? %><p class="dashboard-current-description"><%= truncate(@active_challenge.description, length: 320, separator: " ") %></p><% end %>
+    <% if @active_challenge.help_options.any? %>
+      <p class="dashboard-current-help"><strong>Looking for help with</strong> <%= @active_challenge.help_options.map(&:downcase).to_sentence %></p>
+    <% else %>
+      <p class="small-note">Say what help you need so people know how to contribute.</p>
+    <% end %>
+    <div class="dashboard-current-actions">
+      <%= link_to "Update your project", edit_challenge_path(@active_challenge), class: "button" %>
+      <%= link_to "Mark it completed", edit_challenge_path(@active_challenge, anchor: "challenge_status") %>
+    </div>
+    <p class="small-note">To finish, set the status to Completed and add what happened. It then moves to your portfolio.</p>
+  <% else %>
+    <p class="dashboard-current-empty">You don’t have an active project.</p>
+    <div class="dashboard-current-actions">
+      <% if @draft_challenge %>
+        <%= link_to "Continue “#{truncate(@draft_challenge.title, length: 60)}”", edit_challenge_path(@draft_challenge), class: "button" %>
+        <%= link_to "Start a new project", new_challenge_path %>
+      <% else %>
+        <%= link_to "Start a project", new_challenge_path, class: "button" %>
+      <% end %>
+    </div>
+    <p class="small-note">You can have one active project at a time, plus drafts and completed work.</p>
+  <% end %>
+  <% if @past_challenges.any? %><details class="dashboard-past-projects"><summary>Your drafts & previous work (<%= @past_challenges.size %>)</summary><ul class="work-archive"><% @past_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span> <%= link_to "Edit", edit_challenge_path(challenge), aria: { label: "Edit #{challenge.title}" } %></li><% end %></ul></details><% end %>
+</section>

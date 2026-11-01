@@ -1,9 +1,29 @@
-<header class="member-opening">
+<header class="member-opening editorial-opening">
   <%= render "shared/member_identity", profile: @profile %>
   <div class="member-heading">
     <h1><%= @profile.display_name %></h1>
-    <% if @profile.location.present? %><p class="profile-location"><%= @profile.location %><% if @profile.radius_km.present? %> · Within <%= @profile.radius_km %> km<% end %></p><% end %>
-    <% if @profile.website.to_s.match?(%r{\Ahttps?://}i) %><%= link_to "Website & work ↗", @profile.website, target: "_blank", rel: "noopener noreferrer", class: "profile-website" %><% end %>
+    <% if @profile.location.present? || @profile.availability_provided? %>
+      <p class="member-facts">
+        <% if @profile.location.present? %><span class="profile-location"><%= @profile.location %><% if @profile.radius_km.present? %> · Within <%= @profile.radius_km %> km<% end %></span><% end %>
+        <% if @profile.availability_provided? %><span class="member-availability availability-<%= @profile.availability_status %>"><%= @profile.availability_summary %></span><% end %>
+      </p>
+    <% end %>
+    <% if @profile.availability_provided? && @profile.availability_note.present? %><p class="small-note member-availability-note"><%= @profile.availability_note %></p><% end %>
+    <% if owns_profile?(@profile) && !@profile.availability_provided? %>
+      <p class="small-note owner-note">Only you can see this: <%= link_to "add your availability", edit_account_profile_path(section: "availability", profile_id: @profile.id) %> so people know whether to get in touch.</p>
+    <% end %>
+    <% website = @profile.website.to_s.match?(%r{\Ahttps?://}i) %>
+    <% if @profile.contact_link.present? || website %>
+      <p class="member-actions">
+        <% if @profile.contact_link.present? %><%= link_to @profile.contact_action, @profile.contact_link, class: "button member-contact", rel: "noopener noreferrer" %><% end %>
+        <% if website %><%= link_to "Website & work ↗", @profile.website, target: "_blank", rel: "noopener noreferrer", class: "button secondary profile-website" %><% end %>
+      </p>
+    <% end %>
   </div>
-  <% if @profile.contact_link.present? %><%= link_to @profile.contact_action, @profile.contact_link, class: "button member-contact", rel: "noopener noreferrer" %><% end %>
 </header>
+<% if @profile.purpose.present? %>
+  <section class="member-intro" aria-labelledby="member-intro-title">
+    <h2 id="member-intro-title">Who I want to serve</h2>
+    <%= simple_format @profile.purpose %>
+  </section>
+<% end %>

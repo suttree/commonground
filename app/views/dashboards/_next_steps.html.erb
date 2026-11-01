@@ -1,0 +1,15 @@
+<section class="dashboard-discovery dashboard-next-steps" aria-labelledby="dashboard-next-title">
+  <div class="dashboard-section-heading">
+    <h2 id="dashboard-next-title">What next?</h2>
+    <p class="dashboard-section-links"><%= link_to "Explore companies", companies_path %> · <%= link_to "Explore the goals", sdgs_path %></p>
+  </div>
+  <div class="dashboard-discovery-cards">
+    <% if @active_challenge %>
+      <%= link_to challenge_collaborator_invitations_path(@active_challenge), class: "dashboard-discovery-card" do %><h3>Invite collaborators</h3><p>Add people you already know to “<%= truncate(@active_challenge.title, length: 50) %>”.</p><% end %>
+    <% else %>
+      <%= link_to new_challenge_path, class: "dashboard-discovery-card" do %><h3>Start a project</h3><p>Describe what needs doing and the help you’re looking for.</p><% end %>
+    <% end %>
+    <%= link_to challenges_path(status: "active"), class: "dashboard-discovery-card" do %><h3>Find a project to join</h3><p>Browse active projects and contact the people behind them.</p><% end %>
+    <%= link_to @profile&.priorities_selected? && Array(@profile.target_ids).any? ? people_path(priorities: "1") : people_path, class: "dashboard-discovery-card" do %><h3>Find collaborators</h3><p><%= Array(@profile&.target_ids).any? ? "Meet people who chose the same goals as you." : "Meet people by skill, sector and location." %></p><% end %>
+  </div>
+</section>

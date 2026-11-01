@@ -1,0 +1,23 @@
+<fieldset>
+  <legend>Are you available for new work?</legend>
+  <p id="availability-hint" class="hint">This appears on your public profile, next to your name. Choose “Don’t show my availability” to leave it off; visitors then see nothing rather than “not available”.</p>
+  <div class="field" role="radiogroup" aria-describedby="availability-hint">
+    <div class="check-choice"><%= form.radio_button :availability_status, "", checked: @submission.availability_status.blank? %><%= form.label :availability_status, "Don’t show my availability", value: "" %></div>
+    <% Submission::AVAILABILITY_STATUSES.each do |value, label| %>
+      <div class="check-choice"><%= form.radio_button :availability_status, value %><%= form.label :availability_status, label, value: value %></div>
+    <% end %>
+    <%= render "shared/field_error", record: @submission, attribute: :availability_status %>
+  </div>
+  <div class="field">
+    <%= form.label :availability_hours, "Roughly how many hours a week could you give? (optional)" %>
+    <p id="availability_hours-hint" class="hint">A whole number of hours per week, up to 80. Shown with “Available” or “Limited”, not with “Not available right now”.</p>
+    <%= form.number_field :availability_hours, min: 1, max: 80, step: 1, inputmode: "numeric", **field_options(@submission, :availability_hours, hint: true) %>
+    <%= render "shared/field_error", record: @submission, attribute: :availability_hours %>
+  </div>
+  <div class="field">
+    <%= form.label :availability_note, "Anything else about timing? (optional)" %>
+    <p id="availability_note-hint" class="hint">For example, “From March” or “Evenings and weekends”. Up to 200 characters. Also public.</p>
+    <%= form.text_field :availability_note, maxlength: 200, **field_options(@submission, :availability_note, hint: true) %>
+    <%= render "shared/field_error", record: @submission, attribute: :availability_note %>
+  </div>
+</fieldset>

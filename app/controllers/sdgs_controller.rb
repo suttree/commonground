@@ -17,6 +17,7 @@ class SdgsController < ApplicationController
     @goal = SdgDirectory.goal(params[:id])
     raise ActiveRecord::RecordNotFound unless @goal
     @guide = SdgDirectory::GUIDES.fetch(@goal.fetch("id"))
+    @goal_challenges = Challenge.discoverable.filtered(goal: @goal.fetch("id").to_s).includes(:submission).recent.limit(6)
   end
 
   def target

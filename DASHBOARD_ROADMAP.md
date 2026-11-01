@@ -2,13 +2,14 @@
 
 ## Agreed direction
 
-Apply Ink & lime to the currently functional dashboard now. Keep its information
-order and existing controls. Later, evolve toward the Community living room
+Apply Ink & lime to the currently functional dashboard. Its order is now: current
+project and availability, next actions, the reflection question and priorities,
+then projects connected to the member's goals. Existing controls are kept. Later, evolve toward the Community living room
 layout when there is real community content to support it. The visual prototype
 is a direction, not evidence that article sharing or discussions already exist.
 
 Other agreed design decisions: discovery uses a filter sidebar and refreshed
-cards; member profiles use Work & personality for now. Both are implemented on
+cards; member profiles now use Personal & editorial (previously Work & personality). Both are implemented on
 the same design branch alongside the dashboard styling. Marketing is deferred. Next design reviews are project
 details and company profiles, then joining and editing; the full mobile and
 state review comes last.
@@ -70,6 +71,24 @@ article comment threads. Decide between comments on contributions and contacting
 the author. Do not add a misleading 'Join the conversation' button before there
 is a destination. Comments would also need ownership, deletion, reporting,
 moderation, and a deliberate notification policy.
+
+### 5. "Things I wish existed" (idea, needs definition)
+
+Nika suggested a place where members share things they wish existed or would
+like to see happen. Not built. It is captured here so it isn't lost, and it needs
+decisions before any design work:
+
+- Posting: who can post, how long a post is, and whether it can be anonymous.
+- Discovery: where wishes appear (dashboard, goal pages, a dedicated page) and
+  how they are filtered or tied to SDG goals.
+- Responses: whether people can reply, say "me too", or offer to help, and what
+  that triggers (contact flow, notification, nothing).
+- Relationship to projects: whether a wish can become a project, and how credit
+  and ownership carry over.
+- Moderation, editing, deletion, and when a wish is closed or stale.
+
+Treat it like the community stream: no placeholder feed or non-working buttons
+until these are decided.
 
 ## When to revisit the dashboard layout
 

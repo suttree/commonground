@@ -187,8 +187,19 @@ identities use initials. Identity accent colours derive from the persisted profi
 ID, so filtering or sorting does not recolour a person. No uploaded company logo
 or photograph is required. SDG labels retain official colour markers.
 
-Personal profiles follow Work & personality: identity and contact first, current
-project, side projects and portfolio, then purpose and background. All existing
-profile data and private owner controls remain available. Company profile layout
-is intentionally deferred. Shared partial styling is scoped to avoid changing the
-marketing website or project detail pages.
+Personal profiles follow Personal & editorial: a restrained serif name, location
+and stated availability, contact and website as real buttons, then the member's
+own purpose as a serif introduction. Current work follows with the help needed,
+then side projects, portfolio, background and skills in a main column, with goals
+(official SDG colour dots plus text), skills summary and sectors in a narrow
+aside. Skills are a plain list rather than a carousel of identical cards. Lime is
+reserved for the current-work accent and the "available" marker. Empty sections
+are hidden; no headline or quote is invented. Owner-only prompts and private
+answers use a sage wash so they read as distinct from what visitors see.
+Company profile layout is intentionally deferred. Shared partial styling is
+scoped to avoid changing the marketing website or project detail pages.
+
+The dashboard leads with current work (lime accent, serif title, "Update your
+project" and "Mark it completed" via the existing status field) beside
+availability, then next actions, then reflection and priorities, then projects
+connected to the member's goals ordered by publication date.

@@ -10,38 +10,54 @@
   <% if current_account.submissions.none? %>
     <%= render "journey" %>
   <% else %>
-  <div class="dashboard-overview<%= " dashboard-overview-meta-only" unless @provocation_answer_count %>">
+  <% if @profile %>
+    <div class="dashboard-now<%= " has-availability" unless @profile.organisation? %>">
+      <%= render "current_work" %>
+      <%= render "availability" unless @profile.organisation? %>
+    </div>
+  <% end %>
+  <%= render "next_steps" %>
+  <div class="dashboard-overview dashboard-reflection<%= " dashboard-overview-meta-only" unless @provocation_answer_count %>">
     <%= render "provocations" if @provocation_answer_count %>
-    <%= render "meta" %>
-  </div>
-  <section class="dashboard-priorities-strip" aria-labelledby="dashboard-priorities-title">
-    <div class="dashboard-section-heading">
-      <h2 id="dashboard-priorities-title">What matters to you</h2>
-      <% if @profile&.priorities_selected? %><%= link_to "Review your priorities", edit_account_profile_path(section: "priorities", profile_id: @profile.id) %><% end %>
-    </div>
-    <% if @profile&.priorities_selected? %>
-      <% if Array(@profile.target_ids).any? %>
-        <ul class="dashboard-priority-links"><% @profile.target_ids.each do |id| %><li><%= link_to "#{id}: #{SdgQuiz::LABELS.fetch(id)}", sdg_target_path(id) %></li><% end %></ul>
+    <section class="dashboard-priorities-strip" aria-labelledby="dashboard-priorities-title">
+      <div class="dashboard-section-heading">
+        <h2 id="dashboard-priorities-title">What matters to you</h2>
+        <% if @profile&.priorities_selected? %><%= link_to "Review your priorities", edit_account_profile_path(section: "priorities", profile_id: @profile.id) %><% end %>
+      </div>
+      <% if @profile&.priorities_selected? %>
+        <% if Array(@profile.target_ids).any? %>
+          <ul class="dashboard-priority-links"><% @profile.target_ids.each do |id| %><li class="sdg-color-<%= id.split(".").first %>"><span class="goal-dot" aria-hidden="true"></span><%= link_to "#{id}: #{SdgQuiz::LABELS.fetch(id)}", sdg_target_path(id) %></li><% end %></ul>
+        <% else %>
+          <p class="small-note">You're still exploring which problems you want to work on.</p>
+        <% end %>
       <% else %>
-        <p class="small-note">You're still exploring which problems you want to work on.</p>
+        <p class="small-note">Find the problems you want to work on. <%= link_to "Take the eight-question SDG quiz", quiz_path %></p>
+        <% unless @profile %><p class="small-note">Create a <%= link_to "personal profile", new_person_path %> or <%= link_to "company profile", new_organisation_path %> to save your priorities.</p><% end %>
       <% end %>
-    <% else %>
-      <p class="small-note">Find the problems you want to work on. <%= link_to "Take the eight-question SDG quiz", quiz_path %></p>
-      <% unless @profile %><p class="small-note">Create a <%= link_to "personal profile", new_person_path %> or <%= link_to "company profile", new_organisation_path %> to save your priorities.</p><% end %>
-    <% end %>
-  </section>
-  <section class="dashboard-discovery" aria-labelledby="dashboard-browse-title">
-    <div class="dashboard-section-heading">
-      <h2 id="dashboard-browse-title">Find your next connection</h2>
-      <%= link_to "Explore the goals", sdgs_path %>
-    </div>
-    <div class="dashboard-discovery-cards">
-      <%= link_to challenges_path, class: "dashboard-discovery-card" do %><h3>Find a project <span aria-hidden="true">↗</span></h3><p>Put your skills to work on something that matters.</p><% end %>
-      <%= link_to people_path, class: "dashboard-discovery-card" do %><h3>Meet people <span aria-hidden="true">↗</span></h3><p>Find people who care about the same problems.</p><% end %>
-      <%= link_to companies_path, class: "dashboard-discovery-card" do %><h3>Explore companies <span aria-hidden="true">↗</span></h3><p>Get to know the teams doing useful work.</p><% end %>
-    </div>
-  </section>
-  <% if @recommended_challenges&.any? %><section class="recent-work"><h2>Projects to explore</h2><p>Work connected to your selected goals, when you have added them.</p><div class="challenge-grid"><%= render partial: "challenges/card", collection: @recommended_challenges, as: :challenge %></div></section><% end %>
+    </section>
+  </div>
+  <% if @profile %>
+    <section class="recent-work dashboard-goal-projects" aria-labelledby="goal-projects-title">
+      <div class="dashboard-section-heading">
+        <h2 id="goal-projects-title"><%= @goals.any? ? "Projects connected to your goals" : "Latest active projects" %></h2>
+        <%= link_to "All projects", challenges_path(status: "active") %>
+      </div>
+      <% if @goals.any? %>
+        <ul class="directory-goals dashboard-goal-list"><% @goals.each do |goal| %><li class="sdg-color-<%= goal.fetch('id') %>"><span class="goal-dot" aria-hidden="true"></span><%= link_to "Goal #{goal.fetch('id')}: #{goal.fetch('name')}", sdg_goal_path(goal.fetch("id"), anchor: "goal-projects") %></li><% end %></ul>
+      <% else %>
+        <p>Newest first, by publication date. <%= link_to "Choose your priorities", @profile.priorities_selected? ? edit_account_profile_path(section: "priorities", profile_id: @profile.id) : quiz_path %> to see projects linked to your goals.</p>
+      <% end %>
+      <% if @recommended_challenges.any? %>
+        <div class="challenge-grid"><%= render partial: "challenges/card", collection: @recommended_challenges, as: :challenge %></div>
+      <% else %>
+        <div class="empty-state">
+          <p><%= @goals.any? ? "No one has published an active project linked to these goals yet." : "There are no other active projects yet." %></p>
+          <p class="empty-state-actions"><% unless @active_challenge %><%= link_to "Start a project", new_challenge_path %><% end %><%= link_to @goals.any? ? "Find people who share your goals" : "Meet people", @goals.any? ? people_path(priorities: "1") : people_path %></p>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+  <%= render "meta" %>
   <% end %>
   <div class="dashboard-footer"><%= button_to "Log out", logout_path, method: :delete, class: "button secondary" %></div>
 </div>

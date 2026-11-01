@@ -23,12 +23,15 @@ class DashboardsController < ApplicationController
     if @profile
       @active_challenge = @profile.challenges.find_by(status: "active")
       @past_challenges = @profile.challenges.where.not(status: "active").order(updated_at: :desc)
+      @draft_challenge = @past_challenges.find { |challenge| challenge.status == "draft" }
       goals = Array(@profile.target_ids).map { |id| id.split(".").first }.uniq
+      @goals = ProfileOptions::GOALS.select { |goal| goals.include?(goal.fetch("id").to_s) }
       recommendations = Challenge.discoverable.where(status: "active").where.not(submission_id: @profile.id)
       if goals.any?
         conditions = goals.map { "EXISTS (SELECT 1 FROM json_each(challenges.target_ids) WHERE value LIKE ?)" }.join(" OR ")
         recommendations = recommendations.where(conditions, *goals.map { |id| "#{id}.%" })
       end
+      # Latest by publication date, not last edit.
       @recommended_challenges = recommendations.includes(:submission).recent.limit(3)
     end
   end
