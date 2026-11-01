@@ -1,6 +1,6 @@
 class ProfileSections
   PERSONAL = {
-    "basics" => [ "Basics", %w[name website location radius_km] ],
+    "basics" => [ "Basics", %w[name website location radius_km availability_status] ],
     "purpose" => [ "Purpose", %w[purpose] ],
     "experience" => [ "Experience", %w[experience sectors_past sectors_future sector_reason] ],
     "skills" => [ "Skills", %w[skills skills_summary] ],

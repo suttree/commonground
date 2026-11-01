@@ -1,5 +1,5 @@
 <% content_for :title, @profile.display_name %>
-<% content_for :body_class, "ink-lime-theme member-theme" unless @profile.organisation? %>
+<% content_for :body_class, "ink-lime-theme member-theme editorial-profile" unless @profile.organisation? %>
 <article class="public-profile">
   <nav class="profile-toolbar" aria-label="Profile navigation">
     <%= link_to @profile.organisation? ? "← All companies" : "← All people", @profile.organisation? ? companies_path : people_path, class: "button ghost small back" %>
@@ -33,11 +33,17 @@
     </div>
   </header>
   <% end %>
-  <% if @current_challenge %><section class="profile-section current-challenge"><h2><%= @profile.organisation? ? "Our current project" : "My current project" %></h2><%= render "challenges/card", challenge: @current_challenge %></section><% end %>
-  <% unless @profile.organisation? %>
-    <%= render "side_projects", profile: @profile %>
-    <%= render "projects", profile: @profile %>
-    <% if @profile.purpose.present? %><section class="profile-section member-purpose"><h2>Why I do this</h2><%= simple_format @profile.purpose %></section><% end %>
+  <% if @profile.organisation? %>
+    <% if @current_challenge %><section class="profile-section current-challenge"><h2>Our current project</h2><%= render "challenges/card", challenge: @current_challenge %></section><% end %>
+  <% else %>
+    <% if @profile.purpose.present? %><section class="member-purpose" aria-label="Why I do this"><%= simple_format @profile.purpose %></section><% end %>
+    <div class="editorial-work-layout <%= 'without-sides' unless @profile.side_projects.exists? %>">
+      <div>
+        <% if @current_challenge %><%= render "member_project", challenge: @current_challenge %><% end %>
+        <%= render "projects", profile: @profile %>
+      </div>
+      <%= render "side_projects", profile: @profile %>
+    </div>
   <% end %>
   <% if owns_profile?(@profile) && !@profile.organisation? %>
     <section class="profile-section" aria-labelledby="your-answers-title">
@@ -59,7 +65,6 @@
         <section class="profile-section"><h2>I feel most <%= @profile.satisfaction_feeling.to_s.downcase %> when...</h2><%= simple_format @profile.satisfaction_notes %></section>
       <% end %>
       <% unless @profile.organisation? %>
-        <% if @profile.skills_summary.present? %><section class="profile-section"><h2>Skills & interests</h2><%= simple_format @profile.skills_summary %></section><% end %>
         <%= render "skills", profile: @profile %>
       <% else %>
         <% if @profile.profile_entries("products").any? %>

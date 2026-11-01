@@ -192,3 +192,9 @@ project, side projects and portfolio, then purpose and background. All existing
 profile data and private owner controls remain available. Company profile layout
 is intentionally deferred. Shared partial styling is scoped to avoid changing the
 marketing website or project detail pages.
+
+### Personal & editorial member profiles
+
+Member profiles use an editorial identity block, a serif purpose statement, a lime current-project panel and a side-project column. At 650px and below, the content stacks, the portrait reduces to a controlled 76px-wide frame, and contact actions span the width. These rules build on the signed-in mobile navigation and form improvements in PR #16.
+
+Public availability is an optional `profile.availability_status` choice in Basics. Open and occasional-help states use a green dot; unavailable and unset states remain neutral, always with a text label. The legacy `availability` column is not displayed or migrated because it was not explicitly collected for public display. No database migration is needed.

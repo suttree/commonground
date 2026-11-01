@@ -8,9 +8,12 @@ class Submission < ApplicationRecord
   STATUSES = [ "Received", "Needs a conversation", "Ready for introductions", "Introduced", "Outcome recorded" ].freeze
   PROFILE_FIELDS = %i[target_ids sectors_past sectors_future sector_reason radius_km education_topics satisfaction_feeling satisfaction_notes skills projects mission offering impact_metrics proud_of challenge_kind help_needed products].freeze
 
+  AVAILABILITY_STATUSES = [ "Open to a new project", "Available for occasional help", "Not available right now" ].freeze
+
   CONTACT_ACTIONS = [ "Email me", "Follow me", "Connect on LinkedIn" ].freeze
 
-  store_accessor :profile, *PROFILE_FIELDS, :exploring, :contact_action, :contact_destination, :skills_summary
+  store_accessor :profile, *PROFILE_FIELDS, :availability_status, :exploring, :contact_action, :contact_destination, :skills_summary
+  validates :availability_status, inclusion: { in: AVAILABILITY_STATUSES }, allow_blank: true
   validate :valid_contact_action
   has_many :challenges, dependent: :destroy
   has_many :contact_requests, dependent: :destroy

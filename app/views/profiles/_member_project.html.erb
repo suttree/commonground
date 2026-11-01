@@ -1,0 +1,11 @@
+<section class="profile-section editorial-current-project" aria-labelledby="current-project-title">
+  <p class="eyebrow">Current project</p>
+  <h2 id="current-project-title"><%= link_to challenge.title, challenge_path(challenge) %></h2>
+  <%= render "challenges/organisation", challenge: challenge %>
+  <p><%= truncate(challenge.description, length: 260, separator: " ") %></p>
+  <% if challenge.help_options.any? %><p class="member-project-need">Looking for help with <strong><%= challenge.help_options.map(&:downcase).to_sentence %></strong></p><% end %>
+  <div class="actions">
+    <%= link_to "View project →", challenge_path(challenge), class: "button" %>
+    <% if owns_profile?(challenge.submission) %><%= link_to "Update project", edit_challenge_path(challenge) %><% end %>
+  </div>
+</section>

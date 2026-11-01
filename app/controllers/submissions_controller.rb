@@ -191,7 +191,7 @@ class SubmissionsController < ApplicationController
       [ :organisation_name, :location, :exploring, :challenge, :mission, :offering, :impact_metrics, :proud_of, :challenge_kind, :help_needed,
         { target_ids: [], sectors_past: [], products: ProfileOptions::REPEATED_FIELDS.fetch("products").keys } ]
     else
-      [ :experience, :skills_summary, :location, :radius_km, :sector_reason, :education_topics, :satisfaction_feeling, :satisfaction_notes, :exploring,
+      [ :availability_status, :experience, :skills_summary, :location, :radius_km, :sector_reason, :education_topics, :satisfaction_feeling, :satisfaction_notes, :exploring,
         { target_ids: [], sectors_past: [], sectors_future: [],
           skills: ProfileOptions::REPEATED_FIELDS.fetch("skills").keys, projects: ProfileOptions::REPEATED_FIELDS.fetch("projects").keys + ProfileOptions::PROJECT_DETAILS.keys + %w[image_token remove_image] } ]
     end
