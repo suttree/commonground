@@ -70,7 +70,7 @@ class PublicProfilesTest < ActionDispatch::IntegrationTest
   test "publication requires authenticated admin access" do
     entry = profile
     patch admin_submission_path(entry), params: { submission: { published: false } }
-    assert_includes [ 401, 503 ], response.status
+    assert_redirected_to login_path
     assert entry.reload.published?
   end
 

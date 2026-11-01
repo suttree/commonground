@@ -1,18 +1,6 @@
 require "test_helper"
 
 class PilotTest < ActionDispatch::IntegrationTest
-  setup do
-    @old_user = ENV["ADMIN_USERNAME"]
-    @old_password = ENV["ADMIN_PASSWORD"]
-    ENV["ADMIN_USERNAME"] = "test-admin"
-    ENV["ADMIN_PASSWORD"] = "test-password-for-this-suite"
-  end
-
-  teardown do
-    ENV["ADMIN_USERNAME"] = @old_user
-    ENV["ADMIN_PASSWORD"] = @old_password
-  end
-
   def answers
     {
       name: "Alex Example", email: "alex@example.test", purpose: "Help local growers use surplus produce",
@@ -21,14 +9,6 @@ class PilotTest < ActionDispatch::IntegrationTest
       availability: "Two days a week from October", location: "London or remote",
       pay_expectations: "GBP 400 per day", consent: "1"
     }
-  end
-
-  def admin_headers
-    unless @admin_signed_in
-      sign_in_account(Account.create!(email: "admin@example.test", admin: true))
-      @admin_signed_in = true
-    end
-    { "HTTP_AUTHORIZATION" => ActionController::HttpAuthentication::Basic.encode_credentials("test-admin", "test-password-for-this-suite") }
   end
 
   test "public pages use semantic HTML and load only the required scripts" do
@@ -113,14 +93,15 @@ class PilotTest < ActionDispatch::IntegrationTest
     assert_redirected_to create_account_path
     entry = Submission.last
     assert_equal "organisation", entry.kind
-    get admin_root_path, headers: admin_headers
+    sign_in_account(Account.create!(email: "admin@example.test", admin: true))
+    get admin_root_path
     assert_response :success
     assert_select "a", text: "Orchard Co-op"
-    get admin_submission_path(entry), headers: admin_headers
+    get admin_submission_path(entry)
     assert_response :success
     assert_select "dd", text: /We need help figuring this out/
     assert_equal "no-store", response.headers["Cache-Control"]
-    patch admin_submission_path(entry), headers: admin_headers, params: { submission: { status: "Needs a conversation", notes: "Clarify the time commitment.", email: "changed@example.test" } }
+    patch admin_submission_path(entry), params: { submission: { status: "Needs a conversation", notes: "Clarify the time commitment.", email: "changed@example.test" } }
     assert_redirected_to admin_submission_path(entry)
     assert_equal "Needs a conversation", entry.reload.status
     assert_equal "alex@example.test", entry.email
@@ -162,38 +143,35 @@ class PilotTest < ActionDispatch::IntegrationTest
     assert_redirected_to thanks_path
   end
 
-  test "every admin action requires authentication and fails closed without credentials" do
+  test "every admin action requires a signed-in account" do
     entry = Submission.create!(answers.merge(kind: "person"))
     [ admin_root_path, admin_submissions_path, admin_submission_path(entry) ].each do |path|
       get path
-      assert_response :unauthorized
+      assert_redirected_to login_path
       assert_no_match entry.email, response.body
     end
     patch admin_submission_path(entry), params: { submission: { status: "Introduced" } }
-    assert_response :unauthorized
+    assert_redirected_to login_path
     assert_equal "Received", entry.reload.status
-    get admin_root_path, headers: { "HTTP_AUTHORIZATION" => ActionController::HttpAuthentication::Basic.encode_credentials("test-admin", "wrong") }
-    assert_response :unauthorized
-    ENV.delete("ADMIN_PASSWORD")
-    get admin_root_path, headers: admin_headers
-    assert_response :service_unavailable
   end
 
   test "admin filters applications and rejects unknown statuses" do
     person = Submission.create!(answers.merge(kind: "person"))
     Submission.create!(answers.merge(kind: "organisation", organisation_name: "Orchard", challenge: "Reduce waste"))
-    get admin_root_path, headers: admin_headers, params: { kind: "organisation" }
+    sign_in_account(Account.create!(email: "admin@example.test", admin: true))
+    get admin_root_path, params: { kind: "organisation" }
     assert_response :success
     assert_select ".application-list li", count: 1
     assert_select ".application-list h2", text: "Orchard"
-    patch admin_submission_path(person), headers: admin_headers, params: { submission: { status: "unknown" } }
+    patch admin_submission_path(person), params: { submission: { status: "unknown" } }
     assert_response :unprocessable_entity
     assert_equal "Received", person.reload.status
   end
 
   test "application content cannot inject scripts in admin pages" do
     entry = Submission.create!(answers.merge(kind: "person", purpose: '<script>alert("bad")</script>'))
-    get admin_submission_path(entry), headers: admin_headers
+    sign_in_account(Account.create!(email: "admin@example.test", admin: true))
+    get admin_submission_path(entry)
     assert_response :success
     assert_select "script", count: 1
     assert_select "script[src='https://scripts.withcabin.com/hello.js'][async][defer]", count: 1
@@ -245,11 +223,12 @@ class PilotTest < ActionDispatch::IntegrationTest
     assert_equal 2, entry.projects.size
     assert_equal "Alive", entry.satisfaction_feeling
     assert_nil entry.mission
-    get admin_submission_path(entry), headers: admin_headers
+    sign_in_account(Account.create!(email: "admin@example.test", admin: true))
+    get admin_submission_path(entry)
     assert_response :success
     assert_select "dd", text: /Working with others/
     assert_select "li", text: /12.3/
-    patch admin_submission_path(entry), headers: admin_headers, params: { submission: { notes: "Reviewed" } }
+    patch admin_submission_path(entry), params: { submission: { notes: "Reviewed" } }
     assert_redirected_to admin_submission_path(entry)
     assert_equal 2, entry.reload.projects.size
   end
@@ -294,7 +273,8 @@ class PilotTest < ActionDispatch::IntegrationTest
     assert_redirected_to create_account_path
     entry = Submission.last
     assert_equal 2, entry.products.size
-    get admin_submission_path(entry), headers: admin_headers
+    sign_in_account(Account.create!(email: "admin@example.test", admin: true))
+    get admin_submission_path(entry)
     assert_response :success
     assert_select "dd", text: /Cider/
     assert_select "dd", text: /Tonnes saved/
@@ -303,10 +283,11 @@ class PilotTest < ActionDispatch::IntegrationTest
   test "legacy applications retain their original answers and remain editable" do
     entry = Submission.create!(answers.merge(kind: "organisation", organisation_name: "Legacy", challenge: "Original challenge"))
     assert_equal 1, entry.profile_version
-    get admin_submission_path(entry), headers: admin_headers
+    sign_in_account(Account.create!(email: "admin@example.test", admin: true))
+    get admin_submission_path(entry)
     assert_response :success
     assert_select "dd", text: /GBP 400 per day/
-    patch admin_submission_path(entry), headers: admin_headers, params: { submission: { status: "Introduced" } }
+    patch admin_submission_path(entry), params: { submission: { status: "Introduced" } }
     assert_redirected_to admin_submission_path(entry)
     assert_equal "Introduced", entry.reload.status
   end

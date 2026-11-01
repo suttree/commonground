@@ -54,21 +54,14 @@ class ContactRequestsTest < ActionDispatch::IntegrationTest
   test "requests are available only through authenticated admin" do
     post profile_contact_path(@recipient.public_slug), params: { contact_request: @valid }
     entry = ContactRequest.last
-    old_user, old_password = ENV.values_at("ADMIN_USERNAME", "ADMIN_PASSWORD")
-    ENV["ADMIN_USERNAME"] = "test-admin"
-    ENV["ADMIN_PASSWORD"] = "test-password"
     get admin_contact_request_path(entry)
-    assert_response :unauthorized
-    auth = ActionController::HttpAuthentication::Basic.encode_credentials("test-admin", "test-password")
+    assert_redirected_to login_path
     sign_in_account(Account.create!(email: "admin@example.test", admin: true))
-    get admin_contact_requests_path, headers: { "HTTP_AUTHORIZATION" => auth }
+    get admin_contact_requests_path
     assert_response :success
-    get admin_contact_request_path(entry), headers: { "HTTP_AUTHORIZATION" => auth }
+    get admin_contact_request_path(entry)
     assert_response :success
     assert_includes response.body, @valid[:message]
     assert_equal "no-store", response.headers["Cache-Control"]
-  ensure
-    ENV["ADMIN_USERNAME"] = old_user
-    ENV["ADMIN_PASSWORD"] = old_password
   end
 end
