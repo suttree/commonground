@@ -1,0 +1,8 @@
+<% initials = profile.display_name.to_s.split.filter_map { |word| word[0] }.first(2).join.upcase.presence || "?" %>
+<div class="member-identity identity-tone-<%= profile.id.to_i % 4 %><%= " organisation-identity" if profile.organisation? %>" aria-hidden="true">
+  <% if !profile.organisation? && (photo = profile.profile_photo) %>
+    <%= image_tag profile_photo_source(photo), alt: "", class: "profile-avatar", loading: "lazy", width: 96, height: 96 %>
+  <% else %>
+    <span><%= initials %></span>
+  <% end %>
+</div>

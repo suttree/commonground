@@ -1,4 +1,4 @@
-<article class="challenge-card">
+<article class="challenge-card project-tone-<%= challenge.id.to_i % 4 %>">
   <p class="eyebrow"><%= render "shared/section_icon", section: "challenges" %><%= challenge.completed? ? "Completed project" : challenge.status.humanize %></p>
   <h3><%= link_to challenge.title, challenge_path(challenge) %></h3>
   <p class="small-note"><%= link_to challenge.submission.display_name, profile_path(challenge.submission.public_slug) %></p>

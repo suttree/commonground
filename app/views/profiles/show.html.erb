@@ -1,4 +1,5 @@
 <% content_for :title, @profile.display_name %>
+<% content_for :body_class, "ink-lime-theme member-theme" unless @profile.organisation? %>
 <article class="public-profile">
   <nav class="profile-toolbar" aria-label="Profile navigation">
     <%= link_to @profile.organisation? ? "← All companies" : "← All people", @profile.organisation? ? companies_path : people_path, class: "button ghost small back" %>
@@ -9,6 +10,9 @@
   <% if current_profile == @profile %>
     <% unless @profile.published? %><p class="small-note">Only you can see this preview. Contact the team to restore your public profile.</p><% end %>
   <% end %>
+  <% unless @profile.organisation? %>
+    <%= render "member_opening" %>
+  <% else %>
   <header class="profile-opening">
     <div>
       <p class="eyebrow profile-kind"><%= render "shared/section_icon", section: @profile.organisation? ? "companies" : "people" %><%= @profile.organisation? ? "Organisation" : "Personal profile" %></p>
@@ -28,7 +32,13 @@
       <%= simple_format @profile.purpose %>
     </div>
   </header>
+  <% end %>
   <% if @current_challenge %><section class="profile-section current-challenge"><h2><%= @profile.organisation? ? "Our current project" : "My current project" %></h2><%= render "challenges/card", challenge: @current_challenge %></section><% end %>
+  <% unless @profile.organisation? %>
+    <%= render "side_projects", profile: @profile %>
+    <%= render "projects", profile: @profile %>
+    <% if @profile.purpose.present? %><section class="profile-section member-purpose"><h2>Why I do this</h2><%= simple_format @profile.purpose %></section><% end %>
+  <% end %>
   <% if owns_profile?(@profile) && !@profile.organisation? %>
     <section class="profile-section" aria-labelledby="your-answers-title">
       <h2 id="your-answers-title">Your answers</h2>
@@ -109,10 +119,9 @@
       </div>
     </section>
   <% end %>
-  <%= render "projects", profile: @profile %>
-  <%= render "side_projects", profile: @profile unless @profile.organisation? %>
+  <%= render "projects", profile: @profile if @profile.organisation? %>
   <% if @archived_challenges.any? %><details class="challenge-optional"><summary>Previous projects</summary><ul class="work-archive"><% @archived_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span></li><% end %></ul></details><% end %>
-  <% if @profile.contact_link.present? %>
+  <% if @profile.organisation? && @profile.contact_link.present? %>
     <section class="profile-contact profile-section" aria-label="Contact <%= @profile.display_name %>"><%= link_to @profile.contact_action, @profile.contact_link, class: "button", rel: "noopener noreferrer" %></section>
   <% end %>
 </article>

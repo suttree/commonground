@@ -1,0 +1,9 @@
+<header class="member-opening">
+  <%= render "shared/member_identity", profile: @profile %>
+  <div class="member-heading">
+    <h1><%= @profile.display_name %></h1>
+    <% if @profile.location.present? %><p class="profile-location"><%= @profile.location %><% if @profile.radius_km.present? %> · Within <%= @profile.radius_km %> km<% end %></p><% end %>
+    <% if @profile.website.to_s.match?(%r{\Ahttps?://}i) %><%= link_to "Website & work ↗", @profile.website, target: "_blank", rel: "noopener noreferrer", class: "profile-website" %><% end %>
+  </div>
+  <% if @profile.contact_link.present? %><%= link_to @profile.contact_action, @profile.contact_link, class: "button member-contact", rel: "noopener noreferrer" %><% end %>
+</header>

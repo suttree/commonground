@@ -25,7 +25,7 @@ class ProfilePhotosTest < ActionDispatch::IntegrationTest
     css_select("input[name=profile_photo_token]").sole["value"]
   end
 
-  test "personal profiles use the Commonbound logo when no optional photo is saved" do
+  test "personal profiles use initials when no optional photo is saved" do
     profile = create_owned_profile
     get edit_account_profile_path
     assert_select "form[enctype='multipart/form-data']"
@@ -35,8 +35,8 @@ class ProfilePhotosTest < ActionDispatch::IntegrationTest
     assert_response :see_other
     assert_nil profile.reload.profile_photo
     get profile_path(profile.public_slug)
-    assert_select ".profile-purpose-images .ambient-mark", count: 1
-    assert_select ".profile-opening .profile-avatar", count: 0
+    assert_select ".member-opening .member-identity span", text: "AT"
+    assert_select ".member-opening .profile-avatar", count: 0
   end
 
   test "signup preserves a private photo across validation and attaches it on save" do
@@ -107,8 +107,8 @@ class ProfilePhotosTest < ActionDispatch::IntegrationTest
     get profile_photo_path(replacement)
     assert_response :not_found
     get profile_path(profile.public_slug)
-    assert_select ".profile-purpose-images .ambient-mark", count: 1
-    assert_select ".profile-opening .profile-avatar", count: 0
+    assert_select ".member-opening .member-identity span", text: "A"
+    assert_select ".member-opening .profile-avatar", count: 0
   end
 
   test "photo survives portfolio saves and cannot change from another section or profile" do

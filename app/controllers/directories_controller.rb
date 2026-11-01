@@ -51,7 +51,7 @@ class DirectoriesController < ApplicationController
     end
     @count = profiles.count
     @page = [ params[:page].to_i, 1 ].max
-    @profiles = profiles.order(name_column, :id).limit(24).offset((@page - 1) * 24)
+    @profiles = profiles.includes(:profile_photo).order(name_column, :id).limit(24).offset((@page - 1) * 24)
     render :index
   end
 end

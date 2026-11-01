@@ -147,3 +147,48 @@ Links that leave the current task open in a new tab: "View profile" from the edi
 - Where the woven-ribbon illustration should and shouldn't appear. It's currently on eight templates.
 - SDG colours and member counts on the goal pages.
 - Navigation structure.
+
+## Dashboard: Ink & lime
+
+The dashboard alone now uses an Ink & lime theme (`body.dashboard-theme`).
+The public website and other pages retain their existing palette pending their
+own implementation passes. Keep current dashboard functionality and information
+order until the community features described in `DASHBOARD_ROADMAP.md` are ready.
+
+New root tokens:
+
+| Token | Value | Purpose |
+| --- | --- | --- |
+| `--dashboard-paper` | `#fafbf8` | Clean page background |
+| `--dashboard-surface` | `#ffffff` | Cards and fields |
+| `--dashboard-ink` | `#25343b` | Text and actions |
+| `--dashboard-muted` | `#56666c` | Secondary text |
+| `--dashboard-line` | `#dbe2df` | Decorative separators |
+| `--dashboard-field-line` | `#79877f` | Input and answer control boundaries |
+| `--dashboard-lime` | `#ddeb91` | Reflection panel |
+| `--dashboard-sage` | `#eaf0eb` | Quiet highlights |
+| `--dashboard-radius` | `10px` | Dashboard panels |
+
+Use existing spacing and type tokens. Serif question text, neutral project cards,
+and a lime reflection panel establish hierarchy. Preserve the official SDG colours;
+the dashboard theme does not override those classes. Notes, sharing, question
+permalinks, profile switching, and normal form submissions remain available.
+
+## Discovery and member profiles
+
+The approved Ink & lime theme also applies to people/company/project discovery
+and personal profile pages through `ink-lime-theme`. Company profiles, project
+detail pages, onboarding, and marketing retain their existing layouts.
+
+Discovery preserves the filter sidebar, server-side queries, and pagination.
+Search comes first, with result counts and individually removable applied filters
+above the cards. Person photos fit a fixed circular crop; absent photos and company
+identities use initials. Identity accent colours derive from the persisted profile
+ID, so filtering or sorting does not recolour a person. No uploaded company logo
+or photograph is required. SDG labels retain official colour markers.
+
+Personal profiles follow Work & personality: identity and contact first, current
+project, side projects and portfolio, then purpose and background. All existing
+profile data and private owner controls remain available. Company profile layout
+is intentionally deferred. Shared partial styling is scoped to avoid changing the
+marketing website or project detail pages.

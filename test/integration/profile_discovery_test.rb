@@ -16,6 +16,14 @@ class ProfileDiscoveryTest < ActionDispatch::IntegrationTest
     assert_select ".directory-card", count: 1
     assert_select ".directory-card", text: /Make streets accessible/
     assert_select ".directory-location", text: "Bristol"
+    assert_select "body.discovery-theme.ink-lime-theme"
+    remove_location = css_select(".applied-filters a").find { |link| link["aria-label"].start_with?("Remove location filter") }
+    assert remove_location
+    get remove_location["href"]
+    assert_nil request.query_parameters["location"]
+    assert_equal "research", request.query_parameters["skill"]
+    assert_equal "11.2", request.query_parameters["target"]
+    assert_select ".directory-card", count: 1
     get people_path(skill: "Unmatched")
     assert_select ".directory-card", count: 0
     get people_path
