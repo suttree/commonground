@@ -6,6 +6,7 @@ class ProfilesController < ApplicationController
     @current_challenge = @profile_challenges.find_by(status: "active")
     @completed_challenges = @profile_challenges.where(status: "completed")
     @archived_challenges = @profile_challenges.where(status: %w[paused abandoned])
+    render :company if @profile.organisation?
   end
 
   def skill

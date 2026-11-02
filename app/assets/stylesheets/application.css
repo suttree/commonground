@@ -1228,3 +1228,39 @@ html.sheet-open, html.sheet-open body { overflow: hidden; }
 .project-goal { display: flex; align-items: baseline; gap: 10px; }
 .project-goal-number { flex: none; background: var(--sdg-color); color: #17231d; border-radius: 4px; padding: 5px 9px; font-weight: 600; }
 .project-editorial .project-editorial-heading { border: 0; padding-top: 0; }
+
+/* Editorial organisation profiles: real work first, compact identity alongside. */
+.company-layout { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: var(--space-9); align-items: start; padding-top: var(--space-6); }
+.company-layout > * { min-width: 0; overflow-wrap: anywhere; }
+.company-opening h1 { margin-bottom: var(--space-5); }
+.company-lead { font-size: var(--text-lg); max-width: 58ch; }
+.company-current-work { margin-top: var(--space-7); padding: var(--space-6); background: var(--dashboard-lime); border-radius: var(--dashboard-radius); }
+.company-current-work h2 { font: 400 var(--heading-2)/1.2 Georgia, serif; }
+.company-current-work h2 a { text-decoration: none; }
+.company-current-work .actions { margin-bottom: 0; }
+.company-need { border-top: 1px solid #a8b66e; padding-top: var(--space-4); }
+.company-section { border-top: 1px solid var(--line); padding-top: var(--space-6); margin-top: var(--space-7); }
+.company-section > h2 { font-size: var(--heading-3); }
+.company-products { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
+.company-product h3 { font-size: var(--text-md); }
+.company-product h4 { font-size: var(--text-base); }
+.company-product p { font-size: var(--text-base); }
+.company-identity .member-identity { width: 104px; height: 104px; border-radius: 9px; margin-bottom: var(--space-6); font-size: 2rem; }
+.company-identity p { font-size: var(--text-sm); }
+.company-identity .company-location { margin-bottom: var(--space-2); }
+.company-contact, .company-goals { margin-top: var(--space-7); }
+.company-goals h2 { font-size: var(--text-sm); font-weight: 500; color: var(--muted); }
+.company-goals ul { list-style: none; padding: 0; }
+.company-goal { display: flex; gap: var(--space-3); align-items: baseline; margin-top: var(--space-4); font-size: var(--text-sm); }
+.company-goal-number { flex: none; border-left: 5px solid var(--sdg-color); padding: 2px 8px; font-weight: 600; }
+.company-direct-contact { margin-block: var(--space-6); }
+.company-story .profile-project-grid { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 650px) {
+  .company-layout { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
+  .company-products { grid-template-columns: minmax(0, 1fr); }
+  .company-opening h1 { font-size: 2.3rem; }
+  .company-identity { padding-top: var(--space-6); border-top: 1px solid var(--line); }
+  .company-editorial .actions a, .company-identity a { min-height: 44px; display: inline-flex; align-items: center; }
+  .company-current-work .button, .company-direct-contact .button { width: 100%; }
+}
+.company-identity .company-goals { background: transparent; border: 0; padding: 0; border-radius: 0; }

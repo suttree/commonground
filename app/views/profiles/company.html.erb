@@ -1,0 +1,56 @@
+<% content_for :title, @profile.display_name %>
+<% content_for :body_class, "ink-lime-theme company-editorial" %>
+<article class="public-profile">
+  <nav class="profile-toolbar" aria-label="Profile navigation">
+    <%= link_to "← All companies", companies_path, class: "button ghost small back" %>
+    <% if owns_profile?(@profile) %><%= link_to "Edit company", edit_account_profile_path(profile_id: @profile.id), class: "button secondary small" %><% end %>
+  </nav>
+  <% unless @profile.published? %><p class="small-note">Only you can see this preview.</p><% end %>
+  <div class="company-layout">
+    <div class="company-story">
+      <header class="company-opening">
+        <h1><%= @profile.display_name %></h1>
+        <% if @profile.mission.present? %><div class="company-lead"><%= simple_format @profile.mission %></div><% end %>
+        <% if @profile.offering.present? && @profile.offering != @profile.mission %><%= simple_format @profile.offering %><% end %>
+      </header>
+      <% if @current_challenge %>
+        <section class="company-current-work profile-section" aria-labelledby="company-current-title">
+          <p class="small-note">Current project</p>
+          <h2 id="company-current-title"><%= link_to @current_challenge.title, challenge_path(@current_challenge) %></h2>
+          <p><%= truncate(@current_challenge.description, length: 260, separator: " ") %></p>
+          <% if @current_challenge.help_options.any? %><p class="company-need">Looking for help with <strong><%= @current_challenge.help_options.map(&:downcase).to_sentence %></strong></p><% end %>
+          <div class="actions"><%= link_to "Explore the project →", challenge_path(@current_challenge), class: "button" %><%= link_to "Offer help", new_profile_contact_path(@profile.public_slug, challenge_id: @current_challenge.id) %></div>
+        </section>
+      <% elsif @profile.help_needed.present? %>
+        <section class="company-current-work profile-section"><h2>Looking for help</h2><%= simple_format @profile.help_needed %><%= link_to @profile.contact_action, @profile.contact_link, class: "button" if @profile.contact_link.present? %></section>
+      <% elsif @profile.contact_link.present? %>
+        <p class="company-direct-contact"><%= link_to @profile.contact_action, @profile.contact_link, class: "button", rel: "noopener noreferrer" %></p>
+      <% end %>
+      <% if @profile.profile_entries("products").any? %>
+        <section class="profile-section company-section"><h2>Products & services</h2><div class="company-products">
+          <% @profile.profile_entries("products").each do |entry| %><div class="company-product"><h3><%= entry["name"] %></h3><%= simple_format entry["special"] if entry["special"].present? %><% if entry["impact"].present? %><h4>The impact we want to have</h4><%= simple_format entry["impact"] %><% end %></div><% end %>
+        </div></section>
+      <% end %>
+      <%= render "projects", profile: @profile %>
+      <% { purpose: "Who we serve", impact_metrics: "Our impact", proud_of: "What we're proud of", challenge: @profile.challenge_kind == "Goals" ? "Our current goals" : "Our current challenges" }.each do |field, heading| %>
+        <% value = @profile.public_send(field) %>
+        <% if value.present? && ![@profile.mission, @profile.offering].include?(value) %><section class="profile-section company-section"><h2><%= heading %></h2><%= simple_format value %></section><% end %>
+      <% end %>
+      <% if @current_challenge && @profile.help_needed.present? %><section class="profile-section company-section"><h2>Other ways to help</h2><%= simple_format @profile.help_needed %></section><% end %>
+      <% if @archived_challenges.any? %><details class="challenge-optional"><summary>Previous projects</summary><ul class="work-archive"><% @archived_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span></li><% end %></ul></details><% end %>
+    </div>
+    <aside class="company-identity" aria-label="Organisation identity">
+      <%= render "shared/member_identity", profile: @profile %>
+      <% if @profile.location.present? %><p class="company-location"><span aria-hidden="true">📍</span> <%= @profile.location %></p><% end %>
+      <% if @profile.sectors_past.present? %><p class="small-note"><%= @profile.sectors_past.join(" · ") %></p><% end %>
+      <% if @profile.website.to_s.match?(%r{\Ahttps?://}i) %><p><%= link_to "Company website ↗", @profile.website, target: "_blank", rel: "noopener noreferrer" %></p><% end %>
+      <% if @profile.contact_link.present? && (@current_challenge || @profile.help_needed.present?) %><p class="company-contact"><%= link_to @profile.contact_action, @profile.contact_link, class: "button", rel: "noopener noreferrer" %></p><% end %>
+      <% if @profile.exploring == "1" %><section class="company-goals"><h2>Our priorities</h2><p>We're exploring which problems to work on next.</p></section>
+      <% elsif @profile.target_ids.present? && @profile.target_ids.size <= 3 %>
+        <section class="company-goals profile-targets"><h2>Working towards</h2><ul class="profile-goals">
+          <% @profile.target_ids.each do |id| %><li class="company-goal sdg-color-<%= id.to_s.split('.').first.to_i %>"><span class="company-goal-number" aria-hidden="true"><%= id.to_s.split('.').first %></span><%= link_to "#{id}: #{SdgDirectory::LABELS.fetch(id)}", sdg_target_path(id) %></li><% end %>
+        </ul></section>
+      <% end %>
+    </aside>
+  </div>
+</article>
