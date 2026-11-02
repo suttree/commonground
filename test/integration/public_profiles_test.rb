@@ -12,11 +12,11 @@ class PublicProfilesTest < ActionDispatch::IntegrationTest
     get profile_path(entry.public_slug)
     assert_response :success
     assert_select "h1", text: "Ara the Songbird"
-    assert_select ".profile-main", text: /Provide companionship/
-    assert_select ".profile-evidence h3", text: "Ara"
-    assert_select ".profile-evidence", text: /Reduce loneliness/
-    assert_select "aside", text: /Local production/
-    assert_select "aside", text: /Product design and research/
+    assert_select ".company-story", text: /Provide companionship/
+    assert_select ".company-product h3", text: "Ara"
+    assert_select ".company-product", text: /Reduce loneliness/
+    assert_select ".company-story", text: /Local production/
+    assert_select ".company-current-work", text: /Product design and research/
     assert_select "h2", text: "Our current challenges"
     assert_select "h2", text: "Our impact", count: 0
     [ entry.name, entry.email, entry.notes, entry.status ].each { |value| assert_no_match value, response.body }
