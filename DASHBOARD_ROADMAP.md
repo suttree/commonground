@@ -2,16 +2,35 @@
 
 ## Agreed direction
 
-Apply Ink & lime to the currently functional dashboard now. Keep its information
-order and existing controls. Later, evolve toward the Community living room
-layout when there is real community content to support it. The visual prototype
-is a direction, not evidence that article sharing or discussions already exist.
+The functional dashboard now uses Ink & lime with current work and availability first,
+then reflection and priorities, followed by discovery and existing recommendations.
+It links to existing project creation, people discovery and contact flows; it does
+not promise automated matching or a new joining system.
 
-Other agreed design decisions: discovery uses a filter sidebar and refreshed
-cards; member profiles use Work & personality for now. Both are implemented on
-the same design branch alongside the dashboard styling. Marketing is deferred. Next design reviews are project
-details and company profiles, then joining and editing; the full mobile and
-state review comes last.
+Member profiles use Personal & editorial. Discovery, project details, company
+profiles, joining/editor polish and mobile layouts have been implemented in the
+open PRs. Marketing remains deferred. These statements describe branch work,
+not a claim that everything is merged into main.
+
+## Delivered in the current pass
+
+- Personal availability displayed on the dashboard, edited through Basics; open
+  and occasional-help states have green dots. Legacy availability stays private.
+- Active project gets the primary space; members without one can start a project.
+  Active-project owners are directed to update instead of starting a second active project.
+- Goal and exact-target pages show up to three discoverable projects, newest
+  publication first, with an empty state and links to project discovery.
+- Profile sections follow a deliberate order instead of alphabetical order;
+  mobile section links wrap and existing unsaved-change protection remains.
+- Joining clarifies required versus optional information and public/private data.
+
+## Product decisions still for Duncan
+
+- A new project-joining workflow beyond existing contact/invitation flows.
+- Collaborator matching beyond people discovery.
+- A place to share things members wish existed: define posting, responses,
+  visibility, and its relationship to projects before building an ideas feed.
+- Article sharing and the activity stream described below.
 
 ## What main already supports
 

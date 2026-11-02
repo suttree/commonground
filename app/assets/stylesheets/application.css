@@ -1303,3 +1303,29 @@ html.sheet-open, html.sheet-open body { overflow: hidden; }
   .company-current-work .button, .company-direct-contact .button { width: 100%; }
 }
 .company-identity .company-goals { background: transparent; border: 0; padding: 0; border-radius: 0; }
+
+/* Work first, reflection second; same reading order at every width. */
+.dashboard-theme .dashboard-overview { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+.dashboard-theme .dashboard-overview-meta-only { grid-template-columns: minmax(0, 1fr); }
+.dashboard-theme .dashboard-project-link { font: 400 var(--heading-2)/1.2 Georgia, serif; }
+.dashboard-next-actions { display: flex; flex-wrap: wrap; gap: var(--space-5); margin-block: var(--space-5); }
+.dashboard-next-actions a { min-height: 44px; display: inline-flex; align-items: center; }
+.sdg-projects { margin-block: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--line); }
+.sdg-projects .challenge-card { min-width: 0; overflow-wrap: anywhere; }
+.sdg-projects > p:last-child { margin-top: var(--space-5); }
+.editing-theme .profile-panel { max-width: 820px; }
+.editing-theme .profile-tabs { flex-wrap: wrap; }
+.editing-theme .profile-tabs a { min-height: 44px; }
+.editing-theme .onboarding-page > h1 { margin-top: var(--space-5); }
+@media (max-width: 650px) {
+  .dashboard-theme .dashboard-overview { grid-template-columns: minmax(0, 1fr); }
+  .sdg-projects .challenge-grid { grid-template-columns: minmax(0, 1fr); }
+  .editing-theme .profile-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; }
+  .editing-theme .profile-tabs a { white-space: normal; padding: var(--space-3); }
+  .editing-theme .profile-editor .actions > a { min-height: 44px; display: inline-flex; align-items: center; }
+}
+.dashboard-theme .dashboard-meta .dashboard-project-link { font: 400 var(--heading-2)/1.2 Georgia, serif; }
+.goals-theme .sdg-goal-summary .button { white-space: normal; max-width: 100%; }
+@media (max-width: 650px) {
+  .goals-theme .sdg-goal-summary .button { width: 100%; }
+}

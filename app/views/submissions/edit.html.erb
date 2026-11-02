@@ -1,3 +1,4 @@
+<% content_for :body_class, "ink-lime-theme editing-theme" %>
 <% content_for :title, "Edit #{@submission.display_name}" %>
 <%= javascript_include_tag "profile_editor", defer: true %>
 <div class="form-page profile-editor">
@@ -7,7 +8,7 @@
     <%= link_to "View profile", profile_path(@submission.public_slug), class: "button secondary small", target: "_blank", rel: "noopener" %>
   </header>
   <nav class="profile-tabs" aria-label="Profile sections">
-    <% @sections.sort_by { |_key, (label, _fields)| label.downcase }.each do |key, (label, _fields)| %>
+    <% @sections.each do |key, (label, _fields)| %>
       <%= link_to label, edit_account_profile_path(section: key, profile_id: @submission.id), aria: { current: key == @section ? "page" : nil } %>
     <% end %>
   </nav>
@@ -20,13 +21,13 @@
     <% if @section == "side_projects" %>
       <%= render "submissions/sections/side_projects" %>
     <% else %>
-    <p class="hint">Save this section before switching tabs. Changes appear on your public profile.</p>
+    <p class="hint">Save one section at a time. Profile content is public; your login email stays private. Optional fields can be left blank.</p>
     <%= render "shared/errors", record: @submission %>
     <%= form_with model: @submission, url: account_profile_path, local: true, html: { multipart: true, data: { profile_editor: true, unsaved: @unsaved_section ? "true" : "false" } } do |form| %>
       <%= hidden_field_tag :profile_id, @submission.id %>
       <%= hidden_field_tag :section, @section %>
       <%= render "submissions/sections/#{@section}", form: form %>
-      <div class="actions"><%= form.submit "Save #{@sections.fetch(@section).first.downcase}", class: "button" %></div>
+      <div class="actions"><%= form.submit "Save #{@sections.fetch(@section).first.downcase}", class: "button" %><%= link_to "Back to dashboard", dashboard_path %></div>
     <% end %>
     <% end %>
   </section>

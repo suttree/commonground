@@ -2,7 +2,7 @@
 
 Commonbound's visual language lives in one stylesheet, [`app/assets/stylesheets/application.css`](app/assets/stylesheets/application.css). Every colour, size, space and corner comes from a token declared on `:root` at the top of that file. Use a token instead of typing a value. If no token fits, add one here and in `:root` rather than writing a one-off.
 
-It's fine to look early-stage. Keep the brand decisions already made: the woven-ribbon illustration, green and cream colours, and plain wording.
+Keep plain wording and the established typography. Marketing retains the original green and cream theme; product pages use the Ink & lime direction documented below.
 
 ## Principles
 
@@ -150,10 +150,10 @@ Links that leave the current task open in a new tab: "View profile" from the edi
 
 ## Dashboard: Ink & lime
 
-The dashboard alone now uses an Ink & lime theme (`body.dashboard-theme`).
-The public website and other pages retain their existing palette pending their
-own implementation passes. Keep current dashboard functionality and information
-order until the community features described in `DASHBOARD_ROADMAP.md` are ready.
+The dashboard uses `body.dashboard-theme`; discovery, member/company profiles,
+project details, joining/editing and goal pages use `ink-lime-theme`. Marketing
+retains its existing theme. Current work and availability precede reflection on
+the functional dashboard. The community stream remains scoped in `DASHBOARD_ROADMAP.md`.
 
 New root tokens:
 
@@ -177,8 +177,8 @@ permalinks, profile switching, and normal form submissions remain available.
 ## Discovery and member profiles
 
 The approved Ink & lime theme also applies to people/company/project discovery
-and personal profile pages through `ink-lime-theme`. Company profiles, project
-detail pages, onboarding, and marketing retain their existing layouts.
+and profile pages through `ink-lime-theme`. Project details, company profiles,
+joining and editing now share this palette; marketing remains deferred.
 
 Discovery preserves the filter sidebar, server-side queries, and pagination.
 Search comes first, with result counts and individually removable applied filters
@@ -187,14 +187,26 @@ identities use initials. Identity accent colours derive from the persisted profi
 ID, so filtering or sorting does not recolour a person. No uploaded company logo
 or photograph is required. SDG labels retain official colour markers.
 
-Personal profiles follow Work & personality: identity and contact first, current
-project, side projects and portfolio, then purpose and background. All existing
-profile data and private owner controls remain available. Company profile layout
-is intentionally deferred. Shared partial styling is scoped to avoid changing the
-marketing website or project detail pages.
-
 ### Personal & editorial member profiles
 
 Member profiles use an editorial identity block, a serif purpose statement, a lime current-project panel and a side-project column. At 650px and below, the content stacks, the portrait reduces to a controlled 76px-wide frame, and contact actions span the width. These rules build on the signed-in mobile navigation and form improvements in PR #16.
 
 Public availability is an optional `profile.availability_status` choice in Basics. Open and occasional-help states use a green dot; unavailable and unset states remain neutral, always with a text label. The legacy `availability` column is not displayed or migrated because it was not explicitly collected for public display. No database migration is needed.
+
+## Project and company details
+
+Use a large editorial title, a nearby introduction and a lime help/current-project panel.
+Keep longer narrative content in the main column. The quieter sidebar provides
+identity, location, public contact links and UN target colours without a divider
+between every item. Initials are a first-class fallback; layouts must work without
+photos or company logos. Never substitute private account-owner details for public
+company contact information. Empty optional sections disappear.
+
+## Joining, editing and goals
+
+Joining explains required versus optional fields and public versus private data.
+Editing follows the ProfileSections order, wraps sections into two columns on
+phones, and preserves unsaved-change protection and the mobile save action.
+Goal pages show up to three published, discoverable projects; target pages match
+the exact target. The browse link explicitly opens the broader parent goal filter.
+Keep official UN colours alongside Ink & lime. See DESIGN_QA.md for validation.
