@@ -4,7 +4,7 @@ module ApplicationHelper
     photo.submission_id ? profile_photo_path(photo) : draft_profile_photo_path(token: photo.draft_token)
   end
 
-  def main_navigation_link(label, path, section:)
+  def main_navigation_link(label, path, section:, **options)
     active_section = case controller_path
     when %r{\Aadmin/}
       :admin
@@ -22,7 +22,7 @@ module ApplicationHelper
       :about if action_name == "about"
     end
     current = current_page?(path) ? "page" : "location" if active_section == section
-    link_to label, path, aria: { current: current }
+    link_to label, path, aria: { current: current }, **options
   end
 
   # "Sarper's profile" for people (first name), "Acme's profile" for companies.

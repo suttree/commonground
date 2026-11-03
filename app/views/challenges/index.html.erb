@@ -1,35 +1,32 @@
 <% content_for :title, "Projects" %>
 <% content_for :body_class, "ink-lime-theme discovery-theme " %>
-<%= javascript_include_tag "discovery_filters", defer: true %>
 <div class="form-page">
   <%= render "shared/discovery_nav", current_section: "challenges" %>
   <%= render "shared/discovery_intro", title: "Projects", description: "Find work you can help with, and see what people have achieved." %>
   <% if current_account %>
   <%= form_with url: challenges_path, method: :get, id: "project-filters" do %><% end %>
   <div class="discovery-layout">
-  <aside class="discovery-sidebar" aria-labelledby="filters-heading">
-    <h2 id="filters-heading" class="discovery-sidebar-title">Filters</h2>
-    <div class="discovery-search" role="search">
-      <h2 class="discovery-sidebar-title">Search</h2>
-      <%= label_tag :q, "Search projects", class: "sr-only" %>
-      <%= search_field_tag :q, @filters[:q], form: "project-filters", placeholder: "Search projects by name or topic" %>
-      <button class="button" form="project-filters">Search</button>
-
-    </div>
-    <div class="directory-filters">
+  <% active_count = @filters.slice(:location, :industry, :goal, :status).count { |_key, value| value.present? } %>
+  <%= render layout: "shared/filter_panel", locals: { form_id: "project-filters", search_label: "Search projects by name or topic", query: @filters[:q], clear_path: challenges_path, active_count: active_count } do %>
       <div class="field"><%= label_tag :location, "Location" %><%= search_field_tag :location, @filters[:location], form: "project-filters", placeholder: "Any location" %></div>
       <div class="field"><%= label_tag :industry, "Industry" %><%= select_tag :industry, options_for_select(ProfileOptions::SECTORS, @filters[:industry]), include_blank: "All industries", form: "project-filters", data: { auto_submit: true } %></div>
       <div class="field"><%= label_tag :goal, "SDG goal" %><%= select_tag :goal, options_for_select(ProfileOptions::GOALS.map { |goal| [goal.fetch("name"), goal.fetch("id")] }, @filters[:goal]), include_blank: "All goals", form: "project-filters", data: { auto_submit: true } %></div>
       <div class="field"><%= label_tag :status, "Show" %><%= select_tag :status, options_for_select([["Active projects", "active"], ["Completed projects", "completed"]], @filters[:status]), include_blank: "All projects", form: "project-filters", data: { auto_submit: true } %></div>
-      <%= link_to "Clear filters", challenges_path %>
-    </div>
-
-  </aside>
+  <% end %>
   <div class="discovery-results">
       <p class="discovery-count" role="status"><%= pluralize(@count, "project") %></p>
   <%= render "shared/applied_filters", filters: @filters %>
   <div class="directory-grid"><%= render partial: "card", collection: @challenges, as: :challenge %></div>
-  <% if @challenges.empty? %><p class="empty-state">No work matches yet. Try another location or remove a filter.</p><% end %>
+  <% if @challenges.empty? %>
+    <div class="empty-state">
+      <% if @filters.values.any?(&:present?) %>
+        <p>No work matches yet. Try another location or remove a filter.</p>
+        <p><%= link_to "Clear all filters", challenges_path, class: "button secondary small" %></p>
+      <% else %>
+        <p>No projects are listed yet. Be the first to share one.</p>
+      <% end %>
+    </div>
+  <% end %>
   <nav class="actions" aria-label="Project pages"><% if @page > 1 %><%= link_to "Previous", challenges_path(@filters.merge(page: @page - 1)) %><% end %><% if @page * 24 < @count %><%= link_to "Next", challenges_path(@filters.merge(page: @page + 1)) %><% end %></nav>
   <div class="actions"><%= link_to "Start a project", new_challenge_path, class: "button secondary" %></div>
   </div>

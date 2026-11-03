@@ -173,7 +173,8 @@ class PilotTest < ActionDispatch::IntegrationTest
     sign_in_account(Account.create!(email: "admin@example.test", admin: true))
     get admin_submission_path(entry)
     assert_response :success
-    assert_select "script", count: 1
+    assert_select "script:not([src])", count: 0
+    assert_no_match "alert(\"bad\")</script>", response.body
     assert_select "script[src='https://scripts.withcabin.com/hello.js'][async][defer]", count: 1
   end
 

@@ -78,8 +78,8 @@ class AccountsTest < ActionDispatch::IntegrationTest
     company.update!(published: true)
     get profile_path(company.public_slug)
     assert_select "h2", text: "SDG quiz answers", count: 0
-    assert_select ".profile-targets .eyebrow", text: "Sustainable development goals"
-    assert_select "h2", text: "Problems I want to work on next"
+    assert_select ".company-goals a[href]", minimum: 1
+    assert_select ".company-goals h2", text: "Working towards"
   end
 
   test "failed codes do not log in" do

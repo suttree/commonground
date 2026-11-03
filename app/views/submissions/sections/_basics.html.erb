@@ -11,13 +11,13 @@
       <div class="field">
         <%= form.label :location, "Location (optional)" %>
         <p id="location-hint" class="hint">Where <%= organisation ? "is your company" : "are you" %> based? Add a town or city, region and country so people can find you by location. This appears on your public profile. No street address needed.</p>
-        <%= form.text_field :location, maxlength: 5000, placeholder: "e.g. Bristol, UK", **field_options(@submission, :location, hint: true) %>
+        <%= form.text_field :location, maxlength: 5000, placeholder: "e.g. Bristol, UK", autocapitalize: "words", **field_options(@submission, :location, hint: true) %>
         <%= render "shared/field_error", record: @submission, attribute: :location %>
       </div>
       <% unless organisation %>
         <div class="field">
           <%= form.label :radius_km, "Radius around this location, in kilometres (optional)" %>
-          <%= form.number_field :radius_km, min: 0, max: 20000, step: "any", **field_options(@submission, :radius_km) %>
+          <%= form.number_field :radius_km, min: 0, max: 20000, step: "any", inputmode: "decimal", **field_options(@submission, :radius_km) %>
           <%= render "shared/field_error", record: @submission, attribute: :radius_km %>
         </div>
       <% end %>

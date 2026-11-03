@@ -7,11 +7,11 @@
   <% if @side_project.errors.any? %><p class="hint">Your text is still here. Please choose any new photo files again before saving.</p><% end %>
   <%= form_with model: @side_project, html: { multipart: true } do |form| %>
     <%= hidden_field_tag :profile_id, @profile.id %>
-    <div class="field"><%= form.label :name, "Project name" %><%= form.text_field :name, required: true, maxlength: 200 %></div>
+    <div class="field"><%= form.label :name, "Project name" %><%= form.text_field :name, required: true, maxlength: 200, **field_options(@side_project, :name) %><%= render "shared/field_error", record: @side_project, attribute: :name %></div>
     <% { description: "What is it about?", purpose: "What is its purpose?", joy: "Why does it give or spread joy?" }.each do |field, label| %>
-      <div class="field"><%= form.label field, "#{label} (optional)" %><%= form.text_area field, rows: 4, maxlength: 5000 %></div>
+      <div class="field"><%= form.label field, "#{label} (optional)" %><%= form.text_area field, rows: 4, maxlength: 5000, **field_options(@side_project, field) %><%= render "shared/field_error", record: @side_project, attribute: field %></div>
     <% end %>
-    <div class="field"><%= form.label :url, "Link (optional)" %><%= form.url_field :url, maxlength: 500, placeholder: "https://" %></div>
+    <div class="field"><%= form.label :url, "Link (optional)" %><%= form.url_field :url, maxlength: 500, placeholder: "https://", autocomplete: "url", **field_options(@side_project, :url) %><%= render "shared/field_error", record: @side_project, attribute: :url %></div>
     <fieldset><legend>Photos (optional)</legend>
       <p class="hint">Up to five photos per project. JPEG, PNG or WebP, under 2 MB each. The first photo is the cover until you choose another. Photos will be public with your profile.</p>
       <div class="side-photo-editor">
