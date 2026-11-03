@@ -37,14 +37,6 @@
     <% if @current_challenge %><section class="profile-section current-challenge"><h2>Our current project</h2><%= render "challenges/card", challenge: @current_challenge %></section><% end %>
   <% else %>
     <% if @profile.purpose.present? %><section class="member-purpose" aria-label="Why I do this"><%= simple_format @profile.purpose %></section><% end %>
-    <div class="editorial-work-layout <%= 'without-sides' unless @profile.side_projects.exists? %>">
-      <div>
-        <% if @current_challenge %><%= render "member_project", challenge: @current_challenge %><% end %>
-        <% if @profile.current_focus.present? %><section class="profile-section"><h2>What’s keeping me busy</h2><%= simple_format @profile.current_focus %></section><% end %>
-        <%= render "projects", profile: @profile %>
-      </div>
-      <%= render "side_projects", profile: @profile %>
-    </div>
   <% end %>
   <% if owns_profile?(@profile) && !@profile.organisation? %>
     <section class="profile-section" aria-labelledby="your-answers-title">
@@ -56,8 +48,13 @@
       <% end %>
     </section>
   <% end %>
-  <div class="profile-body">
+  <% has_sector_interests = @profile.sectors_future.present? || @profile.sectors_past.present? || @profile.sector_reason.present? %>
+  <div class="profile-body <%= "without-interests" if !@profile.organisation? && !has_sector_interests %>">
     <div class="profile-main">
+      <% unless @profile.organisation? %>
+        <% if @current_challenge %><%= render "member_project", challenge: @current_challenge %><% end %>
+        <% if @profile.current_focus.present? %><section class="profile-section"><h2>What’s keeping me busy</h2><%= simple_format @profile.current_focus %></section><% end %>
+      <% end %>
       <% fields = @profile.organisation? ? { mission: "Our purpose", offering: "What we offer", impact_metrics: "Our impact", proud_of: "What we're proud of" } : { experience: "The thread through my work", education_topics: "What shaped my thinking" } %>
       <% fields.each do |field, heading| %>
         <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><%= simple_format @profile.public_send(field) %></section><% end %>
@@ -91,7 +88,7 @@
           <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><%= simple_format @profile.public_send(field) %></section><% end %>
         <% end %>
       </aside>
-    <% else %>
+    <% elsif has_sector_interests %>
       <aside class="profile-interests" aria-label="Sector interests">
         <% { sectors_future: "Where I'd like to work", sectors_past: "Where I've worked" }.each do |field, heading| %>
           <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><ul class="profile-tags"><% @profile.public_send(field).each do |sector| %><li><%= link_to sector, people_path(sector: sector) %></li><% end %></ul></section><% end %>
@@ -100,6 +97,10 @@
       </aside>
     <% end %>
   </div>
+  <% unless @profile.organisation? %>
+    <%= render "projects", profile: @profile %>
+    <%= render "side_projects", profile: @profile %>
+  <% end %>
   <% if (example = SdgQuiz::EXAMPLES[@profile.public_slug]) && !@profile.organisation? && @profile.profile["quiz_completed_at"].blank? %>
     <section class="profile-targets profile-section" id="quiz-answers">
       <p class="eyebrow">Example quiz answers</p>

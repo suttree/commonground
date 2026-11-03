@@ -48,6 +48,21 @@ class SideProjectsTest < ActionDispatch::IntegrationTest
     assert_not PortfolioImage.exists?(photos.first.id)
   end
 
+  test "long side projects remain a separate collection with short expandable previews" do
+    description = "A short introduction.\n\n" + ("Detailed background and project outcomes. " * 30)
+    5.times { |index| @profile.side_projects.create!(name: "Experiment #{index}", description: description) }
+    get profile_path(@profile.public_slug)
+    assert_response :success
+    assert_select ".public-profile > #side-projects .side-project-card", count: 5
+    assert_select ".profile-body #side-projects", count: 0
+    assert_select ".editorial-work-layout", count: 0
+    assert_select ".side-project-excerpt", text: "A short introduction.", count: 5
+    assert_select ".side-project-card details", count: 5
+    assert_select ".side-project-card details", text: /Detailed background and project outcomes/, count: 5
+    assert_operator response.body.index("The thread through my work"), :<, response.body.index('id="side-projects"')
+    assert_equal description, @profile.side_projects.first.description
+  end
+
   test "photos follow publication access and projects cannot be edited by others" do
     post side_projects_path, params: { side_project: { name: "A hobby" }, photos: [ upload ] }
     project = @profile.side_projects.sole

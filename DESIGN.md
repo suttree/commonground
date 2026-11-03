@@ -189,7 +189,7 @@ or photograph is required. SDG labels retain official colour markers.
 
 ### Personal & editorial member profiles
 
-Member profiles use an editorial identity block, a serif purpose statement, a lime current-project panel and a side-project column. At 650px and below, the content stacks, the portrait reduces to a controlled 76px-wide frame, and contact actions span the width. These rules build on the signed-in mobile navigation and form improvements in PR #16.
+Member profiles use an editorial identity block, a serif purpose statement, a lime current-project panel and a separate side-project collection. At 650px and below, the content stacks, the portrait reduces to a controlled 76px-wide frame, and contact actions span the width. These rules build on the signed-in mobile navigation and form improvements in PR #16.
 
 Public availability is an optional `profile.availability_status` choice in Basics. Open and occasional-help states use a green dot; unavailable and unset states remain neutral, always with a text label. The legacy `availability` column is not displayed or migrated because it was not explicitly collected for public display. No database migration is needed.
 
@@ -229,3 +229,11 @@ appear above and below the form. Section switching supports Save & continue, Kee
 editing or Discard. Failed validation retains submitted values and staged photos.
 Location uses a native typeahead datalist of up to 200 distinct published community
 locations, with unrestricted free-text entry; it is not a worldwide geocoding service.
+
+### Populated profiles
+
+Keep current work with the main narrative. Portfolio and side-project collections
+follow as independent full-width sections; do not constrain a potentially long
+side-project collection to a sidebar beside a short current-project card. Use
+two columns on desktop and one on mobile. Side-project previews show the first
+paragraph (at most 200 characters); the complete text remains expandable.
