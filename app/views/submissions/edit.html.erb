@@ -1,3 +1,6 @@
+<% if @editorial %>
+  <%= render "submissions/editorial_editor" %>
+<% else %>
 <% content_for :body_class, "ink-lime-theme editing-theme" %>
 <% content_for :title, "Edit #{@submission.display_name}" %>
 <%= javascript_include_tag "profile_editor", defer: true %>
@@ -8,7 +11,7 @@
     <%= link_to "View profile", profile_path(@submission.public_slug), class: "button secondary small", target: "_blank", rel: "noopener" %>
   </header>
   <nav class="profile-tabs" aria-label="Profile sections">
-    <% @sections.each do |key, (label, _fields)| %>
+    <% (@submission.organisation? ? @sections : ProfileSections::PERSONAL).each do |key, (label, _fields)| %>
       <%= link_to label, edit_account_profile_path(section: key, profile_id: @submission.id), aria: { current: key == @section ? "page" : nil } %>
     <% end %>
   </nav>
@@ -32,3 +35,5 @@
     <% end %>
   </section>
 </div>
+
+<% end %>

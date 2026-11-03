@@ -39,10 +39,10 @@ class ProfileSectionsTest < ActionDispatch::IntegrationTest
 
   test "tabs show one section and successful saves stay on that section" do
     get edit_account_profile_path
-    assert_select ".profile-tabs a", count: 9
-    assert_select ".profile-tabs a[aria-current=page]", text: "Basics"
+    assert_select ".profile-tabs a", count: 4
+    assert_select ".profile-tabs a[aria-current=page]", text: /You, at a glance/
     assert_select "input[name='submission[name]']"
-    assert_select "textarea[name='submission[purpose]']", count: 0
+    assert_select "textarea[name='submission[purpose]']", count: 1
     assert_select "textarea[name*='projects']", count: 0
     assert_select "script[src*='profile_editor']"
     original = @profile.profile.deep_dup

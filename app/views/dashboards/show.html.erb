@@ -17,7 +17,7 @@
   <section class="dashboard-priorities-strip" aria-labelledby="dashboard-priorities-title">
     <div class="dashboard-section-heading">
       <h2 id="dashboard-priorities-title">What matters to you</h2>
-      <% if @profile&.priorities_selected? %><%= link_to "Review your priorities", edit_account_profile_path(section: "priorities", profile_id: @profile.id) %><% end %>
+      <% if @profile&.priorities_selected? %><%= link_to "Review your priorities", edit_account_profile_path(section: @profile&.organisation? ? "priorities" : "future", profile_id: @profile.id) %><% end %>
     </div>
     <% if @profile&.priorities_selected? %>
       <% if Array(@profile.target_ids).any? %>
@@ -43,7 +43,7 @@
   </section>
   <section class="recent-work"><div class="dashboard-section-heading"><h2><%= Array(@profile&.target_ids).any? ? "Projects connected to your goals" : "Recent projects" %></h2><%= link_to "Browse all projects", challenges_path %></div>
     <% if @recommended_challenges&.any? %><div class="challenge-grid"><%= render partial: "challenges/card", collection: @recommended_challenges, as: :challenge %></div>
-    <% else %><p>No matching active projects yet. <%= link_to "Browse projects", challenges_path %> or <%= link_to "Review your priorities", edit_account_profile_path(section: "priorities") %>.</p><% end %>
+    <% else %><p>No matching active projects yet. <%= link_to "Browse projects", challenges_path %> or <%= link_to "Review your priorities", edit_account_profile_path(section: @profile&.organisation? ? "priorities" : "future") %>.</p><% end %>
   </section>
   <% end %>
   <div class="dashboard-footer"><%= button_to "Log out", logout_path, method: :delete, class: "button secondary" %></div>

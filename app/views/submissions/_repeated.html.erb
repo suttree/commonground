@@ -13,9 +13,9 @@
         <div class="field">
           <%= label_tag input_id, label %>
           <% if key == "url" %>
-            <%= url_field_tag "submission[#{field}][][#{key}]", entry[key], id: input_id, maxlength: 5000, placeholder: "https://" %>
+            <%= url_field_tag "submission[#{field}][][#{key}]", entry[key], id: input_id, maxlength: 5000, placeholder: "https://your-website.com/project" %>
           <% else %>
-          <%= text_area_tag "submission[#{field}][][#{key}]", entry[key], id: input_id, rows: 2, maxlength: 5000, aria: { describedby: @submission.errors[field].any? ? "#{field}-error" : nil } %>
+          <%= text_area_tag "submission[#{field}][][#{key}]", entry[key], id: input_id, rows: 2, maxlength: 5000, placeholder: { "title" => "e.g. A neighbourhood repair day", "role" => "e.g. Organiser and facilitator", "skill" => "e.g. Bringing people together", "results" => "e.g. 30 neighbours joined and 18 items were repaired", "organisation" => "e.g. Local community centre", "time" => "e.g. Spring 2026", "problem" => "What needed to change?", "context" => "Who was involved, and where?", "approach" => "What did you do to move things forward?", "caption" => "Describe what the image shows" }[key], aria: { describedby: @submission.errors[field].any? ? "#{field}-error" : nil } %>
           <% end %>
         </div>
       <% end %>

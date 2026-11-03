@@ -12,7 +12,7 @@ class Submission < ApplicationRecord
 
   CONTACT_ACTIONS = [ "Email me", "Follow me", "Connect on LinkedIn" ].freeze
 
-  store_accessor :profile, *PROFILE_FIELDS, :availability_status, :exploring, :contact_action, :contact_destination, :skills_summary
+  store_accessor :profile, *PROFILE_FIELDS, :availability_status, :exploring, :contact_action, :contact_destination, :skills_summary, :current_focus, :contribution, :collaboration_interest
   validates :availability_status, inclusion: { in: AVAILABILITY_STATUSES }, allow_blank: true
   validate :valid_contact_action
   has_many :challenges, dependent: :destroy
@@ -39,7 +39,7 @@ class Submission < ApplicationRecord
   validates :website, length: { maximum: 500 }, format: { with: %r{\Ahttps?://[^\s]+\z}, message: "must start with https:// or http://" }, allow_blank: true
   validates :status, inclusion: { in: STATUSES }
   validates :purpose, :challenge, :experience, :availability, :location, :pay_expectations, length: { maximum: 5000 }
-  validates :skills_summary, length: { maximum: 5000 }
+  validates :skills_summary, :current_focus, :contribution, :collaboration_interest, length: { maximum: 5000 }
   validates :notes, length: { maximum: 10000 }
   validates :organisation_name, :challenge, presence: true, if: :organisation?
   validates :experience, presence: true, unless: :organisation?

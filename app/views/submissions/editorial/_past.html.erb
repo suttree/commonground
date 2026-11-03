@@ -1,0 +1,8 @@
+<%= render "submissions/editorial/field", form: form, attribute: :experience, label: "The thread through your experience", required: true, placeholder: "e.g. Organising neighbourhood events taught me how to turn a loose idea into something people want to join." %>
+<p class="story-visibility">Public on your profile · optional</p>
+<%= render "submissions/sectors", form: form, attribute: :sectors_past, label: "Sectors I have worked in" %>
+<%= render "submissions/repeated", form: form, field: "skills", title: "Skills I can share", singular: "Skill" %>
+<%= render "submissions/repeated", form: form, field: "projects", title: "Work I’m proud of", singular: "Project" %>
+<%= render "submissions/editorial/field", form: form, attribute: :education_topics, label: "What shaped your thinking?", placeholder: "e.g. Learning to repair things changed how I think about waste." %>
+<p class="story-visibility">Public on your profile · optional</p>
+<%= render "submissions/sections/perspective", form: form %>

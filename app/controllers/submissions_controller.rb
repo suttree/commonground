@@ -93,8 +93,8 @@ class SubmissionsController < ApplicationController
       row["image_id"] = existing_projects.dig(index, "image_id") if existing_projects.dig(index, "image_id")
     end
     @image_errors, @draft_images = [], {}
-    prepare_project_images if !@section || @section == "portfolio"
-    prepare_profile_photo if !@section || @section == "basics"
+    prepare_project_images if !@section || %w[portfolio past].include?(@section)
+    prepare_profile_photo if !@section || %w[basics identity].include?(@section)
     if @image_errors.any? || @profile_photo_error
       @image_errors.each { |message| @submission.errors.add(:projects, message) }
       @submission.errors.add(:profile_photo, @profile_photo_error) if @profile_photo_error
@@ -111,12 +111,14 @@ class SubmissionsController < ApplicationController
         @submission.save!
         @draft_images.each_value { |image| image.update!(submission: @submission) }
         persist_profile_photo
-        if !@section || @section == "portfolio"
+        if !@section || %w[portfolio past].include?(@section)
           kept_images = @submission.profile_entries("projects").filter_map { |row| row["image_id"] }
           @submission.portfolio_images.where(side_project_id: nil).where.not(id: kept_images).destroy_all
         end
       end
-      destination = @section ? edit_account_profile_path(section: @section, profile_id: @submission.id) : dashboard_path
+      next_section = params[:next_section].presence
+      next_section = nil unless @sections&.key?(next_section)
+      destination = @section ? edit_account_profile_path(section: next_section || @section, profile_id: @submission.id) : dashboard_path
       message = @section ? "#{@sections.fetch(@section).first} saved." : "Your profile has been updated."
       redirect_to destination, notice: message, status: :see_other
     else
@@ -128,7 +130,11 @@ class SubmissionsController < ApplicationController
 
   def prepare_edit_section
     @sections = ProfileSections.for(@submission)
-    @section = params[:section].presence || "basics"
+    @section = params[:section].presence || (@submission.organisation? ? "basics" : "identity")
+    @editorial = !@submission.organisation? && ProfileSections::EDITORIAL.key?(@section)
+    if @editorial
+      @location_suggestions = Submission.published.where.not(location: [ nil, "" ]).distinct.order(:location).limit(200).pluck(:location)
+    end
     raise ActiveRecord::RecordNotFound unless @sections.key?(@section)
   end
 
@@ -191,7 +197,7 @@ class SubmissionsController < ApplicationController
       [ :organisation_name, :location, :exploring, :challenge, :mission, :offering, :impact_metrics, :proud_of, :challenge_kind, :help_needed,
         { target_ids: [], sectors_past: [], products: ProfileOptions::REPEATED_FIELDS.fetch("products").keys } ]
     else
-      [ :availability_status, :experience, :skills_summary, :location, :radius_km, :sector_reason, :education_topics, :satisfaction_feeling, :satisfaction_notes, :exploring,
+      [ :current_focus, :contribution, :collaboration_interest, :availability_status, :experience, :skills_summary, :location, :radius_km, :sector_reason, :education_topics, :satisfaction_feeling, :satisfaction_notes, :exploring,
         { target_ids: [], sectors_past: [], sectors_future: [],
           skills: ProfileOptions::REPEATED_FIELDS.fetch("skills").keys, projects: ProfileOptions::REPEATED_FIELDS.fetch("projects").keys + ProfileOptions::PROJECT_DETAILS.keys + %w[image_token remove_image] } ]
     end

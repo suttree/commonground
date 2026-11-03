@@ -210,3 +210,22 @@ phones, and preserves unsaved-change protection and the mobile save action.
 Goal pages show up to three published, discoverable projects; target pages match
 the exact target. The browse link explicitly opens the broader parent goal filter.
 Keep official UN colours alongside Ink & lime. See DESIGN_QA.md for validation.
+
+## Editorial profile editing (3 November 2026)
+
+Personal editing opens in four sections: You, at a glance; What you’re working on;
+What comes next; What you bring. Keep the left navigation and editorial form
+area: large name, portrait upload overlay, serif purpose and lime current project.
+Existing sections remain supported for bookmarked links and company editing is unchanged.
+
+Use visible public/optional labels and concrete placeholders. Account login email
+is a separate private disclosure. Current work links to the existing project editor;
+side projects retain their own editor. `current_focus`, `contribution` and
+`collaboration_interest` are optional, length-validated JSON fields displayed on
+the public profile. Existing fields and portfolio images remain intact.
+
+Saving is explicit, never autosave: unsaved/saving/server-confirmed saved states
+appear above and below the form. Section switching supports Save & continue, Keep
+editing or Discard. Failed validation retains submitted values and staged photos.
+Location uses a native typeahead datalist of up to 200 distinct published community
+locations, with unrestricted free-text entry; it is not a worldwide geocoding service.

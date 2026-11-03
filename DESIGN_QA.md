@@ -35,3 +35,25 @@ Browser checks used static rendered fixtures with local scripts, not a deployed
 end-to-end session. Form persistence and permissions were exercised by Rails
 integration tests. Real-device Safari/Android, production uploads and deployed
 email/contact delivery were not tested. No production records were modified.
+
+## Editorial editor follow-up — 3 November 2026
+
+Implemented the approved four-section editor, portrait add/edit overlay, explicit
+save states, visibility hints, examples and community-location suggestions.
+
+Live browser verification used an isolated local Rails test server and disposable
+database: changed the name, triggered the unsaved warning, saved and continued to
+Future, then saved a new contribution. The redirect showed server-confirmed success
+and retained values. Invalid contact data returned errors, retained the input and
+kept both status indicators unsaved. All four sections fit at 320/375/768/1280px.
+Fixed inherited hero spacing and the hidden-image fallback during visual QA.
+
+Integration coverage adds grouped save isolation, safe continuation destinations,
+public output of new fields, location privacy, repeat-entry staging, portfolio image
+removal, and editorial portrait staging/save/removal. Prior mobile and company
+coverage remains. Native location suggestions are based on the public community,
+not a new third-party location provider. Real-device checks remain outstanding.
+
+Final follow-up validation: 176 tests, 3454 assertions, no failures/errors/skips;
+Ruby lint and JavaScript syntax checks pass. Browser runs exercised real server
+POST/PATCH/redirect cycles, using only synthetic local records.

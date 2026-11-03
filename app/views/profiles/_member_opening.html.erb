@@ -6,7 +6,7 @@
     <p class="member-availability">
       <span class="availability-dot <%= 'is-open' if Submission::AVAILABILITY_STATUSES.first(2).include?(@profile.availability_status) %>" aria-hidden="true"></span>
       <span><%= @profile.availability_status.presence || (owns_profile?(@profile) ? "Availability not added" : "Availability not shared") %></span>
-      <% if owns_profile?(@profile) %><%= link_to @profile.availability_status.present? ? "Update" : "Add availability", edit_account_profile_path(section: "basics", profile_id: @profile.id, anchor: "submission_availability_status") %><% end %>
+      <% if owns_profile?(@profile) %><%= link_to @profile.availability_status.present? ? "Update" : "Add availability", edit_account_profile_path(section: "future", profile_id: @profile.id, anchor: "submission_availability_status") %><% end %>
     </p>
   </div>
   <%= render "shared/member_identity", profile: @profile %>

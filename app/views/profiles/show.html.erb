@@ -40,6 +40,7 @@
     <div class="editorial-work-layout <%= 'without-sides' unless @profile.side_projects.exists? %>">
       <div>
         <% if @current_challenge %><%= render "member_project", challenge: @current_challenge %><% end %>
+        <% if @profile.current_focus.present? %><section class="profile-section"><h2>What’s keeping me busy</h2><%= simple_format @profile.current_focus %></section><% end %>
         <%= render "projects", profile: @profile %>
       </div>
       <%= render "side_projects", profile: @profile %>
@@ -66,6 +67,9 @@
       <% end %>
       <% unless @profile.organisation? %>
         <%= render "skills", profile: @profile %>
+        <% { contribution: "What I’d like to contribute", collaboration_interest: "Who I’d like to work with" }.each do |field, heading| %>
+          <% if @profile.public_send(field).present? %><section class="profile-section"><h2><%= heading %></h2><%= simple_format @profile.public_send(field) %></section><% end %>
+        <% end %>
       <% else %>
         <% if @profile.profile_entries("products").any? %>
           <section class="profile-section"><h2>Products & services</h2>

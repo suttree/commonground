@@ -1,0 +1,4 @@
+<div class="story-public-field">
+  <p class="story-visibility">Public on your profile<%= " · optional" unless local_assigns[:required] %></p>
+  <%= render "submissions/text_field", form: form, attribute: attribute, label: label, required: local_assigns.fetch(:required, false), placeholder: placeholder, hint: local_assigns[:hint] %>
+</div>

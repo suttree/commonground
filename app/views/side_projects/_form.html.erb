@@ -1,6 +1,6 @@
 <% content_for :title, @side_project.persisted? ? "Edit side project" : "Add a side project" %>
 <div class="form-page narrow">
-  <p class="back-link"><%= link_to "Back to side projects", edit_account_profile_path(section: "side_projects", profile_id: @profile.id) %></p>
+  <p class="back-link"><%= link_to "Back to side projects", edit_account_profile_path(section: "present", profile_id: @profile.id) %></p>
   <h1><%= @side_project.persisted? ? "Edit side project" : "Add a side project" %></h1>
   <p>A hobby, experiment or something you make time for. Only the name is required.</p>
   <%= render "shared/errors", record: @side_project %>
@@ -25,6 +25,6 @@
       </div>
       <%= label_tag :photos, "Add photos" %><%= file_field_tag "photos[]", id: "photos", multiple: true, accept: "image/jpeg,image/png,image/webp" %>
     </fieldset>
-    <div class="actions"><%= form.submit "Save side project", class: "button" %><%= link_to "Cancel", edit_account_profile_path(section: "side_projects", profile_id: @profile.id) %></div>
+    <div class="actions"><%= form.submit "Save side project", class: "button" %><%= link_to "Cancel", edit_account_profile_path(section: "present", profile_id: @profile.id) %></div>
   <% end %>
 </div>
