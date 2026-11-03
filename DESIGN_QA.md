@@ -76,3 +76,5 @@ a local rendered fixture at 320/375/768/1280px. Confirmed no document overflow,
 correct grid columns, and expansion revealing the full text. Added a five-project
 long-content regression test. Full suite: 177 tests, 3464 assertions, all passing;
 all 121 Ruby files pass lint. Production data was not modified.
+
+Purpose typography follow-up: live computed styles confirmed regular Georgia (400), normal tracking, and an 820px measure. Restored the approved prototype's 640px measure and increased line-height to 1.55. Checked Duncan's complete purpose text at desktop and 375px; no horizontal overflow. Wording is unchanged.
