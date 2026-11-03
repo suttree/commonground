@@ -8,9 +8,13 @@
           <% if (cover = project.cover_photo) %><%= image_tag portfolio_image_path(cover), alt: "#{project.name} cover photo", class: "side-project-cover", loading: "lazy" %><% end %>
           <div class="side-project-copy">
             <h3><%= project.name %></h3>
-            <%= simple_format project.description if project.description.present? %>
-            <% if project.purpose.present? || project.joy.present? || project.photos.size > 1 %>
+            <% description = project.description.to_s %>
+            <% excerpt = truncate(description.split(/\n\s*\n/).first.to_s, length: 200, separator: " ") %>
+            <% expanded_description = description != excerpt %>
+            <% if excerpt.present? %><p class="side-project-excerpt"><%= excerpt %></p><% end %>
+            <% if expanded_description || project.purpose.present? || project.joy.present? || project.photos.size > 1 %>
               <details><summary>More about <%= project.name %></summary>
+                <%= simple_format description if expanded_description %>
                 <% if project.purpose.present? %><h4>Its purpose</h4><%= simple_format project.purpose %><% end %>
                 <% if project.joy.present? %><h4>Why it gives or spreads joy</h4><%= simple_format project.joy %><% end %>
                 <% if project.photos.size > 1 %><div class="side-project-gallery"><% project.photos.each_with_index do |photo, index| %><%= link_to portfolio_image_path(photo), aria: { label: "Open photo #{index + 1} of #{project.name}" } do %><%= image_tag portfolio_image_path(photo), alt: "#{project.name}, photo #{index + 1}", loading: "lazy" %><% end %><% end %></div><% end %>

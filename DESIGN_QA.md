@@ -57,3 +57,22 @@ not a new third-party location provider. Real-device checks remain outstanding.
 Final follow-up validation: 176 tests, 3454 assertions, no failures/errors/skips;
 Ruby lint and JavaScript syntax checks pass. Browser runs exercised real server
 POST/PATCH/redirect cycles, using only synthetic local records.
+
+## Public profile flow regression — 3 November 2026
+
+Duncan's populated profile exposed a gap in the earlier QA: a long side-project
+sidebar determined the height of a grid row containing only the current project
+and portfolio. This left several screens of empty space and delayed the rest of
+the member's story. Side-project descriptions were also unbounded in previews.
+
+The current project and current focus now belong to the main profile narrative.
+Portfolio and side projects are independent collections after that narrative.
+Side projects use two desktop columns and one mobile column, a first-paragraph
+preview capped at 200 characters, and expandable full descriptions/details/photos.
+Empty sector sidebars are omitted. No saved profile content is changed or removed.
+
+Verified with Duncan's public long-description example and public cover images in
+a local rendered fixture at 320/375/768/1280px. Confirmed no document overflow,
+correct grid columns, and expansion revealing the full text. Added a five-project
+long-content regression test. Full suite: 177 tests, 3464 assertions, all passing;
+all 121 Ruby files pass lint. Production data was not modified.
