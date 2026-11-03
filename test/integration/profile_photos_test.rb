@@ -25,6 +25,24 @@ class ProfilePhotosTest < ActionDispatch::IntegrationTest
     css_select("input[name=profile_photo_token]").sole["value"]
   end
 
+  test "editorial identity stages, saves and removes the portrait" do
+    profile = create_owned_profile
+    patch account_profile_path, params: { section: "identity", submission: { name: "" }, profile_photo: upload }
+    assert_response :unprocessable_entity
+    token = token_from_form
+    assert_nil profile.reload.profile_photo
+    patch account_profile_path, params: { section: "identity", submission: { name: "Alex" }, profile_photo_token: token }
+    assert_redirected_to edit_account_profile_path(section: "identity", profile_id: profile.id)
+    assert profile.reload.profile_photo
+    follow_redirect!
+    assert_select ".story-photo-frame img:not([hidden])"
+    patch account_profile_path, params: { section: "identity", submission: { name: "Alex" }, remove_profile_photo: "1" }
+    assert_nil profile.reload.profile_photo
+    follow_redirect!
+    assert_select ".story-photo-initials", text: "A"
+    assert_select ".story-photo-frame img[hidden]"
+  end
+
   test "personal profiles use initials when no optional photo is saved" do
     profile = create_owned_profile
     get edit_account_profile_path

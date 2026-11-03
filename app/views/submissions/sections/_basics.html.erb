@@ -16,6 +16,12 @@
       </div>
       <% unless organisation %>
         <div class="field">
+          <%= form.label :availability_status, "Availability (optional)" %>
+          <p id="availability_status-hint" class="hint">This appears on your public profile. Leave it blank if you prefer not to share.</p>
+          <%= form.select :availability_status, Submission::AVAILABILITY_STATUSES, { include_blank: "Not shared" }, field_options(@submission, :availability_status, hint: true) %>
+          <%= render "shared/field_error", record: @submission, attribute: :availability_status %>
+        </div>
+        <div class="field">
           <%= form.label :radius_km, "Radius around this location, in kilometres (optional)" %>
           <%= form.number_field :radius_km, min: 0, max: 20000, step: "any", inputmode: "decimal", **field_options(@submission, :radius_km) %>
           <%= render "shared/field_error", record: @submission, attribute: :radius_km %>

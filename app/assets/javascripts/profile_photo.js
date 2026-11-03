@@ -5,6 +5,13 @@
     const remove = field.querySelector("input[type=checkbox]");
     const savedSource = field.dataset.retainedSrc;
     const savedAlt = preview.alt;
+    const editorial = field.hasAttribute("data-editorial-photo");
+    const photoLabel = field.querySelector(".story-photo-label");
+    const updateEditorial = (hasPhoto) => {
+      if (!editorial) return;
+      preview.hidden = !hasPhoto;
+      photoLabel.textContent = hasPhoto ? "Edit photo" : "＋ Add photo";
+    };
     let reader;
     const releasePreview = () => {
       if (reader?.readyState === FileReader.LOADING) reader.abort();
@@ -18,11 +25,13 @@
         reader.addEventListener("load", () => {
           preview.src = reader.result;
           preview.alt = "Selected profile photo preview";
+          updateEditorial(true);
         });
         reader.readAsDataURL(file);
       } else {
         preview.src = remove?.checked ? field.dataset.defaultSrc : savedSource;
         preview.alt = savedAlt;
+        updateEditorial(!remove?.checked && field.dataset.hasPhoto === "true");
       }
     });
     remove?.addEventListener("change", () => {
@@ -30,6 +39,7 @@
       input.value = "";
       preview.src = remove.checked ? field.dataset.defaultSrc : savedSource;
       preview.alt = remove.checked ? "Commonbound logo" : savedAlt;
+      updateEditorial(!remove.checked);
     });
     window.addEventListener("pagehide", releasePreview);
   });

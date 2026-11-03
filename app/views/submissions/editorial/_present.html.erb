@@ -1,0 +1,4 @@
+<% project = @submission.challenges.find_by(status: "active") %>
+<% if project %><div class="story-project"><p class="eyebrow"><span class="availability-dot is-open" aria-hidden="true"></span> Your active project · public</p><h3><%= project.title %></h3><p><%= truncate(project.description, length: 220) %></p><%= link_to "Edit project details ↗", edit_challenge_path(project), class: "button secondary" %><p class="hint">Connected to your project. Update it once; it appears on your profile too.</p></div>
+<% else %><p>No active project yet. <%= link_to "Start a project", new_challenge_path %> or <%= link_to "browse projects", challenges_path %>.</p><% end %>
+<%= render "submissions/editorial/field", form: form, attribute: :current_focus, label: "What’s keeping you busy?", placeholder: "e.g. I’m helping turn an empty shop into a place to repair, share and learn.", hint: "Work, volunteering, learning or a personal experiment." %>

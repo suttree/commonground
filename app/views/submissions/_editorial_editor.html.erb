@@ -1,0 +1,30 @@
+<% content_for :body_class, "ink-lime-theme editing-theme story-editor-theme" %>
+<% content_for :title, "Edit #{@submission.display_name}" %>
+<%= javascript_include_tag "profile_editor", defer: true %>
+<div class="story-editor">
+  <p><%= link_to "← Back to dashboard", dashboard_path, class: "button ghost small back" %></p>
+  <header class="page-intro"><div><p class="eyebrow">Your space in Commonbound</p><h1>A little more you.</h1><p>What you’re doing, what matters to you, and where you’d like to go.</p></div><%= link_to "View saved profile ↗", profile_path(@submission.public_slug), class: "button secondary small", target: "_blank", rel: "noopener" %></header>
+  <div class="story-editor-layout">
+    <aside>
+      <nav class="profile-tabs story-nav" aria-label="Profile sections">
+        <% ProfileSections::EDITORIAL.each do |key, (label, _)| %>
+          <%= link_to edit_account_profile_path(section: key, profile_id: @submission.id), aria: { current: key == @section ? "page" : nil } do %><%= label %><small><%= { "identity" => "Your introduction", "present" => "Life and work, right now", "future" => "Possibilities and priorities", "past" => "Experience and perspective" }.fetch(key) %></small><% end %>
+        <% end %>
+      </nav>
+      <details class="story-account"><summary>Your account · private</summary><p>Login email: <%= current_account.email %></p><p class="hint">Used for signing in. This stays off your public profile unless you explicitly add it as a contact destination.</p></details>
+    </aside>
+    <section class="profile-panel" aria-labelledby="profile-section-title">
+      <div id="profile-unsaved" class="notice" role="alert" tabindex="-1" hidden><p>You have unsaved changes. Save before switching sections, or keep editing.</p><div class="actions"><button type="submit" form="editorial-profile-form" class="button" id="profile-save-continue">Save & continue</button><button type="button" class="button secondary" id="profile-keep-editing">Keep editing</button><button type="button" class="button secondary" id="profile-discard">Discard changes</button></div></div>
+      <h2 id="profile-section-title"><%= @sections.fetch(@section).first %></h2>
+      <p class="hint story-section-intro"><%= { "identity" => "Give someone a starting point for a conversation.", "present" => "A snapshot of where your energy is going today.", "future" => "A little direction helps the right people find you.", "past" => "The experiences and abilities that shaped how you work. It doesn’t have to read like a CV." }.fetch(@section) %></p>
+      <%= render "shared/errors", record: @submission %>
+      <%= form_with model: @submission, url: account_profile_path, local: true, id: "editorial-profile-form", html: { multipart: true, data: { profile_editor: true, unsaved: @unsaved_section ? "true" : "false", saved_message: flash[:notice] } } do |form| %>
+        <%= hidden_field_tag :profile_id, @submission.id %><%= hidden_field_tag :section, @section %><%= hidden_field_tag :next_section, "", id: "profile-next-section" %>
+        <div class="story-save-state" data-save-state><div><strong data-save-label><%= @unsaved_section ? "Unsaved changes" : flash[:notice].presence || "No unsaved changes" %></strong><small data-save-note>Edits are published only when you save.</small></div><button type="submit" class="button secondary small" data-save-button>Save changes</button></div>
+        <%= render "submissions/editorial/#{@section}", form: form %>
+        <div class="actions story-save-bar" data-save-state><div role="status" aria-live="polite"><strong data-save-label><%= @unsaved_section ? "Unsaved changes" : flash[:notice].presence || "No unsaved changes" %></strong><small data-save-note>Save this section when you’re ready.</small></div><%= form.submit "Save changes", class: "button", data: { save_button: true } %></div>
+      <% end %>
+      <% if @section == "present" %><div class="story-side-projects"><%= render "submissions/sections/side_projects" %></div><% end %>
+    </section>
+  </div>
+</div>

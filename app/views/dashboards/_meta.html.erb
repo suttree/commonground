@@ -5,10 +5,13 @@
       <% if @active_challenge %>
         <p class="dashboard-project-link"><%= link_to @active_challenge.title, challenge_path(@active_challenge) %></p>
         <% if @active_challenge.description.present? %><p class="dashboard-project-description"><%= truncate(@active_challenge.description, length: 150) %></p><% end %>
-        <p class="dashboard-meta-actions"><%= link_to "Update project", edit_challenge_path(@active_challenge) %> · <%= link_to "Start a project", new_challenge_path %></p>
+        <p class="dashboard-meta-actions"><%= link_to "Update project", edit_challenge_path(@active_challenge) %></p>
       <% else %>
-        <p>No current project. <%= link_to "Start a project", new_challenge_path %></p>
+        <p>What would you like to work on next?</p><p><%= link_to "Start a project", new_challenge_path, class: "button" %></p>
       <% end %>
+      <% if @active_challenge&.help_options&.any? %><p>Looking for help with <strong><%= @active_challenge.help_options.map(&:downcase).to_sentence %></strong>.</p><% end %>
+      <% unless @profile.organisation? %><p class="member-availability"><span class="availability-dot <%= 'is-open' if Submission::AVAILABILITY_STATUSES.first(2).include?(@profile.availability_status) %>" aria-hidden="true"></span><span><%= @profile.availability_status.presence || "Availability not added" %></span><%= link_to @profile.availability_status.present? ? "Update availability" : "Add availability", edit_account_profile_path(section: "future", profile_id: @profile.id, anchor: "submission_availability_status") %></p><% end %>
+      <div class="dashboard-next-actions"><%= link_to "Browse projects", challenges_path %><%= link_to "Find collaborators", people_path %></div>
       <% if @past_challenges.any? %><details class="dashboard-past-projects"><summary>Your drafts & previous work (<%= @past_challenges.size %>)</summary><ul class="work-archive"><% @past_challenges.each do |challenge| %><li><%= link_to challenge.title, challenge_path(challenge) %> <span class="status"><%= challenge.status.humanize %></span> <%= link_to "Edit", edit_challenge_path(challenge), aria: { label: "Edit #{challenge.title}" } %></li><% end %></ul></details><% end %>
     </section>
   <% end %>

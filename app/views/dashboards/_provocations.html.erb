@@ -1,11 +1,13 @@
 <section class="provocations profile-section" id="provocations" aria-labelledby="provocations-title" data-profile-id="<%= @profile.id %>" tabindex="-1">
   <div class="dashboard-question-heading">
     <p class="eyebrow" id="provocations-title">A question to think about</p>
-    <span class="dashboard-question-count"><%= @provocation_answer_count %> / <%= @provocation_count %> answered</span>
+    <% if @provocation_count.positive? %><span class="dashboard-question-count"><%= @provocation_answer_count %> / <%= @provocation_count %> answered</span><% end %>
   </div>
   <% if @provocation %>
     <p class="dashboard-question-goal"><%= link_to sdg_goal_path(@provocation.goal_id) do %><span class="dashboard-goal-number" aria-label="Goal <%= @provocation.goal_id %>"><%= @provocation.goal_id %></span><%= @provocation.goal.fetch("name") %><% end %></p>
     <%= render "provocation_answers/choices", provocation: @provocation, selected: nil, link_question: true %>
+  <% elsif @provocation_count.zero? %>
+    <p>There are no questions to reflect on yet. Explore projects or review what matters to you.</p>
   <% else %>
     <p>You've answered all the questions for now. You can revisit your answers at any time.</p>
   <% end %>

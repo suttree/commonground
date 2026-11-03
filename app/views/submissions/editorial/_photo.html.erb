@@ -1,0 +1,15 @@
+<%= javascript_include_tag "profile_photo", defer: true %>
+<% retained = @draft_profile_photo || @submission.profile_photo %>
+<% photo = @remove_profile_photo ? nil : retained %>
+<div class="story-photo" data-profile-photo data-editorial-photo data-default-src="<%= image_path('commonbound-woven-fabric.png') %>" data-retained-src="<%= profile_photo_source(retained) %>" data-has-photo="<%= photo.present? %>">
+  <div class="story-photo-frame">
+    <span class="story-photo-initials" aria-hidden="true"><%= @submission.name.to_s.split.filter_map { |part| part[0] }.first(2).join %></span>
+    <%= image_tag profile_photo_source(photo), alt: photo ? "Profile photo of #{@submission.name}" : "", class: "profile-avatar", hidden: photo.nil?, width: 128, height: 150 %>
+    <%= label_tag :profile_photo, photo ? "Edit photo" : "＋ Add photo", class: "story-photo-label" %>
+    <%= file_field_tag :profile_photo, accept: "image/jpeg,image/png,image/webp", **field_options(@submission, :profile_photo, hint: true) %>
+  </div>
+  <p id="profile_photo-hint" class="hint">Optional · public<br>JPEG, PNG or WebP, up to 2 MB.</p>
+  <%= hidden_field_tag :profile_photo_token, @draft_profile_photo.draft_token if @draft_profile_photo %>
+  <% if retained %><div class="profile-photo-remove"><%= check_box_tag :remove_profile_photo, "1", @remove_profile_photo %><%= label_tag :remove_profile_photo, "Remove photo; use initials" %></div><% end %>
+  <%= render "shared/field_error", record: @submission, attribute: :profile_photo %>
+</div>
