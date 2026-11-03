@@ -1,0 +1,8 @@
+<div class="field"><%= form.label :availability_status, "Room for something new? (optional) · public" %><%= form.select :availability_status, Submission::AVAILABILITY_STATUSES, { include_blank: "Not shared" }, field_options(@submission, :availability_status, hint: true) %><p id="availability_status-hint" class="hint"><span class="availability-dot <%= 'is-open' if Submission::AVAILABILITY_STATUSES.first(2).include?(@submission.availability_status) %>" data-availability-dot aria-hidden="true"></span><span data-availability-label><%= @submission.availability_status.presence || "Availability not shared" %></span></p><%= render "shared/field_error", record: @submission, attribute: :availability_status %></div>
+<%= render "submissions/editorial/field", form: form, attribute: :contribution, label: "What would you like to contribute?", placeholder: "e.g. I’d love to help a local food project find its first partners." %>
+<%= render "submissions/editorial/field", form: form, attribute: :collaboration_interest, label: "Who would you like to work with?", placeholder: "e.g. A practical organiser and someone who enjoys telling stories about local change." %>
+<p class="story-visibility">Public on your profile · optional</p>
+<%= render "submissions/sectors", form: form, attribute: :sectors_future, label: "Sectors I wish to move into" %>
+<%= render "submissions/editorial/field", form: form, attribute: :sector_reason, label: "What draws you towards them?", placeholder: "e.g. I want to apply my organising experience to local food systems." %>
+<p class="hint">Selected priorities are public. Your individual quiz answers stay private.</p>
+<%= render "submissions/sections/priorities", form: form %>

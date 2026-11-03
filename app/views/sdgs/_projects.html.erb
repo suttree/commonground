@@ -1,0 +1,6 @@
+<section class="sdg-projects" aria-labelledby="sdg-projects-title">
+  <h2 id="sdg-projects-title">Latest projects for <%= @target ? "target #{@target.fetch('id')}" : "this goal" %></h2>
+  <% if @projects.any? %><div class="challenge-grid"><%= render partial: "challenges/card", collection: @projects, as: :challenge %></div>
+  <% else %><p>No published projects for <%= @target ? "this target" : "this goal" %> yet.</p><% end %>
+  <p><%= link_to "Browse projects for goal #{@goal.fetch('id')}", challenges_path(goal: @goal.fetch("id")) %> · <%= link_to "Browse all projects", challenges_path %></p>
+</section>

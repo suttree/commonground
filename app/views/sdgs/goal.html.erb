@@ -1,3 +1,4 @@
+<% content_for :body_class, "ink-lime-theme goals-theme" %>
 <% content_for :title, "Goal #{@goal.fetch('id')}: #{@goal.fetch('name')}" %>
 <div class="sdg-directory">
   <nav class="back-link" aria-label="Breadcrumb"><%= link_to "SDG directory", sdgs_path %> / Goal <%= @goal.fetch("id") %></nav>
@@ -8,6 +9,7 @@
       <%= link_to "Find people who selected this goal", people_path(goal: @goal.fetch("id")), class: "button" %>
     </div>
   </header>
+  <%= render "projects" %>
   <h2 class="sdg-section-title"><%= @goal.fetch("targets").size %> targets for <%= @goal.fetch("name") %></h2>
   <p class="small-note">Short titles are a reading guide. Each target page includes the full source wording and a direct link you can share.</p>
   <div class="sdg-target-grid">

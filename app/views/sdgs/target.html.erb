@@ -1,3 +1,4 @@
+<% content_for :body_class, "ink-lime-theme goals-theme" %>
 <% content_for :title, "Target #{@target.fetch('id')}: #{SdgDirectory::LABELS.fetch(@target.fetch('id'))}" %>
 <div class="sdg-directory narrow">
   <nav class="back-link" aria-label="Breadcrumb"><%= link_to "SDG directory", sdgs_path %> / <%= link_to "Goal #{@goal.fetch('id')}", sdg_goal_path(@goal.fetch("id")) %> / Target <%= @target.fetch("id") %></nav>
@@ -15,5 +16,6 @@
     <% if @previous %><%= link_to "Previous target: #{@previous.fetch('id')}", sdg_target_path(@previous.fetch("id")) %><% end %>
     <% if @next %><%= link_to "Next target: #{@next.fetch('id')}", sdg_target_path(@next.fetch("id")) %><% end %>
   </nav>
+  <%= render "projects" %>
   <%= render "source" %>
 </div>

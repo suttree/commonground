@@ -11,13 +11,13 @@
     <%= render "journey" %>
   <% else %>
   <div class="dashboard-overview<%= " dashboard-overview-meta-only" unless @provocation_answer_count %>">
-    <%= render "provocations" if @provocation_answer_count %>
     <%= render "meta" %>
+    <%= render "provocations" if @provocation_answer_count %>
   </div>
   <section class="dashboard-priorities-strip" aria-labelledby="dashboard-priorities-title">
     <div class="dashboard-section-heading">
       <h2 id="dashboard-priorities-title">What matters to you</h2>
-      <% if @profile&.priorities_selected? %><%= link_to "Review your priorities", edit_account_profile_path(section: "priorities", profile_id: @profile.id) %><% end %>
+      <% if @profile&.priorities_selected? %><%= link_to "Review your priorities", edit_account_profile_path(section: @profile&.organisation? ? "priorities" : "future", profile_id: @profile.id) %><% end %>
     </div>
     <% if @profile&.priorities_selected? %>
       <% if Array(@profile.target_ids).any? %>
@@ -41,7 +41,10 @@
       <%= link_to companies_path, class: "dashboard-discovery-card" do %><h3>Explore companies <span aria-hidden="true">↗</span></h3><p>Get to know the teams doing useful work.</p><% end %>
     </div>
   </section>
-  <% if @recommended_challenges&.any? %><section class="recent-work"><h2>Projects to explore</h2><p>Work connected to your selected goals, when you have added them.</p><div class="challenge-grid"><%= render partial: "challenges/card", collection: @recommended_challenges, as: :challenge %></div></section><% end %>
+  <section class="recent-work"><div class="dashboard-section-heading"><h2><%= Array(@profile&.target_ids).any? ? "Projects connected to your goals" : "Recent projects" %></h2><%= link_to "Browse all projects", challenges_path %></div>
+    <% if @recommended_challenges&.any? %><div class="challenge-grid"><%= render partial: "challenges/card", collection: @recommended_challenges, as: :challenge %></div>
+    <% else %><p>No matching active projects yet. <%= link_to "Browse projects", challenges_path %> or <%= link_to "Review your priorities", edit_account_profile_path(section: @profile&.organisation? ? "priorities" : "future") %>.</p><% end %>
+  </section>
   <% end %>
   <div class="dashboard-footer"><%= button_to "Log out", logout_path, method: :delete, class: "button secondary" %></div>
 </div>

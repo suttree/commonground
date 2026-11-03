@@ -17,6 +17,7 @@ class SdgsController < ApplicationController
     @goal = SdgDirectory.goal(params[:id])
     raise ActiveRecord::RecordNotFound unless @goal
     @guide = SdgDirectory::GUIDES.fetch(@goal.fetch("id"))
+    @projects = Challenge.discoverable.filtered(goal: @goal.fetch("id")).includes(:submission, :organisation).recent.limit(3)
   end
 
   def target
@@ -26,6 +27,7 @@ class SdgsController < ApplicationController
     @guide = SdgDirectory::GUIDES.fetch(@goal.fetch("id"))
     targets = @goal.fetch("targets")
     position = targets.index(@target)
+    @projects = Challenge.discoverable.where("EXISTS (SELECT 1 FROM json_each(challenges.target_ids) WHERE value = ?)", @target.fetch("id")).includes(:submission, :organisation).recent.limit(3)
     @previous = targets[position - 1] if position.positive?
     @next = targets[position + 1]
   end

@@ -1,3 +1,4 @@
+<% content_for :body_class, "ink-lime-theme editing-theme" %>
 <% content_for :title, "Join Commonbound" %>
 <div class="form-page join-layout">
   <aside class="join-story" aria-label="Your first steps">
@@ -9,7 +10,7 @@
   <section class="join-form" aria-labelledby="join-title">
     <p class="eyebrow">Step 1 of 4</p>
     <h2 id="join-title">Start with you.</h2>
-    <p>A name and an email. We'll take it from there.</p>
+    <p>Create your account with a name and email. Next, explore your priorities or skip ahead to your profile.</p>
     <% if @error %><p class="error-summary" role="alert"><%= @error %></p><% end %>
     <%= form_with url: login_path do |form| %>
       <%= hidden_field_tag :individual_signup, "1" %>

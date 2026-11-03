@@ -10,5 +10,5 @@
       </div>
       <%= render "shared/field_error", record: @submission, attribute: :satisfaction_feeling %>
     </fieldset>
-    <%= render "submissions/text_field", form: form, attribute: :satisfaction_notes, label: "When…", hint: "Write a list of moments or situations. Use separate paragraphs if you'd like to explain them. To skip this section after starting, clear this answer and choose Skip this section.", rows: 6 %>
+    <%= render "submissions/text_field", form: form, attribute: :satisfaction_notes, label: "When…", placeholder: "e.g. When a group finds a way forward together.", hint: "Write a list of moments or situations. Use separate paragraphs if you'd like to explain them. To skip this section after starting, clear this answer and choose Skip this section.", rows: 6 %>
   </details>

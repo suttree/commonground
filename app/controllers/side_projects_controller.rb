@@ -42,7 +42,7 @@ class SideProjectsController < ApplicationController
   end
 
   def editor_path
-    edit_account_profile_path(section: "side_projects", profile_id: @profile.id)
+    edit_account_profile_path(section: "present", profile_id: @profile.id)
   end
 
   def save_project(template)

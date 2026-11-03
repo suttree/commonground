@@ -11,12 +11,38 @@ class ProfileSectionsTest < ActionDispatch::IntegrationTest
     post verify_login_path, params: { code: code }
   end
 
+  test "public availability is explicit, editable and independent of legacy availability" do
+    @profile.update!(availability: "Private legacy answer")
+    get profile_path(@profile.public_slug)
+    assert_select ".member-availability", text: /Availability not added/
+    assert_select ".availability-dot.is-open", count: 0
+    assert_no_match "Private legacy answer", response.body
+    Submission::AVAILABILITY_STATUSES.each_with_index do |status, index|
+      patch account_profile_path, params: { section: "basics", profile_id: @profile.id, submission: { availability_status: status } }
+      assert_response :redirect
+      assert_equal status, @profile.reload.availability_status
+      get profile_path(@profile.public_slug)
+      assert_select ".member-availability", text: /#{Regexp.escape(status)}/
+      assert_select ".availability-dot.is-open", count: index < 2 ? 1 : 0
+    end
+    patch account_profile_path, params: { section: "basics", profile_id: @profile.id, submission: { availability_status: "Invalid" } }
+    assert_response :unprocessable_entity
+    assert_select "#submission_availability_status[aria-invalid=true]"
+    patch account_profile_path, params: { section: "basics", profile_id: @profile.id, submission: { availability_status: "" } }
+    assert_response :redirect
+    assert_equal "Private legacy answer", @profile.reload.availability
+    delete logout_path
+    get profile_path(@profile.public_slug)
+    assert_select ".member-availability", text: /Availability not shared/
+    assert_select ".member-availability a", count: 0
+  end
+
   test "tabs show one section and successful saves stay on that section" do
     get edit_account_profile_path
-    assert_select ".profile-tabs a", count: 9
-    assert_select ".profile-tabs a[aria-current=page]", text: "Basics"
+    assert_select ".profile-tabs a", count: 4
+    assert_select ".profile-tabs a[aria-current=page]", text: /You, at a glance/
     assert_select "input[name='submission[name]']"
-    assert_select "textarea[name='submission[purpose]']", count: 0
+    assert_select "textarea[name='submission[purpose]']", count: 1
     assert_select "textarea[name*='projects']", count: 0
     assert_select "script[src*='profile_editor']"
     original = @profile.profile.deep_dup
