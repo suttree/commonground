@@ -1220,13 +1220,12 @@ html.sheet-open, html.sheet-open body { overflow: hidden; }
 .editorial-profile .profile-main > .editorial-current-project:first-child { margin-top: 0; }
 .editorial-profile .public-profile > #side-projects { margin-top: var(--space-8); }
 .editorial-profile #side-projects .side-project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: var(--space-7); }
-.editorial-profile #side-projects .side-project-card { min-width: 0; background: transparent; border: 0; border-radius: 0; }
-.editorial-profile .side-project-copy { padding: var(--space-4) 0; }
+.editorial-profile .side-project-card { min-width: 0; }
 .editorial-profile .side-project-copy h3 { font: 400 1.5rem/1.25 Georgia, serif; }
-.editorial-profile .side-project-cover { width: 100%; height: auto; max-height: none; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; }
+.editorial-profile .side-project-cover { height: auto; max-height: none; aspect-ratio: 16 / 9; }
 .editorial-profile .side-project-excerpt { max-width: 60ch; }
 .editorial-profile .side-project-card details { margin-block: var(--space-3); }
-.editorial-profile .side-project-card summary { min-height: 44px; padding-block: var(--space-2); }
+.editorial-profile .side-project-card summary { min-height: 44px; margin: 0; padding-block: var(--space-2); }
 @media (max-width: 650px) {
   .editorial-profile .member-opening { grid-template-columns: minmax(0, 1fr) 76px; gap: var(--space-4); }
   .editorial-profile .member-opening .member-identity { width: 76px; height: 100px; grid-row: 1; border-radius: 7px 24px 7px 7px; font-size: 1.6rem; }
